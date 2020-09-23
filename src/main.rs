@@ -67,7 +67,7 @@ fn main() -> Result<()> {
         )
     })?;
 
-    println!("{}", standard_user.uid());
+    homebrew::install_formulae(standard_user)?;
 
     Ok(())
 }

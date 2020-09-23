@@ -1,0 +1,8 @@
+# -*- mode: ruby -*-
+
+# Bundler for Homebrew
+# https://github.com/Homebrew/homebrew-bundle
+
+brew 'git'
+
+mas 'LastPass Password Manager', id: 926036361
