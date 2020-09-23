@@ -1,6 +1,7 @@
 use anyhow::{anyhow, Error, Result};
 use clap::{crate_authors, crate_description, crate_name, App, Arg};
 use log::debug;
+use users::get_user_by_name;
 
 mod homebrew;
 mod verbose_command;
@@ -59,8 +60,10 @@ fn main() -> Result<()> {
     let matches = app.get_matches();
 
     let standard_username = get_standard_username(matches.value_of("standard-user"))?;
+    let standard_user = get_user_by_name(&standard_username)
+        .ok_or_else(|| anyhow!("Could not lookup user with name {:?}!", standard_username))?;
 
-    println!("{}", standard_username);
+    println!("{}", standard_user.uid());
 
     Ok(())
 }

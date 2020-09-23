@@ -11,6 +11,7 @@ nix = "0.18.0"
 clap = "2.33"
 anyhow = "1.0"
 log = {version = "0.4.8", features = ["std"]}
+users = "0.10"
 #ansi_term = "0.11.0"
 #directories = "2.0.2"
 #Inflector = "0.11.4"

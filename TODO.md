@@ -1,3 +1,7 @@
+# Technical shit
+
+Logging borrowed from vROps Architect / Deploy
+
 # Things to add
 
 When there are several options to try, they're ordered by preference from cursory research.
