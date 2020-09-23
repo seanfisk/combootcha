@@ -1,6 +1,6 @@
+use anyhow::{anyhow, Context, Result};
 use std::path::Path;
 use std::process::Command;
-use anyhow::{Result, anyhow, Context};
 
 pub fn run(command: &mut Command) -> Result<()> {
     run_base(command, None)
@@ -11,7 +11,7 @@ pub fn run_in_dir<P: AsRef<Path>>(command: &mut Command, current_dir: P) -> Resu
     run_base(command, Some(current_dir.as_ref()))
 }
 
-fn run_base(command: &mut Command, current_dir: Option<&Path>) -> Result<()> { 
+fn run_base(command: &mut Command, current_dir: Option<&Path>) -> Result<()> {
     println!(
         "=> {:?}{}",
         command,
@@ -20,9 +20,7 @@ fn run_base(command: &mut Command, current_dir: Option<&Path>) -> Result<()> {
     if let Some(current_dir) = current_dir {
         command.current_dir(current_dir);
     }
-    let status = command
-        .status()
-        .context("Could not launch process")?;
+    let status = command.status().context("Could not launch process")?;
     if status.success() {
         Ok(())
     } else {

@@ -1,5 +1,5 @@
-use anyhow::{Error, Result, anyhow};
-use clap::{crate_authors, crate_description, crate_name, Arg, App};
+use anyhow::{anyhow, Error, Result};
+use clap::{crate_authors, crate_description, crate_name, App, Arg};
 use log::debug;
 
 mod homebrew;
@@ -16,7 +16,7 @@ fn get_env(name: &str) -> Result<Option<String>> {
         Err(e) => match e {
             VarError::NotPresent => Ok(None),
             VarError::NotUnicode(_) => Err(Error::new(e)),
-        }
+        },
     }
 }
 
