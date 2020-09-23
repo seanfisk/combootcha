@@ -1,5 +1,6 @@
 use crate::verbose_command;
 use anyhow::Result;
+use log::info;
 use nix::unistd::{chown, Uid};
 use std::fs;
 use std::io::Write;
@@ -9,7 +10,23 @@ use std::path::Path;
 use std::process::Command;
 use users::User;
 
-pub fn install_formulae(standard_user: User) -> Result<()> {
+pub fn install_system(standard_user: &User) -> Result<()> {
+    if Path::new("/usr/local/bin/brew").exists() {
+        info!("Hombrew is already installed");
+        Ok(())
+    } else {
+        info!("Installing Homebrew…");
+        // Yeah, we could pull this down with reqwest, but it's a bit simpler to use the exact command that Hombrew provides
+        verbose_command::run(
+            Command::new("/bin/bash")
+                .arg("-c")
+                .arg("$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)")
+                .uid(standard_user.uid())
+        )
+    }
+}
+
+pub fn install_deps(standard_user: &User) -> Result<()> {
     let brewfile_bytes = include_bytes!("Brewfile");
     // Write the Brewfile to an easy-to-access location so that manual commands can be run against it.
     let brewfile_dest_str = "/usr/local/Brewfile";

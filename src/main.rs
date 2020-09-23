@@ -67,7 +67,8 @@ fn main() -> Result<()> {
         )
     })?;
 
-    homebrew::install_formulae(standard_user)?;
+    homebrew::install_system(&standard_user)?;
+    homebrew::install_deps(&standard_user)?;
 
     Ok(())
 }
