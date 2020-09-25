@@ -1,6 +1,7 @@
 mod env;
 mod homebrew;
 mod logging;
+mod login_shells;
 mod verbose_command;
 
 use anyhow::{anyhow, Result};
@@ -81,6 +82,8 @@ fn main() -> Result<()> {
 
     homebrew::install_system(&standard_user)?;
     homebrew::install_deps(&standard_user)?;
+
+    login_shells::set(&standard_user);
 
     info!("Setup complete!");
 

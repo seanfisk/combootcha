@@ -22,10 +22,16 @@ fn run_base(command: &mut Command, current_dir: Option<&Path>) -> Result<()> {
     if let Some(current_dir) = current_dir {
         command.current_dir(current_dir);
     }
-    let status = command.status().context("Could not launch process")?;
+    let status = command
+        .status()
+        .with_context(|| format!("Could not launch process {:?}", command))?;
     if status.success() {
         Ok(())
     } else {
-        Err(anyhow!("Process failed with status {}", status))
+        Err(anyhow!(
+            "Process {:?} failed with status {}",
+            command,
+            status
+        ))
     }
 }
