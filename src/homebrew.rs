@@ -8,7 +8,7 @@ use std::os::unix::fs::OpenOptionsExt;
 use std::os::unix::process::CommandExt;
 use std::path::Path;
 use std::process::Command;
-use users::User;
+use users::{os::unix::UserExt, User};
 
 pub(crate) fn install_system(standard_user: &User) -> Result<()> {
     info!("Considering Homebrew installation");
@@ -35,19 +35,17 @@ pub(crate) fn install_deps(standard_user: &User) -> Result<()> {
     info!("Installing Homebrew dependencies via Brewfile");
 
     let brewfile_bytes = include_bytes!("Brewfile");
-    // Write the Brewfile to an easy-to-access location so that manual commands can be run against it.
-    let brewfile_dest_str = "/usr/local/Brewfile";
-    let brewfile_dest = Path::new(brewfile_dest_str);
+    let brewfile_dest = standard_user.home_dir().join("Brewfile");
 
     let mut brewfile = fs::OpenOptions::new()
         .create(true)
         .write(true)
         .mode(0o400)
-        .open(brewfile_dest)?;
+        .open(&brewfile_dest)?;
     brewfile.write_all(brewfile_bytes)?;
 
     chown(
-        brewfile_dest,
+        &brewfile_dest,
         Some(Uid::from_raw(standard_user.uid())),
         None,
     )?;
@@ -56,9 +54,8 @@ pub(crate) fn install_deps(standard_user: &User) -> Result<()> {
         Command::new("brew")
             .arg("bundle")
             .arg("install")
-            .args(vec!["--file", brewfile_dest_str])
             .arg("--verbose")
-            .arg("--no-lock") // Don't output Brewfile.lock.json
+            .arg("--global")
             .uid(standard_user.uid()),
     )
 }
