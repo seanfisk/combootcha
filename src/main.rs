@@ -1,4 +1,5 @@
 mod env;
+mod fs;
 mod homebrew;
 mod logging;
 mod login_shells;
