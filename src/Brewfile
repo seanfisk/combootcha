@@ -3,10 +3,83 @@
 # Bundler for Homebrew
 # https://github.com/Homebrew/homebrew-bundle
 
-brew 'git'
-brew 'emacs-mac', args: ['with-spacemacs-icon']
+tap 'homebrew/command-not-found'
 
-# Install X11 software
+brew 'aria2'
+brew 'bash'
+brew 'cask'
+brew 'coreutils'
+brew 'dfc' # An improved version of df with colors.
+
+# Dos2Unix / Unix2Dos <http://waterlan.home.xs4all.nl/dos2unix.html> looks
+# superior to Tofrodos <http://www.thefreecountry.com/tofrodos/>. But that was
+# just from a quick look.
+brew 'dos2unix'
+brew 'duti'
+brew 'editorconfig'
+brew 'emacs-mac', args: ['with-spacemacs-icon']
+brew 'exa'
+brew 'fasd'
+brew 'gibo'
+brew 'git'
+brew 'git-lfs'
+brew 'gnu-tar'
+brew 'graphicsmagick'
+brew 'graphviz'
+brew 'grc'
+brew 'hub'
+brew 'nmap'
+# I prefer ohcount to cloc and sloccount.
+brew 'ohcount'
+brew 'pandoc'
+brew 'pstree'
+brew 'pyenv'
+brew 'pyenv-virtualenv'
+brew 'pyenv-which-ext'
+brew 'qpdf'
+brew 'reattach-to-user-namespace'
+brew 'renameutils'
+brew 'ssh-copy-id'
+brew 'thefuck'
+brew 'trash'
+brew 'watch'
+brew 'wget'
+brew 'xz'
+brew 'zsh'
+brew 'ruby-build'
+brew 'rbenv'
+brew 'rbenv-default-gems'
+
+brew 'figlet'
+brew 'sl'
+brew 'toilet'
+
+cask 'adobe-reader'
+cask 'atext'
+cask 'caffeine'
+# TODO Cathode
+cask 'dash'
+cask 'deeper'
+cask 'disk-inventory-x'
+cask 'firefox'
+cask 'flux'
+cask 'font-inconsolata'
+cask 'font-inconsolata-for-powerline'
+cask 'font-ubuntu'
+cask 'gfxcardstatus'
+cask 'gimp'
+cask 'hammerspoon'
+cask 'iterm2'
+# TODO Java Azul
+cask 'jettison'
+cask 'karabiner-elements'
+cask 'lastpass'
+cask 'quicksilver'
+cask 'speedcrunch'
+cask 'spotify'
+cask 'wireshark'
+
+# X11-based software
 # Note: XQuartz is installed to /Applications/Utilities/XQuartz.app
 cask 'xquartz'
 # These formulae require XQuartz to be installed first
