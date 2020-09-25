@@ -29,7 +29,7 @@ fn run_base(command: &mut Command, current_dir: Option<&Path>) -> Result<()> {
         Ok(())
     } else {
         Err(anyhow!(
-            "Process {:?} failed with status {}",
+            "Process {:?} failed with {}",
             command,
             status
         ))
