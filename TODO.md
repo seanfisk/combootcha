@@ -1,12 +1,10 @@
-# Technical shit
-
-Logging borrowed from vROps Architect / Deploy
-
 # Things to add
 
 When there are several options to try, they're ordered by preference from cursory research.
 
-## Homebrew bundle
+## macOS User Defaults
+
+Maybe we can set these directly without using the `defaults` command?
 
 ## Zsh plugin manager options
 
