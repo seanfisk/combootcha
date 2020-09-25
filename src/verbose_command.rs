@@ -28,10 +28,6 @@ fn run_base(command: &mut Command, current_dir: Option<&Path>) -> Result<()> {
     if status.success() {
         Ok(())
     } else {
-        Err(anyhow!(
-            "Process {:?} failed with {}",
-            command,
-            status
-        ))
+        Err(anyhow!("Process {:?} failed with {}", command, status))
     }
 }
