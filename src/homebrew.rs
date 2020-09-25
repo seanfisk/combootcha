@@ -1,7 +1,7 @@
-use crate::verbose_command;
 use anyhow::Result;
 use log::info;
 use nix::unistd::{chown, Uid};
+
 use std::fs;
 use std::io::Write;
 use std::os::unix::fs::OpenOptionsExt;
@@ -9,6 +9,8 @@ use std::os::unix::process::CommandExt;
 use std::path::Path;
 use std::process::Command;
 use users::{os::unix::UserExt, User};
+
+use crate::verbose_command;
 
 pub(crate) fn install_system(standard_user: &User) -> Result<()> {
     info!("Considering Homebrew installation");

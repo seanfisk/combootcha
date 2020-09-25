@@ -7,8 +7,9 @@ mod verbose_command;
 use anyhow::{anyhow, Result};
 use clap::{crate_authors, crate_description, crate_name, App, AppSettings, Arg};
 use log::{debug, info};
-use logging::ColorMode;
 use users::get_user_by_name;
+
+use logging::ColorMode;
 
 fn is_root() -> bool {
     nix::unistd::Uid::current().is_root()
