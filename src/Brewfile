@@ -54,7 +54,7 @@ brew 'figlet'
 brew 'sl'
 brew 'toilet'
 
-cask 'adobe-reader'
+#cask 'adobe-reader' # Failing right now
 cask 'atext'
 cask 'caffeine'
 # TODO Cathode
