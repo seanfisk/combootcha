@@ -1,4 +1,6 @@
 use anyhow::{anyhow, Context, Result};
+use log::info;
+
 use std::path::Path;
 use std::process::Command;
 
@@ -12,7 +14,7 @@ pub(crate) fn run_in_dir<P: AsRef<Path>>(command: &mut Command, current_dir: P) 
 }
 
 fn run_base(command: &mut Command, current_dir: Option<&Path>) -> Result<()> {
-    println!(
+    info!(
         "=> {:?}{}",
         command,
         current_dir.map_or("".to_owned(), |d| format!(" (cwd: {:?})", d))
