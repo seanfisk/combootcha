@@ -10,7 +10,7 @@ use std::path::Path;
 use std::process::Command;
 use users::User;
 
-pub fn install_system(standard_user: &User) -> Result<()> {
+pub(crate) fn install_system(standard_user: &User) -> Result<()> {
     if Path::new("/usr/local/bin/brew").exists() {
         info!("Hombrew is already installed");
         Ok(())
@@ -29,7 +29,7 @@ pub fn install_system(standard_user: &User) -> Result<()> {
     }
 }
 
-pub fn install_deps(standard_user: &User) -> Result<()> {
+pub(crate) fn install_deps(standard_user: &User) -> Result<()> {
     let brewfile_bytes = include_bytes!("Brewfile");
     // Write the Brewfile to an easy-to-access location so that manual commands can be run against it.
     let brewfile_dest_str = "/usr/local/Brewfile";
