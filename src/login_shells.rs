@@ -1,6 +1,6 @@
 use anyhow::{anyhow, Result};
 use log::{debug, info};
-use users::User;
+use users::{os::unix::UserExt, User};
 
 use std::collections::HashSet;
 use std::fs::File;
@@ -53,6 +53,27 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
                 shells_config_path.to_string_lossy()
             );
         }
+    }
+
+    let zsh_path = brew_bin.join("zsh");
+    let username = standard_user.name().to_owned();
+    let zsh_path_str = zsh_path.to_string_lossy();
+    info!(
+        "Considering setting login shell for user {:?} to {:?}",
+        username, zsh_path_str
+    );
+    if standard_user.shell() == zsh_path {
+        info!(
+            "Login shell for user {:?} was already set to {:?}",
+            username, zsh_path_str
+        );
+    } else {
+        // Annoying that we have to clone this
+        standard_user.clone().with_shell(&zsh_path);
+        info!(
+            "Set login shell for user {:?} to {:?}",
+            username, zsh_path_str
+        );
     }
 
     Ok(())
