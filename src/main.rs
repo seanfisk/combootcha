@@ -5,7 +5,7 @@ mod verbose_command;
 
 use anyhow::{anyhow, Result};
 use clap::{crate_authors, crate_description, crate_name, App, AppSettings, Arg};
-use log::debug;
+use log::{debug, info};
 use logging::ColorMode;
 use users::get_user_by_name;
 
@@ -81,6 +81,8 @@ fn main() -> Result<()> {
 
     homebrew::install_system(&standard_user)?;
     homebrew::install_deps(&standard_user)?;
+
+    info!("Setup complete!");
 
     Ok(())
 }
