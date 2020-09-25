@@ -4,7 +4,7 @@
 # https://github.com/Homebrew/homebrew-bundle
 
 brew 'git'
-brew 'emacs-mac', args: ['--with-spacemacs-icon']
+brew 'emacs-mac', args: ['with-spacemacs-icon']
 
 # Install X11 software
 # Note: XQuartz is installed to /Applications/Utilities/XQuartz.app

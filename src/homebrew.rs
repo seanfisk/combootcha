@@ -35,7 +35,7 @@ pub(crate) fn install_deps(standard_user: &User) -> Result<()> {
     info!("Installing Homebrew dependencies via Brewfile");
 
     let brewfile_bytes = include_bytes!("Brewfile");
-    let brewfile_dest = standard_user.home_dir().join("Brewfile");
+    let brewfile_dest = standard_user.home_dir().join(".Brewfile");
 
     let mut brewfile = fs::OpenOptions::new()
         .create(true)
