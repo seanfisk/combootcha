@@ -14,22 +14,23 @@ use crate::verbose_command;
 //     Ok(())
 // }
 
-pub(crate) fn ensure_containing_dir_with_owner<P: AsRef<Path>>(path: P, owner: &User) -> Result<()> {
-    let parent = safe_parent(path);
-    info!("Ensuring directory {:?} exists", parent.to_string_lossy());
+pub(crate) fn ensure_dir_with_owner<P: AsRef<Path>>(path: P, owner: &User) -> Result<()> {
+    info!("Ensuring directory {:?} exists", path.as_ref().to_string_lossy());
     // Rather than ensuring all ancestors exist and carefully chowning them only when they are created, it is much easier simply to create the directory as the user themselves.
     verbose_command::run(
         Command::new("mkdir")
             .args(vec!["-m", "u=rwx"])
             .arg("-p")
             .arg("-v")
+            .arg("--")
+            .arg(path.as_os_str())
             .uid(owner.uid())
     )
 }
 
-fn safe_parent<P: AsRef<Path>>(path: P) -> PathBuf {
-    path.as_ref().parent().map_or_else(|| PathBuf::from("/"), |p| p.to_owned())
-}
+// fn safe_parent<P: AsRef<Path>>(path: P) -> PathBuf {
+//     path.as_ref().parent().map_or_else(|| PathBuf::from("/"), |p| p.to_owned())
+// }
 
 pub(crate) fn chown<P: AsRef<Path>>(path: P, user: &User) -> Result<()> {
     let path_repr = path.as_ref().to_string_lossy();
