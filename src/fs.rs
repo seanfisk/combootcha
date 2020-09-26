@@ -42,7 +42,7 @@ pub(crate) fn chown<P: AsRef<Path>>(path: P, user: &User) -> Result<()> {
     nix::unistd::chown(path.as_ref(), Some(Uid::from_raw(user.uid())), None).with_context(
         || {
             format!(
-                "Could not change ownership of {:?} to user with name{:?}",
+                "Could not change ownership of {:?} to user with name {:?}",
                 path_repr, user_repr
             )
         },
