@@ -3,6 +3,7 @@ mod fs;
 mod homebrew;
 mod iterm2;
 mod logging;
+mod login_items;
 mod login_shells;
 mod verbose_command;
 
@@ -89,6 +90,8 @@ fn main() -> Result<()> {
     login_shells::set(&standard_user)?;
 
     iterm2::configure(&standard_user)?;
+
+    login_items::configure(&standard_user)?;
 
     info!("Setup complete!");
 
