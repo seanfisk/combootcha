@@ -1,6 +1,7 @@
 mod env;
 mod fs;
 mod homebrew;
+mod iterm2;
 mod logging;
 mod login_shells;
 mod verbose_command;
@@ -82,10 +83,12 @@ fn main() -> Result<()> {
         )
     })?;
 
-    homebrew::install_system(&standard_user)?;
-    homebrew::install_deps(&standard_user)?;
+    // homebrew::install_system(&standard_user)?;
+    // homebrew::install_deps(&standard_user)?;
 
     login_shells::set(&standard_user)?;
+
+    iterm2::configure(&standard_user)?;
 
     info!("Setup complete!");
 
