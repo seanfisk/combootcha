@@ -5,6 +5,8 @@ use std::io::Write;
 use std::path::Path;
 use std::process::{Command, ExitStatus};
 
+// TODO: Create a builder similar to Command that completely encapsulates it. Then switch to using subprocess as an underlying library.
+
 pub(crate) fn run(command: &mut Command) -> Result<()> {
     run_base(command, None)
 }
