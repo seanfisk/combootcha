@@ -9,7 +9,6 @@ use std::path::{Path, PathBuf};
 use std::process::ExitStatus;
 
 pub(crate) struct Command {
-    // TODO Try to use references instead?
     program: OsString,
     args: Vec<OsString>,
     cwd: Option<PathBuf>,
