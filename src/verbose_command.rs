@@ -55,7 +55,7 @@ impl Command {
         let mut std_command = self.build_std_command();
         let status = std_command
             .status()
-            .with_context(|| format!("Could not launch process {:?}", std_command))?;
+            .with_context(|| make_context(&std_command))?;
         check_status(&std_command, &status)
     }
 
@@ -64,7 +64,7 @@ impl Command {
         let mut std_command = self.build_std_command();
         let output = std_command
             .output()
-            .with_context(|| format!("Could not launch process {:?}", std_command))?;
+            .with_context(|| make_context(&std_command))?;
         std::io::stderr().write_all(&output.stderr)?;
         check_status(&std_command, &output.status)?;
         Ok(output.stdout)
@@ -88,6 +88,10 @@ impl Command {
         );
         std_command
     }
+}
+
+fn make_context(command: &std::process::Command) -> String {
+    format!("Could not launch process {:?}", command)
 }
 
 fn check_status(command: &std::process::Command, status: &ExitStatus) -> Result<()> {
