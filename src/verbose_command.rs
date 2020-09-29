@@ -100,36 +100,3 @@ fn check_status(command: &std::process::Command, status: &ExitStatus) -> Result<
         Err(anyhow!("Process {:?} failed with {}", command, status))
     }
 }
-
-// pub(crate) fn run(command: &mut Command) -> Result<()> {
-//     run_base(command, None)
-// }
-
-// pub(crate) fn run_output(command: &mut Command) -> Result<Vec<u8>> {
-//     log_command(&command, None);
-//     let output = command
-//         .output()
-//         .with_context(|| format!("Could not launch process {:?}", command))?;
-//     std::io::stderr().write_all(&output.stderr)?;
-//     check_status(command, &output.status)?;
-//     Ok(output.stdout)
-// }
-
-// Accept the current_dir so that we can print it. If provided, this will override the Command's current_dir property.
-// pub(crate) fn run_in_dir<P: AsRef<Path>>(command: &mut Command, current_dir: P) -> Result<()> {
-//     run_base(command, Some(current_dir.as_ref()))
-// }
-
-// fn run_base(command: &mut Command, current_dir: Option<&Path>) -> Result<()> {
-//     log_command(&command, current_dir);
-//     if let Some(current_dir) = current_dir {
-//         command.current_dir(current_dir);
-//     }
-//     let status = command
-//         .status()
-//         ;
-//     check_status(command, &status)
-// }
-
-// fn log_command(command: &Command, current_dir: Option<&Path>) {
-// }
