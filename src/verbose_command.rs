@@ -26,8 +26,6 @@ impl Command {
         }
     }
 
-    // TODO add arg and args
-
     pub(crate) fn arg<S: AsRef<OsStr>>(&mut self, arg: S) -> &mut Command {
         self.args.push(arg.as_ref().to_owned());
         self
