@@ -5,19 +5,16 @@ use users::{os::unix::UserExt, User};
 use std::collections::HashSet;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use std::os::unix::process::CommandExt;
 use std::path::Path;
-use std::process::Command;
 
-use crate::verbose_command;
+use crate::verbose_command::Command;
 
 pub(crate) fn set(standard_user: &User) -> Result<()> {
     info!("Querying Homebrew bin directory");
-    let brew_prefix_output = verbose_command::run_output(
-        Command::new("brew")
-            .arg("--prefix")
-            .uid(standard_user.uid()),
-    )?;
+    let brew_prefix_output = Command::new("brew")
+        .arg("--prefix")
+        .user(&standard_user)
+        .output()?;
     let brew_prefix = Path::new(std::str::from_utf8(&brew_prefix_output)?.trim_end_matches('\n'));
     let brew_bin = brew_prefix.join("bin");
 

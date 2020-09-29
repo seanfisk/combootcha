@@ -3,11 +3,9 @@ use log::info;
 use nix::unistd::Uid;
 use users::User;
 
-use std::os::unix::process::CommandExt;
-use std::path::{Path, PathBuf};
-use std::process::Command;
+use std::path::Path;
 
-use crate::verbose_command;
+use crate::verbose_command::Command;
 
 // pub(crate) fn ensure_containing_dir<P: AsRef<Path>>(path: P) -> Result<()> {
 //     std::fs::create_dir_all(safe_parent(path))?;
@@ -20,15 +18,14 @@ pub(crate) fn ensure_dir_with_owner<P: AsRef<Path>>(path: P, owner: &User) -> Re
         path.as_ref().to_string_lossy()
     );
     // Rather than ensuring all ancestors exist and carefully chowning them only when they are created, it is much easier simply to create the directory as the user themselves.
-    verbose_command::run(
-        Command::new("mkdir")
-            .args(vec!["-m", "u=rwx"])
-            .arg("-p")
-            .arg("-v")
-            .arg("--")
-            .arg(path.as_ref().as_os_str())
-            .uid(owner.uid()),
-    )
+    Command::new("mkdir")
+        .args(vec!["-m", "u=rwx"])
+        .arg("-p")
+        .arg("-v")
+        .arg("--")
+        .arg(path.as_ref().as_os_str())
+        .user(&owner)
+        .run()
 }
 
 // fn safe_parent<P: AsRef<Path>>(path: P) -> PathBuf {

@@ -1,6 +1,6 @@
 use anyhow::Result;
 use log::info;
-use users::User;
+use users::{os::unix::UserExt, User};
 
 // Login items
 //

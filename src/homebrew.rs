@@ -5,11 +5,9 @@ use users::{os::unix::UserExt, User};
 use std::fs;
 use std::io::Write;
 use std::os::unix::fs::OpenOptionsExt;
-use std::os::unix::process::CommandExt;
 use std::path::Path;
-use std::process::Command;
 
-use crate::verbose_command;
+use crate::verbose_command::Command;
 
 pub(crate) fn install_system(standard_user: &User) -> Result<()> {
     info!("Considering Homebrew installation");
@@ -20,12 +18,12 @@ pub(crate) fn install_system(standard_user: &User) -> Result<()> {
     } else {
         info!("Installing Homebrew…");
         // Yeah, we could pull this down with reqwest, but it's a bit simpler to use the exact command that Hombrew provides
-        verbose_command::run(
-            Command::new("/bin/bash")
-                .arg("-c")
-                .arg("$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)")
-                .uid(standard_user.uid())
-        ).map(|_| {
+        Command::new("/bin/bash")
+            .arg("-c")
+            .arg("$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)")
+            .user(&standard_user)
+            .run()
+            .map(|_| {
             info!("Homebrew installed successfully");
             ()
         })
@@ -47,12 +45,11 @@ pub(crate) fn install_deps(standard_user: &User) -> Result<()> {
 
     crate::fs::chown(brewfile_dest, &standard_user)?;
 
-    verbose_command::run(
-        Command::new("brew")
-            .arg("bundle")
-            .arg("install")
-            .arg("--verbose")
-            .arg("--global")
-            .uid(standard_user.uid()),
-    )
+    Command::new("brew")
+        .arg("bundle")
+        .arg("install")
+        .arg("--verbose")
+        .arg("--global")
+        .user(&standard_user)
+        .run()
 }
