@@ -12,7 +12,7 @@ pub(crate) struct Command {
     program: OsString,
     args: Vec<OsString>,
     cwd: Option<PathBuf>,
-    uid: Option<u32>,
+    user: Option<User>,
 }
 
 impl Command {
@@ -21,7 +21,7 @@ impl Command {
             program: program.as_ref().to_owned(),
             args: Vec::new(),
             cwd: None,
-            uid: None,
+            user: None,
         }
     }
 
@@ -47,7 +47,7 @@ impl Command {
     }
 
     pub(crate) fn user(&mut self, user: &User) -> &mut Command {
-        self.uid = Some(user.uid());
+        self.user = Some(user.clone());
         self
     }
 
@@ -76,15 +76,18 @@ impl Command {
         if let Some(cwd) = &self.cwd {
             std_command.current_dir(cwd);
         }
-        if let Some(uid) = self.uid {
-            std_command.uid(uid);
+        if let Some(user) = &self.user {
+            std_command.uid(user.uid());
         }
         info!(
-            "=> {:?}{}",
+            "=> {:?}{}{}",
             std_command,
             self.cwd
                 .as_ref()
-                .map_or("".to_owned(), |d| format!(" (cwd: {:?})", d))
+                .map_or("".to_owned(), |d| format!(" (cwd: {:?})", d)),
+            self.user
+                .as_ref()
+                .map_or("".to_owned(), |u| format!(" (user: {:?})", u.name()))
         );
         std_command
     }
