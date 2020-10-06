@@ -89,6 +89,8 @@ fn main() -> Result<()> {
 
     login_shells::set(&standard_user)?;
 
+    // TODO Fix Zsh startup helper?
+
     iterm2::configure(&standard_user)?;
 
     login_items::configure(&standard_user)?;
