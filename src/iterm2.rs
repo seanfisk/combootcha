@@ -5,6 +5,8 @@ use users::{os::unix::UserExt, User};
 
 use std::path::Path;
 
+use crate::path::PathExt;
+
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
     let app_support_dir = standard_user
         .home_dir()
@@ -33,7 +35,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
             "Normal Font": make_font(20),
             "Ambiguous Double Width": false,
             // Window
-            "Background Image Location": bgs_dir.join("holland-beach-sunset.jpg").to_str().unwrap(), // TODO Better error handling
+            "Background Image Location": bgs_dir.join("holland-beach-sunset.jpg").to_str_safe()?,
             "Blend": 0.4,
             "Sync Title": true,
             // Terminal

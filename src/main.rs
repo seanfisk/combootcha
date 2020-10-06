@@ -5,6 +5,7 @@ mod iterm2;
 mod logging;
 mod login_items;
 mod login_shells;
+mod path;
 mod verbose_command;
 
 use anyhow::{anyhow, Result};

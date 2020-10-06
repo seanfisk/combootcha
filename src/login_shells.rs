@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 use log::{debug, info};
 use users::{os::unix::UserExt, User};
 
@@ -7,6 +7,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
 
+use crate::path::PathExt;
 use crate::verbose_command::Command;
 
 pub(crate) fn set(standard_user: &User) -> Result<()> {
@@ -40,9 +41,7 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             shell_path.to_string_lossy(),
             shells_config_path.to_string_lossy()
         );
-        let shell_path_str = shell_path
-            .to_str()
-            .ok_or_else(|| anyhow!("Error converting shell path {:?} to a string", shell_path))?;
+        let shell_path_str = shell_path.to_str_safe()?;
         if shells.contains(shell_path_str) {
             info!(
                 "Shell {:?} is already listed in {:?}",
