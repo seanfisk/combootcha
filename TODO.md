@@ -19,5 +19,7 @@ https://jdhao.github.io/2019/10/08/zsh_plugin_managers_compare/
 
 ## Prompts
 
+Check out iTerm2's option "Use built-in Powerline glyphs".
+
 1. https://github.com/eendroroy/alien
 1. https://github.com/reujab/silver
