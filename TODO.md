@@ -8,6 +8,14 @@ https://crates.io/crates/subprocess
 
 ## Check out iTerm2's option "Use built-in Powerline glyphs"
 
+## Network Link Conditioner
+
+## Create bin/ directory
+
+## japi-cc
+
+## Set default browser to Firefox
+
 ## macOS User Defaults
 
 Maybe we can set these directly without using the `defaults` command?
