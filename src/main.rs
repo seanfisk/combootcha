@@ -97,7 +97,7 @@ fn main() -> Result<()> {
 
     login_items::configure(&standard_user)?;
 
-    quicksilver::install_preferences(&standard_user)?;
+    quicksilver::configure(&standard_user)?;
 
     info!("Setup complete!");
 

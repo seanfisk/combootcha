@@ -3,7 +3,7 @@ use users::{os::unix::UserExt, User};
 
 use std::io::Write;
 
-pub(crate) fn install_preferences(standard_user: &User) -> Result<()> {
+pub(crate) fn configure(standard_user: &User) -> Result<()> {
     let bytes = include_bytes!("Quicksilver-Catalog.plist");
     let path = standard_user
         .home_dir()
