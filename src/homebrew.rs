@@ -36,12 +36,15 @@ pub(crate) fn install_deps(standard_user: &User) -> Result<()> {
     let brewfile_bytes = include_bytes!("Brewfile");
     let brewfile_dest = standard_user.home_dir().join(".Brewfile");
 
-    let mut brewfile = fs::OpenOptions::new()
-        .create(true)
-        .write(true)
-        .mode(0o400)
-        .open(&brewfile_dest)?;
-    brewfile.write_all(brewfile_bytes)?;
+    {
+        let mut brewfile = fs::OpenOptions::new()
+            .create(true)
+            .write(true)
+            .truncate(true)
+            .mode(0o400)
+            .open(&brewfile_dest)?;
+        brewfile.write_all(brewfile_bytes)?;
+    }
 
     crate::fs::chown(brewfile_dest, &standard_user)?;
 

@@ -3,6 +3,8 @@ use log::info;
 use serde_json::json;
 use users::{os::unix::UserExt, User};
 
+use std::fs;
+use std::os::unix::fs::OpenOptionsExt;
 use std::path::Path;
 
 use crate::path::PathExt;
@@ -24,43 +26,65 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
     // TODO Restore the volcano image on root shell
     // TODO Restore system profile?
 
-    let profiles = vec![
-        json!({
-            "Guid": personal_profile_guid,
-            // General
-            "Name": personal_profile_name,
-            // Text
-            "Cursor Type": 2, // Box cursor
-            "Blinking Cursor": false,
-            "Normal Font": make_font(20),
-            "Ambiguous Double Width": false,
-            // Window
-            "Background Image Location": bgs_dir.join("holland-beach-sunset.jpg").to_str_safe()?,
-            "Blend": 0.4,
-            "Sync Title": true,
-            // Terminal
-            "Character Encoding": 4, // UTF-8
-            "Terminal Type": "xterm-256color",
-            "Set Local Environment Vars": true, // This means *Locale*, not *Local*
-            "Place Prompt at First Column": true,
-            "Show Mark Indicators": true,
-            // Session
-            "Close Sessions On End": true,
-            "Prompt Before Closing 2": 0, // Do not prompt before closing
-            // Keys
-            "Option Key Sends": 2, // Esc+
-            "Right Option Key Sends": 2, // Esc+
+    let profiles_json = json!({
+        "Profiles": [
+            {
+                "Guid": personal_profile_guid,
+                // General
+                "Name": personal_profile_name,
+                // Text
+                "Cursor Type": 2, // Box cursor
+                "Blinking Cursor": false,
+                "Normal Font": make_font(20),
+                "Use Non-ASCII Font" : false, // Use the same font for non-ASCII text
+                "Ambiguous Double Width": false,
+                // Window
+                "Background Image Location": bgs_dir.join("holland-beach-sunset.jpg").to_str_safe()?,
+                "Blend": 0.4,
+                "Sync Title": true,
+                // Terminal
+                "Character Encoding": 4, // UTF-8
+                "Terminal Type": "xterm-256color",
+                "Set Local Environment Vars": true, // This means *Locale*, not *Local*
+                "Place Prompt at First Column": true,
+                "Show Mark Indicators": true,
+                // Session
+                "Close Sessions On End": true,
+                "Prompt Before Closing 2": 0, // Do not prompt before closing
+                // Keys
+                "Option Key Sends": 2, // Esc+
+                "Right Option Key Sends": 2, // Esc+
+            },
+            {
+                "Guid": "4A0A1F6D-753F-4D35-B019-F63C3144CC99",
+                "Dynamic Profile Parent Name": personal_profile_name,
+                // General
+                "Name": "Presenter Mode",
+                // Text
+                "Normal Font": make_font(36),
+            }
+        ]
+    });
 
-        }),
-        json!({
-            "Guid": "4A0A1F6D-753F-4D35-B019-F63C3144CC99",
-            "Dynamic Profile Parent Name": personal_profile_name,
-            // General
-            "Name": "Presenter Mode",
-            // Text
-            "Normal Font": make_font(36),
-        }),
-    ];
+    crate::fs::ensure_dir_with_owner(&dynamic_profiles_dir, &standard_user)?;
+
+    // This file contains profiles used as parents by the iTerm2/fasd
+    // integration. Since iTerm2 loads the list of dynamic profiles
+    // alphabetically, we prefix it with a hyphen to ensure it is loaded first.
+    // https://iterm2.com/documentation-dynamic-profiles.html
+    let personal_profiles_path = dynamic_profiles_dir.join("-Personal.json");
+
+    {
+        let file = fs::OpenOptions::new()
+            .create(true)
+            .write(true)
+            .truncate(true)
+            .mode(0o400)
+            .open(&personal_profiles_path)?;
+        serde_json::to_writer_pretty(file, &profiles_json)?;
+    }
+
+    crate::fs::chown(personal_profiles_path, &standard_user)?;
 
     Ok(())
 }
