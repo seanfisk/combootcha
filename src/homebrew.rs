@@ -2,9 +2,7 @@ use anyhow::Result;
 use log::info;
 use users::{os::unix::UserExt, User};
 
-use std::fs;
 use std::io::Write;
-use std::os::unix::fs::OpenOptionsExt;
 use std::path::Path;
 
 use crate::verbose_command::Command;
@@ -37,12 +35,7 @@ pub(crate) fn install_deps(standard_user: &User) -> Result<()> {
     let brewfile_dest = standard_user.home_dir().join(".Brewfile");
 
     {
-        let mut brewfile = fs::OpenOptions::new()
-            .create(true)
-            .write(true)
-            .truncate(true)
-            .mode(0o400)
-            .open(&brewfile_dest)?;
+        let mut brewfile = crate::fs::create_file(&brewfile_dest)?;
         brewfile.write_all(brewfile_bytes)?;
     }
 

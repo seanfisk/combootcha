@@ -7,6 +7,17 @@ use std::path::Path;
 
 use crate::verbose_command::Command;
 
+pub(crate) fn create_file<P: AsRef<Path>>(path: P) -> Result<std::fs::File> {
+    info!("Creating file {:?}", path.as_ref().to_string_lossy());
+    use std::os::unix::fs::OpenOptionsExt;
+    Ok(std::fs::OpenOptions::new()
+        .create(true)
+        .write(true)
+        .truncate(true)
+        .mode(0o400)
+        .open(path.as_ref())?)
+}
+
 // pub(crate) fn ensure_containing_dir<P: AsRef<Path>>(path: P) -> Result<()> {
 //     std::fs::create_dir_all(safe_parent(path))?;
 //     Ok(())

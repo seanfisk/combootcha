@@ -4,7 +4,6 @@ use serde_json::json;
 use users::{os::unix::UserExt, User};
 
 use std::fs;
-use std::os::unix::fs::OpenOptionsExt;
 use std::path::Path;
 
 use crate::path::PathExt;
@@ -83,12 +82,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
     crate::fs::ensure_dir_with_owner(&dynamic_profiles_dir, &standard_user)?;
 
     {
-        let file = fs::OpenOptions::new()
-            .create(true)
-            .write(true)
-            .truncate(true)
-            .mode(0o400)
-            .open(&personal_profiles_path)?;
+        let file = crate::fs::create_file(&personal_profiles_path)?;
         serde_json::to_writer_pretty(file, &profiles_json)?;
     }
 
