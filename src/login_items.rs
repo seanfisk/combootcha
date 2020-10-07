@@ -1,6 +1,9 @@
-use anyhow::Result;
+use anyhow::{Context, Result};
 use log::info;
 use users::{os::unix::UserExt, User};
+
+use std::io::Write;
+use std::path::Path;
 
 // Login items
 //
@@ -20,7 +23,7 @@ use users::{os::unix::UserExt, User};
 
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
     let install_dir = standard_user.home_dir().join("Library/LaunchAgents");
-    crate::fs::ensure_dir_with_owner(install_dir, &standard_user)?;
+    crate::fs::ensure_dir_with_owner(&install_dir, &standard_user)?;
     for app in vec![
         "Flux",
         "Jettison",
@@ -30,6 +33,37 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
         "Hammerspoon",
     ] {
         info!("Setting app {} to launch upon login", app);
+        let label = format!("com.seanfisk.login.{}", app.to_lowercase());
+        let agent_path = install_dir.join(format!("{}.plist", label));
+        write_launch_agent(agent_path, &label, &standard_user, app)?;
     }
     Ok(())
+}
+
+fn write_launch_agent<P: AsRef<Path>>(
+    path: P,
+    label: &str,
+    owner: &User,
+    app_name: &str,
+) -> Result<()> {
+    use plist::Value;
+
+    let mut dict = plist::dictionary::Dictionary::new();
+    dict.insert("Key".to_owned(), Value::String(label.to_owned()));
+    dict.insert(
+        "ProgramArguments".to_owned(),
+        Value::Array(vec![
+            Value::String("/usr/bin/open".to_owned()),
+            Value::String("-a".to_owned()),
+            Value::String(app_name.to_owned()),
+        ]),
+    );
+    dict.insert("RunAtLoad".to_owned(), Value::Boolean(true));
+    {
+        let mut file = crate::fs::create_file(path.as_ref())?;
+        Value::Dictionary(dict).to_writer_xml(&mut file)?;
+        // Add a trailing newline since the library doesn't do that
+        writeln!(file).context("Writing trailing newline")?
+    }
+    crate::fs::chown(path, &owner)
 }

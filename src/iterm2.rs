@@ -3,7 +3,6 @@ use log::info;
 use serde_json::json;
 use users::{os::unix::UserExt, User};
 
-use std::fs;
 use std::path::Path;
 
 use crate::path::PathExt;
