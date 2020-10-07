@@ -1,5 +1,6 @@
 mod env;
 mod fs;
+mod hammerspoon;
 mod homebrew;
 mod iterm2;
 mod karabiner;
@@ -91,15 +92,12 @@ fn main() -> Result<()> {
     // homebrew::install_deps(&standard_user)?;
 
     login_shells::set(&standard_user)?;
-
     // TODO Fix Zsh startup helper?
 
     iterm2::configure(&standard_user)?;
-
     login_items::configure(&standard_user)?;
-
     quicksilver::configure(&standard_user)?;
-
+    hammerspoon::configure(&standard_user)?;
     karabiner::configure(&standard_user)?;
 
     info!("Setup complete!");
