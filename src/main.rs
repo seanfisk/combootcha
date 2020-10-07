@@ -6,6 +6,7 @@ mod logging;
 mod login_items;
 mod login_shells;
 mod path;
+mod quicksilver;
 mod verbose_command;
 
 use anyhow::{anyhow, Result};
@@ -95,6 +96,8 @@ fn main() -> Result<()> {
     iterm2::configure(&standard_user)?;
 
     login_items::configure(&standard_user)?;
+
+    quicksilver::install_preferences(&standard_user)?;
 
     info!("Setup complete!");
 
