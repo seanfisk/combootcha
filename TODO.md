@@ -6,6 +6,8 @@ When there are several options to try, they're ordered by preference from cursor
 
 https://crates.io/crates/subprocess
 
+## Check out iTerm2's option "Use built-in Powerline glyphs"
+
 ## macOS User Defaults
 
 Maybe we can set these directly without using the `defaults` command?
@@ -22,8 +24,6 @@ https://www.reddit.com/r/zsh/comments/ak0vgi/a_comparison_of_all_the_zsh_plugin_
 https://jdhao.github.io/2019/10/08/zsh_plugin_managers_compare/
 
 ## Prompts
-
-Check out iTerm2's option "Use built-in Powerline glyphs".
 
 1. https://github.com/eendroroy/alien
 1. https://github.com/reujab/silver
