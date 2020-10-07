@@ -2,6 +2,7 @@ mod env;
 mod fs;
 mod homebrew;
 mod iterm2;
+mod karabiner;
 mod logging;
 mod login_items;
 mod login_shells;
@@ -98,6 +99,8 @@ fn main() -> Result<()> {
     login_items::configure(&standard_user)?;
 
     quicksilver::configure(&standard_user)?;
+
+    karabiner::configure(&standard_user)?;
 
     info!("Setup complete!");
 
