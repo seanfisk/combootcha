@@ -2,6 +2,10 @@
 
 When there are several options to try, they're ordered by preference from cursory research.
 
+## Switch to subprocess library
+
+https://crates.io/crates/subprocess
+
 ## macOS User Defaults
 
 Maybe we can set these directly without using the `defaults` command?
