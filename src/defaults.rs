@@ -15,12 +15,17 @@ impl Application {
     }
 
     pub(crate) fn bool(&self, key: &str, value: bool) -> Result<&Application> {
+        // TODO logging
         let c_key = to_cstring(&key)?;
         unsafe { sys::defaults_set_bool(self.c_id.as_ptr(), c_key.as_ptr(), value) }
         Ok(self)
     }
 
+    // TODO float, string, int
+
+    // Would be nice to do this using Drop but it can fail and we want to propagate those failures
     pub(crate) fn sync(&self) -> Result<()> {
+        // TODO logging
         let success = unsafe { sys::defaults_sync(self.c_id.as_ptr()) };
         if success {
             Ok(())

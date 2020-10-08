@@ -12,15 +12,7 @@ When there are several options to try, they're ordered by preference from cursor
 
 ## macOS User Defaults
 
-Use our seteuid trick
-
-Then write a C or Objective-C function that uses [`CFPreferencesSetMultiple`](https://developer.apple.com/documentation/corefoundation/1515513-cfpreferencessetmultiple?language=objc)
-
-Call [`CFPreferencesSynchronize`](https://developer.apple.com/documentation/corefoundation/1515504-cfpreferencessynchronize?language=objc) afterward.
-
-This way we don't have to write any complicated FFI. We'll just call a big function from Rust.
-
-Other option is to write an FFI for 4 types: bool, int, float, and string. Doesn't really seem like we were settings and arrays.
+Other option is to write an FFI for 4 types: bool, int, float, and string. Doesn't really seem like we were setting any arrays.
 
 Use [`CFPreferencesSetAppValue`](https://developer.apple.com/documentation/corefoundation/1515528-cfpreferencessetappvalue?language=objc) for this.
 
