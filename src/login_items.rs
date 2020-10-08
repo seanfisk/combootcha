@@ -5,6 +5,8 @@ use users::{os::unix::UserExt, User};
 use std::io::Write;
 use std::path::Path;
 
+use crate::user::UserExt as OtherUserExt;
+
 // Login items
 //
 // These are controlled by ~/Library/Preferences/com.apple.loginitems.plist,
@@ -23,7 +25,7 @@ use std::path::Path;
 
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
     let install_dir = standard_user.home_dir().join("Library/LaunchAgents");
-    crate::fs::ensure_dir_with_owner(&install_dir, &standard_user)?;
+    standard_user.as_user(|| crate::fs::ensure_dir(&install_dir))?;
     for app in vec![
         "Flux",
         "Jettison",
@@ -59,11 +61,10 @@ fn write_launch_agent<P: AsRef<Path>>(
         ]),
     );
     dict.insert("RunAtLoad".to_owned(), Value::Boolean(true));
-    {
+    owner.as_user(|| {
         let mut file = crate::fs::create_file(path.as_ref())?;
         Value::Dictionary(dict).to_writer_xml(&mut file)?;
         // Add a trailing newline since the library doesn't do that
-        writeln!(file).context("Writing trailing newline")?
-    }
-    crate::fs::chown(path, &owner)
+        writeln!(file).context("Writing trailing newline")
+    })
 }

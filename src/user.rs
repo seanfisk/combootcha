@@ -1,21 +1,22 @@
 use anyhow::{Context, Result};
-use log::info;
+use log::debug;
 use nix::unistd::{seteuid, Uid};
 use users::User;
 
 pub(crate) trait UserExt {
-    fn as_user<T, F: FnOnce() -> T>(&self, block: F) -> Result<T>;
+    // Just force the block to return Result so that we don't have to deal with a nested Result
+    fn as_user<T, F: FnOnce() -> Result<T>>(&self, block: F) -> Result<T>;
 }
 
 impl UserExt for User {
-    fn as_user<T, F: FnOnce() -> T>(&self, block: F) -> Result<T> {
-        info!("Setting process effective user to {:?}", self.name());
+    fn as_user<T, F: FnOnce() -> Result<T>>(&self, block: F) -> Result<T> {
+        debug!("Setting process effective user to {:?}", self.name());
         seteuid(Uid::from_raw(self.uid())).with_context(|| {
             format!("Could not set process effective user to {:?}", self.name())
         })?;
         let block_result = block();
-        info!("Restoring process effective user to root");
+        debug!("Restoring process effective user to root");
         seteuid(Uid::from_raw(0)).context("Could not restore process effective user to root")?;
-        Ok(block_result)
+        block_result
     }
 }

@@ -103,8 +103,5 @@ fn main() -> Result<()> {
 
     info!("Setup complete!");
 
-    use user::UserExt;
-    standard_user.as_user(|| println!("Current uid is {}", nix::unistd::Uid::effective()))?;
-
     Ok(())
 }

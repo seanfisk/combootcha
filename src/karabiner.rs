@@ -3,10 +3,10 @@ use users::{os::unix::UserExt, User};
 
 use serde_json::json;
 
+use crate::user::UserExt as OtherUserExt;
+
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
     let config_dir = standard_user.home_dir().join(".config/karabiner");
-    crate::fs::ensure_dir_with_owner(&config_dir, &standard_user)?;
-
     let json = json!({
         "profiles": [
             {
@@ -71,10 +71,10 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
     });
 
     let path = config_dir.join("karabiner.json");
-    {
+    standard_user.as_user(|| {
+        crate::fs::ensure_dir(&config_dir)?;
         let file = crate::fs::create_file(&path)?;
         serde_json::to_writer_pretty(file, &json)?;
-    }
-
-    crate::fs::chown(path, &standard_user)
+        Ok(())
+    })
 }

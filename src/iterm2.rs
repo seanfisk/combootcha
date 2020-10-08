@@ -6,6 +6,7 @@ use users::{os::unix::UserExt, User};
 use std::path::Path;
 
 use crate::path::PathExt;
+use crate::user::UserExt as OtherUserExt;
 
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
     let app_support_dir = standard_user
@@ -13,7 +14,6 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
         .join(Path::new("Library/Application Support/iTerm2"));
 
     let bgs_dir = app_support_dir.join("Backgrounds");
-    crate::fs::ensure_dir_with_owner(&bgs_dir, &standard_user)?;
 
     let dynamic_profiles_dir = app_support_dir.join("DynamicProfiles");
     // This file contains profiles used as parents by the iTerm2/fasd
@@ -78,16 +78,14 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
         ]
     });
 
-    crate::fs::ensure_dir_with_owner(&dynamic_profiles_dir, &standard_user)?;
+    standard_user.as_user(|| {
+        crate::fs::ensure_dir(&bgs_dir)?;
+        crate::fs::ensure_dir(&dynamic_profiles_dir)?;
 
-    {
         let file = crate::fs::create_file(&personal_profiles_path)?;
         serde_json::to_writer_pretty(file, &profiles_json)?;
-    }
-
-    crate::fs::chown(personal_profiles_path, &standard_user)?;
-
-    Ok(())
+        Ok(())
+    })
 }
 
 fn make_font(size: u32) -> String {

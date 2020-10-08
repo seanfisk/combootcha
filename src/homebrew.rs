@@ -5,6 +5,7 @@ use users::{os::unix::UserExt, User};
 use std::io::Write;
 use std::path::Path;
 
+use crate::user::UserExt as OtherUserExt;
 use crate::verbose_command::Command;
 
 pub(crate) fn install_system(standard_user: &User) -> Result<()> {
@@ -30,22 +31,20 @@ pub(crate) fn install_system(standard_user: &User) -> Result<()> {
 
 pub(crate) fn install_deps(standard_user: &User) -> Result<()> {
     info!("Installing Homebrew dependencies via Brewfile");
-
     let brewfile_bytes = include_bytes!("Brewfile");
     let brewfile_dest = standard_user.home_dir().join(".Brewfile");
 
-    {
-        let mut brewfile = crate::fs::create_file(&brewfile_dest)?;
-        brewfile.write_all(brewfile_bytes)?;
-    }
+    standard_user.as_user(|| {
+        {
+            let mut brewfile = crate::fs::create_file(&brewfile_dest)?;
+            brewfile.write_all(brewfile_bytes)?;
+        }
 
-    crate::fs::chown(brewfile_dest, &standard_user)?;
-
-    Command::new("brew")
-        .arg("bundle")
-        .arg("install")
-        .arg("--verbose")
-        .arg("--global")
-        .user(&standard_user)
-        .run()
+        Command::new("brew")
+            .arg("bundle")
+            .arg("install")
+            .arg("--verbose")
+            .arg("--global")
+            .run()
+    })
 }
