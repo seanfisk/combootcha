@@ -21,11 +21,9 @@ pub(crate) fn install_system(standard_user: &User) -> Result<()> {
             .arg("-c")
             .arg("$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)")
             .user(&standard_user)
-            .run()
-            .map(|_| {
-            info!("Homebrew installed successfully");
-            ()
-        })
+            .run()?;
+        info!("Homebrew installed successfully");
+        Ok(())
     }
 }
 
