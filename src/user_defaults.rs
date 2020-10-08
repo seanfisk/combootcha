@@ -11,6 +11,7 @@ use std::fmt::{Debug, Display};
 // I'm sure the technique we are using right now isn't as efficient since it goes through C and then Core Foundation, but it has the virtue of being simpler than core-foundation-rs. We're not worried about performance for our purposes.
 
 mod sys {
+    #![allow(unused)]
     include!(concat!(env!("OUT_DIR"), "/user_defaults.rs"));
 }
 
