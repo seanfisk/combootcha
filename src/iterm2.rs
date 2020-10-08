@@ -78,7 +78,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
         ]
     });
 
-    standard_user.as_user(|| {
+    standard_user.as_effective_user(|| {
         crate::fs::ensure_dir(&bgs_dir)?;
         crate::fs::ensure_dir(&dynamic_profiles_dir)?;
 

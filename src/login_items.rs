@@ -25,7 +25,7 @@ use crate::user::UserExt as OtherUserExt;
 
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
     let install_dir = standard_user.home_dir().join("Library/LaunchAgents");
-    standard_user.as_user(|| crate::fs::ensure_dir(&install_dir))?;
+    standard_user.as_effective_user(|| crate::fs::ensure_dir(&install_dir))?;
     for app in vec![
         "Flux",
         "Jettison",
@@ -61,7 +61,7 @@ fn write_launch_agent<P: AsRef<Path>>(
         ]),
     );
     dict.insert("RunAtLoad".to_owned(), Value::Boolean(true));
-    owner.as_user(|| {
+    owner.as_effective_user(|| {
         let mut file = crate::fs::create_file(path.as_ref())?;
         Value::Dictionary(dict).to_writer_xml(&mut file)?;
         // Add a trailing newline since the library doesn't do that

@@ -32,7 +32,7 @@ pub(crate) fn install_deps(standard_user: &User) -> Result<()> {
     let bytes = include_bytes!("Brewfile");
     let path = standard_user.home_dir().join(".Brewfile");
 
-    standard_user.as_user(|| {
+    standard_user.as_effective_user(|| {
         let mut file = crate::fs::create_file(&path)?;
         file.write_all(bytes)?;
         Ok(())

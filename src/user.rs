@@ -5,11 +5,11 @@ use users::User;
 
 pub(crate) trait UserExt {
     // Just force the block to return Result so that we don't have to deal with a nested Result
-    fn as_user<T, F: FnOnce() -> Result<T>>(&self, block: F) -> Result<T>;
+    fn as_effective_user<T, F: FnOnce() -> Result<T>>(&self, block: F) -> Result<T>;
 }
 
 impl UserExt for User {
-    fn as_user<T, F: FnOnce() -> Result<T>>(&self, block: F) -> Result<T> {
+    fn as_effective_user<T, F: FnOnce() -> Result<T>>(&self, block: F) -> Result<T> {
         debug!("Setting process effective user to {:?}", self.name());
         seteuid(Uid::from_raw(self.uid())).with_context(|| {
             format!("Could not set process effective user to {:?}", self.name())
