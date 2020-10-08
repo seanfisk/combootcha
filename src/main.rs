@@ -1,3 +1,4 @@
+mod defaults;
 mod env;
 mod fs;
 mod hammerspoon;
@@ -16,9 +17,10 @@ mod verbose_command;
 use anyhow::{anyhow, Result};
 use clap::{crate_authors, crate_description, crate_name, App, AppSettings, Arg};
 use log::{debug, info};
+use logging::ColorMode;
 use users::get_user_by_name;
 
-use logging::ColorMode;
+use user::UserExt;
 
 fn is_root() -> bool {
     nix::unistd::Uid::current().is_root()
@@ -104,6 +106,11 @@ fn main() -> Result<()> {
     network_link_conditioner::install()?;
 
     info!("Setup complete!");
+
+    standard_user.as_user(|| {
+        defaults::set_bool("com.bluemedora.vROps Deploy", "TestKey", false)?;
+        defaults::sync("com.bluemedora.vROps Deploy")
+    })?;
 
     Ok(())
 }

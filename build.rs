@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result, Context, Error};
+use anyhow::{anyhow, Context, Error, Result};
 
 use std::path::{Path, PathBuf};
 
@@ -16,7 +16,9 @@ fn main() -> std::result::Result<(), Error> {
     );
 
     let ffi_dir = Path::new("src/ffi");
-    let out_path = PathBuf::from(std::env::var("OUT_DIR").context("Could not get out directory from environment")?);
+    let out_path = PathBuf::from(
+        std::env::var("OUT_DIR").context("Could not get out directory from environment")?,
+    );
     let process_input_file = |file_name: &str| -> Result<String> {
         let path = ffi_dir.join(file_name);
         let path_str = path.to_str_safe()?;
@@ -26,7 +28,9 @@ fn main() -> std::result::Result<(), Error> {
 
     bindgen::Builder::default()
         .header(process_input_file("defaults.h")?)
-        .generate().map_err(|_| anyhow!("Could not generate bindings"))?
+        .whitelist_function("defaults_.+")
+        .generate()
+        .map_err(|_| anyhow!("Could not generate bindings"))?
         .write_to_file(out_path.join("defaults.rs"))?;
 
     println!("cargo:rustc-link-lib=framework=CoreFoundation");
@@ -41,10 +45,7 @@ fn main() -> std::result::Result<(), Error> {
 
 fn rerun_if_changed(path: &Path) -> Result<()> {
     // Tell cargo to invalidate the built crate whenever the path changes
-    println!(
-        "cargo:rerun-if-changed={}",
-        path.to_str_safe()?
-    );
+    println!("cargo:rerun-if-changed={}", path.to_str_safe()?);
     Ok(())
 }
 
