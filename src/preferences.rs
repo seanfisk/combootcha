@@ -40,6 +40,27 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             .bool("SuppressLaunchMessage", true)?
             .sync()?;
 
+        // Console and Monitor themes themselves seem not to be stored in preferences.
+        App::new("com.secretgeometry.Cathode")?
+            .bool("CloseOnExit", true)?
+            .bool("JitterWhenWindowMoves", true)?
+            .bool("PositionalPerspective", true)?
+            .int("RenderingQuality", 3)? // High
+            .bool("UseColorPalette", true)?
+            .bool("UseOptionAsMeta", true)?
+            .bool("UseSounds", false)?
+            .sync()?;
+
+        App:new("com.titanium.Deeper")?
+            .bool("ConfirmQuit", false)?
+            .bool("ConfirmQuitApp", true)?
+            .bool("DeleteLog", true)?
+            .bool("DrawerEffect", true)?
+            .bool("Licence", false)? // Don"t show the license at startup
+            .bool("OpenLog", false)?
+            .bool("ShowHelp", false)?
+            .sync()?;
+
         Ok(())
     })
 }
