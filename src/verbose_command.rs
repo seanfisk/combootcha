@@ -49,26 +49,24 @@ impl Command {
     }
 
     pub(crate) fn run(&self) -> Result<()> {
-        let mut popen = self.popen(false)?;
+        let mut popen = self.popen(false, false)?;
         self.wait(&mut popen)
     }
 
-    pub(crate) fn input_and_output(&self, input: &[u8]) -> Result<Vec<u8>> {
-        self.output_internal(Some(input))
+    pub(crate) fn run_with_input(&self, input: &[u8]) -> Result<()> {
+        let mut popen = self.popen(true, false)?;
+        popen.communicate_bytes(Some(input))?;
+        self.wait(&mut popen)
     }
 
     pub(crate) fn output(&self) -> Result<Vec<u8>> {
-        self.output_internal(None)
-    }
-
-    fn output_internal(&self, input: Option<&[u8]>) -> Result<Vec<u8>> {
-        let mut popen = self.popen(input.is_some())?;
-        let (stdout, _stderr) = popen.communicate_bytes(input)?;
+        let mut popen = self.popen(false, true)?;
+        let (stdout, _stderr) = popen.communicate_bytes(None)?;
         self.wait(&mut popen)?;
         Ok(stdout.ok_or_else(|| anyhow!("Stdout was not piped and therefore not captured"))?)
     }
 
-    fn popen(&self, pipe_stdin: bool) -> Result<subprocess::Popen> {
+    fn popen(&self, pipe_stdin: bool, pipe_stdout: bool) -> Result<subprocess::Popen> {
         info!("=> {}", self);
 
         // TODO I'm sure there is a more efficient way to do this
@@ -88,7 +86,11 @@ impl Command {
                 } else {
                     Redirection::None
                 },
-                stdout: Redirection::Pipe,
+                stdout: if pipe_stdout {
+                    Redirection::Pipe
+                } else {
+                    Redirection::None
+                },
                 stderr: Redirection::None,
                 cwd: self.cwd.as_ref().map(|p| p.as_os_str().to_owned()),
                 setuid: self.user.as_ref().map(|u| u.uid()),

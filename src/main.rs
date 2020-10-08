@@ -7,6 +7,7 @@ mod karabiner;
 mod logging;
 mod login_items;
 mod login_shells;
+mod network_link_conditioner;
 mod path;
 mod quicksilver;
 mod user;
@@ -100,6 +101,7 @@ fn main() -> Result<()> {
     quicksilver::configure(&standard_user)?;
     hammerspoon::configure(&standard_user)?;
     karabiner::configure(&standard_user)?;
+    network_link_conditioner::install()?;
 
     info!("Setup complete!");
 
