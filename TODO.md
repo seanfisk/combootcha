@@ -20,6 +20,8 @@ https://crates.io/crates/subprocess
 
 Maybe we can set these directly without using the `defaults` command?
 
+Idea: Fork the process and setuid to the specific user, then set the defaults programmatically.
+
 ## Zsh plugin manager options
 
 1. https://github.com/zdharma/zinit
