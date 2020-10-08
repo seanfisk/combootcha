@@ -9,6 +9,7 @@ mod login_items;
 mod login_shells;
 mod path;
 mod quicksilver;
+mod user;
 mod verbose_command;
 
 use anyhow::{anyhow, Result};
@@ -101,6 +102,9 @@ fn main() -> Result<()> {
     karabiner::configure(&standard_user)?;
 
     info!("Setup complete!");
+
+    use user::UserExt;
+    standard_user.as_user(|| println!("Current uid is {}", nix::unistd::Uid::effective()))?;
 
     Ok(())
 }
