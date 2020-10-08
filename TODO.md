@@ -2,10 +2,6 @@
 
 When there are several options to try, they're ordered by preference from cursory research.
 
-## Switch to subprocess library
-
-https://crates.io/crates/subprocess
-
 ## Check out iTerm2's option "Use built-in Powerline glyphs"
 
 ## Network Link Conditioner
