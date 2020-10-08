@@ -56,7 +56,7 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             .bool("ConfirmQuitApp", true)?
             .bool("DeleteLog", true)?
             .bool("DrawerEffect", true)?
-            .bool("Licence", false)? // Don"t show the license at startup
+            .bool("Licence", false)? // Don't show the license at startup
             .bool("OpenLog", false)?
             .bool("ShowHelp", false)?
             .sync()?;
