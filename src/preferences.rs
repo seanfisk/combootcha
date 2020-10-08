@@ -30,6 +30,10 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             .bool("CVStartAsLargeWindow", false)?
             .sync()?;
 
+        App::new("com.apple.iChat")? // Messages.app
+            .bool("SaveConversationsOnClose", true)? // Save history when conversations are closed
+            .sync()?;
+
         Ok(())
     })
 }
