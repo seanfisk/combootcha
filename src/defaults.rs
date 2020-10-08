@@ -42,5 +42,5 @@ impl Application {
 }
 
 fn to_cstring(str: &str) -> Result<CString> {
-    CString::new(str).with_context(|| format!("Converting to string {:?} to CString", str))
+    CString::new(str).with_context(|| format!("Converting string {:?} to CString", str))
 }
