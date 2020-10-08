@@ -80,6 +80,7 @@ cask 'quicksilver'
 cask 'speedcrunch'
 cask 'spotify'
 cask 'wireshark'
+cask 'zoomus'
 cask 'zulu8' # Java used at VMware
 
 # X11-based software
