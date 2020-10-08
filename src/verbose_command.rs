@@ -49,18 +49,26 @@ impl Command {
     }
 
     pub(crate) fn run(&self) -> Result<()> {
-        let mut popen = self.popen()?;
+        let mut popen = self.popen(false)?;
         self.wait(&mut popen)
     }
 
+    pub(crate) fn input_and_output(&self, input: &[u8]) -> Result<Vec<u8>> {
+        self.output_internal(Some(input))
+    }
+
     pub(crate) fn output(&self) -> Result<Vec<u8>> {
-        let mut popen = self.popen()?;
-        let (stdout, _stderr) = popen.communicate_bytes(None)?;
+        self.output_internal(None)
+    }
+
+    fn output_internal(&self, input: Option<&[u8]>) -> Result<Vec<u8>> {
+        let mut popen = self.popen(input.is_some())?;
+        let (stdout, _stderr) = popen.communicate_bytes(input)?;
         self.wait(&mut popen)?;
         Ok(stdout.ok_or_else(|| anyhow!("Stdout was not piped and therefore not captured"))?)
     }
 
-    fn popen(&self) -> Result<subprocess::Popen> {
+    fn popen(&self, pipe_stdin: bool) -> Result<subprocess::Popen> {
         info!("=> {}", self);
 
         // TODO I'm sure there is a more efficient way to do this
@@ -75,7 +83,11 @@ impl Command {
         Popen::create(
             &argv,
             PopenConfig {
-                stdin: Redirection::None,
+                stdin: if pipe_stdin {
+                    Redirection::Pipe
+                } else {
+                    Redirection::None
+                },
                 stdout: Redirection::Pipe,
                 stderr: Redirection::None,
                 cwd: self.cwd.as_ref().map(|p| p.as_os_str().to_owned()),
