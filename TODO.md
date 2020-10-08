@@ -12,22 +12,7 @@ When there are several options to try, they're ordered by preference from cursor
 
 ## macOS User Defaults
 
-Other option is to write an FFI for 4 types: bool, int, float, and string. Doesn't really seem like we were setting any arrays.
-
-Use [`CFPreferencesSetAppValue`](https://developer.apple.com/documentation/corefoundation/1515528-cfpreferencessetappvalue?language=objc) for this.
-
-Example:
-
-```rust
-Application::new("com.apple.menuextra.clock")
-    .string("DateFormat", "EEE MMM d  H:mm")
-    .bool("FlashDateSeparators", false)
-    .sync()?;
-```
-
-Call `CFPreferencesSynchronize` on `sync`. We can't do it on drop because drop cannot fail.
-
-Use vROps Deploy's caffeine.c as an example of creating a `CFNumber`.
+Just gotta port 'em all over.
 
 ## Zsh plugin manager options
 
