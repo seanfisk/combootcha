@@ -4,9 +4,7 @@ use users::User;
 
 use std::ffi::{OsStr, OsString};
 use std::io::Write;
-use std::os::unix::process::CommandExt;
 use std::path::{Path, PathBuf};
-use std::process::ExitStatus;
 
 pub(crate) struct Command {
     program: OsString,
@@ -52,36 +50,86 @@ impl Command {
     }
 
     pub(crate) fn run(&self) -> Result<()> {
-        let mut std_command = self.build_std_command();
-        let status = std_command
-            .status()
-            .with_context(|| make_context(&std_command))?;
-        check_status(&std_command, &status)
+        self.log_command();
+        use subprocess::{Popen, PopenConfig, Redirection};
+        let mut argv = Vec::new();
+        argv.push(self.program.clone());
+        for arg in &self.args {
+            argv.push(arg.clone());
+        }
+        // Note: Can't use Exec because it doesn't allow access to setuid, which we need
+        let mut popen = Popen::create(
+            &argv,
+            PopenConfig {
+                stdin: Redirection::None,
+                stdout: Redirection::None,
+                stderr: Redirection::None,
+                cwd: self.cwd.as_ref().map(|p| p.as_os_str().to_owned()),
+                setuid: self.user.as_ref().map(|u| u.uid()),
+                ..Default::default()
+            },
+        )
+        .context("Could not launch process")?; // TODO Improve context
+                                               // TODO Check status
+        popen.wait()?;
+        Ok(())
+        // let status = std_command
+        //     .status()
+        //     .with_context(|| make_context(&std_command))?;
+        // check_status(&std_command, &status)
     }
 
     pub(crate) fn output(&self) -> Result<Vec<u8>> {
+        self.log_command();
+        use subprocess::{Popen, PopenConfig, Redirection};
+        let mut argv = Vec::new();
+        argv.push(self.program.clone());
+        for arg in &self.args {
+            argv.push(arg.clone());
+        }
+        // Note: Can't use Exec because it doesn't allow access to setuid, which we need
+        let mut popen = Popen::create(
+            &argv,
+            PopenConfig {
+                stdin: Redirection::None,
+                stdout: Redirection::Pipe,
+                stderr: Redirection::None,
+                cwd: self.cwd.as_ref().map(|p| p.as_os_str().to_owned()),
+                setuid: self.user.as_ref().map(|u| u.uid()),
+                ..Default::default()
+            },
+        )
+        .context("Could not launch process")?; // TODO Improve context
+        let (stdout, _stderr) = popen.communicate_bytes(None)?;
+        // TODO Check status
+        Ok(stdout.ok_or_else(|| anyhow!("Stdout was not piped and therefore not captured"))?)
         // TODO Switch to using subprocess library so that the subprocess can just inherit stderr. We don't want to capture it in 99% of the cases.
-        let mut std_command = self.build_std_command();
-        let output = std_command
-            .output()
-            .with_context(|| make_context(&std_command))?;
-        std::io::stderr().write_all(&output.stderr)?;
-        check_status(&std_command, &output.status)?;
-        Ok(output.stdout)
+        // let mut std_command = self.build_std_command();
+        // let output = std_command
+        //     .output()
+        //     .with_context(|| make_context(&std_command))?;
+        // std::io::stderr().write_all(&output.stderr)?;
+        // check_status(&std_command, &output.status)?;
+        // Ok(output.stdout)
     }
 
-    fn build_std_command(&self) -> std::process::Command {
-        let mut std_command = std::process::Command::new(&self.program);
-        std_command.args(&self.args);
-        if let Some(cwd) = &self.cwd {
-            std_command.current_dir(cwd);
-        }
-        if let Some(user) = &self.user {
-            std_command.uid(user.uid());
+    fn log_command(&self) {
+        // let mut std_command = std::process::Command::new(&self.program);
+        // std_command.args(&self.args);
+        // if let Some(cwd) = &self.cwd {
+        //     std_command.current_dir(cwd);
+        // }
+        // if let Some(user) = &self.user {
+        //     std_command.uid(user.uid());
+        // }
+        let mut argv = Vec::new();
+        argv.push(self.program.clone());
+        for arg in &self.args {
+            argv.push(arg.clone());
         }
         info!(
             "=> {:?}{}{}",
-            std_command,
+            argv,
             self.cwd
                 .as_ref()
                 .map_or("".to_owned(), |d| format!(" (cwd: {:?})", d)),
@@ -89,7 +137,6 @@ impl Command {
                 .as_ref()
                 .map_or("".to_owned(), |u| format!(" (user: {:?})", u.name()))
         );
-        std_command
     }
 }
 
@@ -97,10 +144,10 @@ fn make_context(command: &std::process::Command) -> String {
     format!("Could not launch process {:?}", command)
 }
 
-fn check_status(command: &std::process::Command, status: &ExitStatus) -> Result<()> {
-    if status.success() {
-        Ok(())
-    } else {
-        Err(anyhow!("Process {:?} failed with {}", command, status))
-    }
-}
+// fn check_status(command: &std::process::Command, status: &ExitStatus) -> Result<()> {
+//     if status.success() {
+//         Ok(())
+//     } else {
+//         Err(anyhow!("Process {:?} failed with {}", command, status))
+//     }
+// }

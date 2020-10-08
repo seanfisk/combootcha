@@ -181,6 +181,7 @@ dependencies = [
  "nix",
  "plist",
  "serde_json",
+ "subprocess",
  "users",
 ]
 
@@ -232,6 +233,16 @@ name = "strsim"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8ea5119cdb4c55b55d432abb513a0429384878c15dde60cc77b1c99de1a95a6a"
+
+[[package]]
+name = "subprocess"
+version = "0.2.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "69b9ad6c3e1b525a55872a4d2f2d404b3c959b7bbcbfd83c364580f68ed157bd"
+dependencies = [
+ "libc",
+ "winapi",
+]
 
 [[package]]
 name = "textwrap"
