@@ -34,6 +34,12 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             .bool("SaveConversationsOnClose", true)? // Save history when conversations are closed
             .sync()?;
 
+        App::new("com.lightheadsw.caffeine")?
+            .bool("ActivateOnLaunch", true)? // Turn on Caffeine when the app is started.
+            .int("DefaultDuration", 0)? // Activate indefinitely
+            .bool("SuppressLaunchMessage", true)?
+            .sync()?;
+
         Ok(())
     })
 }
