@@ -12,9 +12,30 @@ When there are several options to try, they're ordered by preference from cursor
 
 ## macOS User Defaults
 
-Maybe we can set these directly without using the `defaults` command?
+Use our seteuid trick
 
-Idea: Fork the process and setuid to the specific user, then set the defaults programmatically.
+Then write a C or Objective-C function that uses [`CFPreferencesSetMultiple`](https://developer.apple.com/documentation/corefoundation/1515513-cfpreferencessetmultiple?language=objc)
+
+Call [`CFPreferencesSynchronize`](https://developer.apple.com/documentation/corefoundation/1515504-cfpreferencessynchronize?language=objc) afterward.
+
+This way we don't have to write any complicated FFI. We'll just call a big function from Rust.
+
+Other option is to write an FFI for 4 types: bool, int, float, and string. Doesn't really seem like we were settings and arrays.
+
+Use [`CFPreferencesSetAppValue`](https://developer.apple.com/documentation/corefoundation/1515528-cfpreferencessetappvalue?language=objc) for this.
+
+Example:
+
+```rust
+Application::new("com.apple.menuextra.clock")
+    .string("DateFormat", "EEE MMM d  H:mm")
+    .bool("FlashDateSeparators", false)
+    .sync()?;
+```
+
+Call `CFPreferencesSynchronize` on `sync`. We can't do it on drop because drop cannot fail.
+
+Use vROps Deploy's caffeine.c as an example of creating a `CFNumber`.
 
 ## Zsh plugin manager options
 

@@ -31,3 +31,8 @@ subprocess = "0.2"
 # ansi_term does not even attempt to implement the Standard for ANSI Colors in Terminals, so there is no conflict in the
 # feature set it is providing.
 ansi_term = "0.11.0" # Synchronized with clap to prevent an extra dependency
+
+[build-dependencies]
+anyhow = "1.0"
+cc = "1.0"
+bindgen = "0.53.1"
