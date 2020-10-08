@@ -5,20 +5,28 @@ mod sys {
     include!(concat!(env!("OUT_DIR"), "/defaults.rs"));
 }
 
-pub(crate) fn set_bool(app_id: &str, key: &str, value: bool) -> Result<()> {
-    let c_app_id = to_cstring(&app_id)?;
-    let c_key = to_cstring(&key)?;
-    unsafe { sys::defaults_set_bool(c_app_id.as_ptr(), c_key.as_ptr(), value) }
-    Ok(())
+pub(crate) struct Application {
+    c_id: CString,
 }
 
-pub(crate) fn sync(app_id: &str) -> Result<()> {
-    let c_app_id = to_cstring(&app_id)?;
-    let success = unsafe { sys::defaults_sync(c_app_id.as_ptr()) };
-    if success {
-        Ok(())
-    } else {
-        Err(anyhow!("Defaults synchronization failed"))
+impl Application {
+    pub(crate) fn new<S: AsRef<str>>(id: S) -> Result<Application> {
+        to_cstring(id.as_ref()).map(|c_id| Application { c_id: c_id })
+    }
+
+    pub(crate) fn bool(&self, key: &str, value: bool) -> Result<&Application> {
+        let c_key = to_cstring(&key)?;
+        unsafe { sys::defaults_set_bool(self.c_id.as_ptr(), c_key.as_ptr(), value) }
+        Ok(self)
+    }
+
+    pub(crate) fn sync(&self) -> Result<()> {
+        let success = unsafe { sys::defaults_sync(self.c_id.as_ptr()) };
+        if success {
+            Ok(())
+        } else {
+            Err(anyhow!("Defaults synchronization failed"))
+        }
     }
 }
 

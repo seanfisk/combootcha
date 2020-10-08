@@ -108,8 +108,9 @@ fn main() -> Result<()> {
     info!("Setup complete!");
 
     standard_user.as_user(|| {
-        defaults::set_bool("com.bluemedora.vROps Deploy", "TestKey", false)?;
-        defaults::sync("com.bluemedora.vROps Deploy")
+        defaults::Application::new("com.bluemedora.vROps Deploy")?
+            .bool("TestKey", false)?
+            .sync()
     })?;
 
     Ok(())
