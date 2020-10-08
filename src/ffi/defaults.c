@@ -3,8 +3,13 @@
 #include "defaults.h"
 
 CFStringRef to_cfstring(const char *c_string) {
-  // TODO This function can return NULL "if there was a problem creating the object"
-  return CFStringCreateWithCStringNoCopy(/*alloc=*/kCFAllocatorDefault, /*cStr=*/c_string, /*encoding=*/kCFStringEncodingUTF8);
+  // TODO This function can return NULL "if there was a problem creating the
+  // object"
+  return CFStringCreateWithCStringNoCopy(
+      /*alloc=*/kCFAllocatorDefault, /*cStr=*/c_string,
+      /*encoding=*/kCFStringEncodingUTF8,
+      /*contentsDeallocator=*/kCFAllocatorNull // We'll deallocate the C string
+  );
 }
 
 void defaults_set_bool(const char *app_id, const char *key, bool value) {

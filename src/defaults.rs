@@ -1,6 +1,12 @@
 use anyhow::{anyhow, Context, Result};
 use std::ffi::CString;
 
+// Using core-foundation-rs might also be an option: https://github.com/servo/core-foundation-rs
+//
+// core-foundation-rs doesn't implement anything related to preferences at this time of writing, but it does have a handy way to create a CFString directly from a Rust string.
+//
+// I'm sure the technique we are using right now isn't as efficient since it goes through C and then Core Foundation, but it has the virtue of being simpler than core-foundation-rs. We're not worried about performance for our purposes.
+
 mod sys {
     include!(concat!(env!("OUT_DIR"), "/defaults.rs"));
 }
