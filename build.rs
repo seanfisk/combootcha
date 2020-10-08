@@ -27,18 +27,18 @@ fn main() -> std::result::Result<(), Error> {
     };
 
     bindgen::Builder::default()
-        .header(process_input_file("defaults.h")?)
-        .whitelist_function("defaults_.+")
+        .header(process_input_file("user_defaults.h")?)
+        .whitelist_function("user_defaults_.+")
         .generate()
         .map_err(|_| anyhow!("Could not generate bindings"))?
-        .write_to_file(out_path.join("defaults.rs"))?;
+        .write_to_file(out_path.join("user_defaults.rs"))?;
 
     println!("cargo:rustc-link-lib=framework=CoreFoundation");
 
     cc::Build::new()
-        .file(process_input_file("defaults.c")?)
+        .file(process_input_file("user_defaults.c")?)
         .flag(&macos_min_version_flag)
-        .compile("defaults");
+        .compile("user_defaults");
 
     Ok(())
 }

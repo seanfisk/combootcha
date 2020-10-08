@@ -1,4 +1,3 @@
-mod defaults;
 mod env;
 mod fs;
 mod hammerspoon;
@@ -10,8 +9,10 @@ mod login_items;
 mod login_shells;
 mod network_link_conditioner;
 mod path;
+mod preferences;
 mod quicksilver;
 mod user;
+mod user_defaults;
 mod verbose_command;
 
 use anyhow::{anyhow, Result};
@@ -19,8 +20,6 @@ use clap::{crate_authors, crate_description, crate_name, App, AppSettings, Arg};
 use log::{debug, info};
 use logging::ColorMode;
 use users::get_user_by_name;
-
-use user::UserExt;
 
 fn is_root() -> bool {
     nix::unistd::Uid::current().is_root()
@@ -105,13 +104,9 @@ fn main() -> Result<()> {
     karabiner::configure(&standard_user)?;
     network_link_conditioner::install()?;
 
-    info!("Setup complete!");
+    preferences::set(&standard_user)?;
 
-    standard_user.as_user(|| {
-        defaults::Application::new("com.bluemedora.vROps Deploy")?
-            .bool("TestKey", false)?
-            .sync()
-    })?;
+    info!("Setup complete!");
 
     Ok(())
 }
