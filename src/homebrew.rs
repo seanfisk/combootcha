@@ -33,16 +33,16 @@ pub(crate) fn install_deps(standard_user: &User) -> Result<()> {
     let path = standard_user.home_dir().join(".Brewfile");
 
     standard_user.as_user(|| {
-        {
-            let mut file = crate::fs::create_file(&path)?;
-            file.write_all(bytes)?;
-        }
+        let mut file = crate::fs::create_file(&path)?;
+        file.write_all(bytes)?;
+        Ok(())
+    })?;
 
-        Command::new("brew")
-            .arg("bundle")
-            .arg("install")
-            .arg("--verbose")
-            .arg("--global")
-            .run()
-    })
+    Command::new("brew")
+        .arg("bundle")
+        .arg("install")
+        .arg("--verbose")
+        .arg("--global")
+        .user(&standard_user)
+        .run()
 }
