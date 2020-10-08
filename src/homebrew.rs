@@ -31,13 +31,13 @@ pub(crate) fn install_system(standard_user: &User) -> Result<()> {
 
 pub(crate) fn install_deps(standard_user: &User) -> Result<()> {
     info!("Installing Homebrew dependencies via Brewfile");
-    let brewfile_bytes = include_bytes!("Brewfile");
-    let brewfile_dest = standard_user.home_dir().join(".Brewfile");
+    let bytes = include_bytes!("Brewfile");
+    let path = standard_user.home_dir().join(".Brewfile");
 
     standard_user.as_user(|| {
         {
-            let mut brewfile = crate::fs::create_file(&brewfile_dest)?;
-            brewfile.write_all(brewfile_bytes)?;
+            let mut file = crate::fs::create_file(&path)?;
+            file.write_all(bytes)?;
         }
 
         Command::new("brew")
