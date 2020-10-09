@@ -9,7 +9,8 @@ use crate::verbose_command::Command;
 
 pub(crate) fn install() -> Result<()> {
     info!("Considering installing Network Link Conditioner");
-    if Path::new("/Library/PreferencePanes/Network Link Conditioner.prefPane").exists() {
+    let prefix = Path::new("/Library/PreferencePanes");
+    if prefix.join("Network Link Conditioner.prefPane").exists() {
         info!("Network Link Conditioner is already installed");
         return Ok(());
     }
@@ -23,10 +24,10 @@ pub(crate) fn install() -> Result<()> {
     //
     let bytes = include_bytes!("network-link-conditioner.tar.xz");
     Command::new("/usr/bin/tar")
-        .args(&["-C", "/Library/PreferencePanes"])
         .arg("-x") // extract
         .arg("-J") // xz
         .arg("-v") // verbose
+        .cwd(prefix)
         .run_with_input(bytes)?;
     info!("Network Link Conditioner installed successfully");
     Ok(())

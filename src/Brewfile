@@ -32,6 +32,7 @@ brew 'nmap'
 # I prefer ohcount to cloc and sloccount.
 brew 'ohcount'
 brew 'pandoc'
+brew 'perl' # For installing japi-compliance-checker
 brew 'pstree'
 brew 'pyenv'
 brew 'pyenv-virtualenv'

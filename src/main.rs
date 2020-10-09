@@ -3,6 +3,7 @@ mod fs;
 mod hammerspoon;
 mod homebrew;
 mod iterm2;
+mod japicc;
 mod karabiner;
 mod logging;
 mod login_items;
@@ -104,6 +105,7 @@ fn main() -> Result<()> {
     hammerspoon::configure(&standard_user)?;
     karabiner::configure(&standard_user)?;
     network_link_conditioner::install()?;
+    japicc::install()?;
 
     preferences::set(&standard_user)?;
 
