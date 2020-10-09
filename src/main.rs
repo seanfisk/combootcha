@@ -11,6 +11,7 @@ mod network_link_conditioner;
 mod path;
 mod preferences;
 mod quicksilver;
+mod scripts;
 mod user;
 mod user_defaults;
 mod verbose_command;
@@ -105,6 +106,8 @@ fn main() -> Result<()> {
     network_link_conditioner::install()?;
 
     preferences::set(&standard_user)?;
+
+    scripts::install(&standard_user)?;
 
     info!("Setup complete!");
 

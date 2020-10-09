@@ -2,8 +2,6 @@
 
 When there are several options to try, they're ordered by preference from cursory research.
 
-## Create bin/ directory
-
 ## japi-cc
 
 ## Set default browser to Firefox
