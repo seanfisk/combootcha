@@ -10,10 +10,6 @@ When there are several options to try, they're ordered by preference from cursor
 
 ## Set default browser to Firefox
 
-## macOS User Defaults
-
-Just gotta port 'em all over.
-
 ## Zsh plugin manager options
 
 1. https://github.com/zdharma/zinit

@@ -5,6 +5,10 @@ use crate::user::UserExt;
 use crate::user_defaults::App;
 
 pub(crate) fn set(standard_user: &User) -> Result<()> {
+    // Any preferences that don't already have specific install instructions go here.
+
+    // Apps such as iTerm2 which have specific instructions in this program should set their preferences in their specific function/file.
+
     standard_user.as_effective_user(|| {
         // Set up clock with day of week, date, and 24-hour clock.
         App::new("com.apple.menuextra.clock")?
@@ -68,39 +72,6 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             .bool("shouldUseSmartMenuBarIcons", true)?
             .sync()?;
 
-        App::new("com.googlecode.iterm2")?
-            .string("Default Bookmark Guid", "TODO")?
-            // General
-            //   Closing
-            .bool("QuitWhenAllWindowsClosed", false)?
-            .bool("PromptOnQuit", true)?
-            //   Services
-            .bool("SUEnableAutomaticChecks", true)?
-            .bool("CheckTestRelease", true)?
-            //   Window
-            .bool("AdjustWindowForFontSizeChange", true)?
-            .bool("UseLionStyleFullscreen", true)?
-            // Appearance
-            //   Tabs
-            .int("TabViewType", 0)? // Tab bar on top
-            .int("TabStyle", 0)? // Light tab theme
-            .bool("HideTabNumber", false)?
-            .bool("HideTabCloseButton", true)?
-            .bool("HideActivityIndicator", false)?
-            //   Window & Tab Titles
-            .bool("WindowNumber", true)?
-            .bool("JobName", true)?
-            .bool("ShowBookmarkName", true)?
-            //   Window
-            .bool("UseBorder", false)?
-            .bool("HideScrollbar", true)?
-            // Keys
-            .bool("Hotkey", true)?
-            .int("HotkeyChar", 59)?
-            .int("HotkeyCode", 41)?
-            .int("HotkeyModifiers", 1_048_840)?
-            .sync()?;
-
         App::new("com.stclairsoft.Jettison")?
             .bool("autoEjectAtLogout", false)?
             .bool("autoEjectEnabled", true)? // This really means autoEjectAtSleep
@@ -115,7 +86,7 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             .bool("playSoundOnSuccess", false)?
             .bool("showRemountProgress", false)?
             // Set "Eject disks and sleep" hotkey to ⌘⌥⌫
-            // XXX Broken as of now
+            // TODO Would need to implement putting dictionaries
             // 'sleepHotkey' => {
             //   'characters' => '',
             //   'charactersIgnoringModifiers' => '',
@@ -126,18 +97,21 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             .bool("toggleMassStorageDriver", false)?
             .sync()?;
 
-        App::new("com.lastpass.LastPass")?
-            // Some preferences are prefixed by a hash, which seems to be stored in
-            // 'lp_local_pwhash'. We don't know what that hash means, or whether it's
-            // consistent, so just leave those alone.
-            .string("global_StartOnLogin", "1")?
-            // Cmd-Shift-L
-            // .string("global_SearchHotKeyMod", lastpass_cmd_shift_key)?
-            // .string("global_SearchHotKeyVK", "37")?
-            // Cmd-Shift-V
-            // .string("global_VaultHotKeyMod", lastpass_cmd_shift_key)?
-            // .string("global_VaultHotKeyVK", "9")?
-            .sync()?;
+        {
+            let lastpass_cmd_shift_key = "1179914";
+            App::new("com.lastpass.LastPass")?
+                // Some preferences are prefixed by a hash, which seems to be stored in
+                // 'lp_local_pwhash'. We don't know what that hash means, or whether it's
+                // consistent, so just leave those alone.
+                .string("global_StartOnLogin", "1")?
+                // ⌘⇧L
+                .string("global_SearchHotKeyMod", lastpass_cmd_shift_key)?
+                .string("global_SearchHotKeyVK", "37")?
+                // ⌘⇧V
+                .string("global_VaultHotKeyMod", lastpass_cmd_shift_key)?
+                .string("global_VaultHotKeyVK", "9")?
+                .sync()?;
+        }
 
         App::new("com.apple.screensaver")?
             .bool("askForPassword", false)?
@@ -167,7 +141,7 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             // Pasteboard
             //   Syncing is somewhat broken, see here:
             //   <http://xquartz.macosforge.org/trac/ticket/765>
-            //   If you go into XQuartz and press Cmd-C it will usually sync it.
+            //   If you go into XQuartz and press ⌘C it will usually sync it.
             .bool("sync_pasteboard", true)?
             .bool("sync_clipboard_to_pasteboard", true)?
             .bool("sync_pasteboard_to_clipboard", true)?
@@ -196,15 +170,7 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
         App::new("NSGlobalDomain")?
             // Always show scrollbars
             .string("AppleShowScrollBars", "Always")?
-            // Allow keyboard access to all controls (using Tab), not just text boxes and
-            // lists.
-            //
-            // Note: We used to use
-            //
-            //     include_recipe 'mac_os_x::kbaccess'
-            //
-            // which supposedly does the same thing, but its idempotence check was not
-            // behaving properly. Moved it to here and it is working fine.
+            // Allow keyboard access to all controls (using Tab), not just text boxes and lists.
             .int("AppleKeyboardUIMode", 2)?
             // Increase window resize speed for Cocoa applications
             .float("NSWindowResizeTime", 0.001)?
@@ -225,16 +191,14 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             // Disable press-and-hold for keys in favor of key repeat
             .bool("ApplePressAndHoldEnabled", false)?
             // Key repeat
-            // This is also possible through the mac_os_x::key_repeat recipe, but having
-            // it here allows customization of the values.
-            //// Set a keyboard repeat rate to fast
+            //   Set a keyboard repeat rate to fast
             .int("KeyRepeat", 2)?
-            //// Set low initial delay
+            //   Set low initial delay
             .int("InitialKeyRepeat", 15)?
             // Finder
-            //// Show all filename extensions
+            //   Show all filename extensions
             .bool("AppleShowAllExtensions", true)?
-            //// Enable spring loading for directories
+            //   Enable spring loading for directories
             .bool("com.apple.springing.enabled", true)?
             // Remove the spring loading delay for directories
             .int("com.apple.springing.delay", 0)?
@@ -250,6 +214,7 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             .bool("DevMode", true)?
             .sync()?;
 
+        // TODO
         // Reveal IP address, hostname, OS version, etc. when clicking the clock in the
         // login window
         // App::new("/Library/Preferences/com.apple.loginwindow")?
@@ -306,8 +271,7 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             .sync()?;
 
         App::new("com.apple.TimeMachine")?
-            // Prevent Time Machine from prompting to use new hard drives as backup
-            // volume
+            // Prevent Time Machine from prompting to use new hard drives as backup volume
             .bool("DoNotOfferNewDisksForBackup", true)?
             .sync()?;
 
@@ -322,7 +286,7 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
         App::new("com.apple.DiskUtility")?
             // Enable the debug menu in Disk Utility
             .bool("DUDebugMenuEnabled", true)?
-            // enable the advanced image menu in Disk Utility
+            // Enable the advanced image menu in Disk Utility
             .bool("advanced-image-options", true)?
             .sync()?;
 

@@ -84,6 +84,40 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
 
         let file = crate::fs::create_file(&personal_profiles_path)?;
         serde_json::to_writer_pretty(file, &profiles_json)?;
+
+        crate::user_defaults::App::new("com.googlecode.iterm2")?
+            .string("Default Bookmark Guid", personal_profile_guid)?
+            // General
+            //   Closing
+            .bool("QuitWhenAllWindowsClosed", false)?
+            .bool("PromptOnQuit", true)?
+            //   Services
+            .bool("SUEnableAutomaticChecks", true)?
+            .bool("CheckTestRelease", true)?
+            //   Window
+            .bool("AdjustWindowForFontSizeChange", true)?
+            .bool("UseLionStyleFullscreen", true)?
+            // Appearance
+            //   Tabs
+            .int("TabViewType", 0)? // Tab bar on top
+            .int("TabStyle", 0)? // Light tab theme
+            .bool("HideTabNumber", false)?
+            .bool("HideTabCloseButton", true)?
+            .bool("HideActivityIndicator", false)?
+            //   Window & Tab Titles
+            .bool("WindowNumber", true)?
+            .bool("JobName", true)?
+            .bool("ShowBookmarkName", true)?
+            //   Window
+            .bool("UseBorder", false)?
+            .bool("HideScrollbar", true)?
+            // Keys
+            .bool("Hotkey", true)?
+            .int("HotkeyChar", 59)?
+            .int("HotkeyCode", 41)?
+            .int("HotkeyModifiers", 1_048_840)?
+            .sync()?;
+
         Ok(())
     })
 }
