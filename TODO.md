@@ -2,8 +2,6 @@
 
 When there are several options to try, they're ordered by preference from cursory research.
 
-## japi-cc
-
 ## Set default browser to Firefox
 
 ## Zsh plugin manager options
