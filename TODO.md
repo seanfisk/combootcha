@@ -2,8 +2,6 @@
 
 When there are several options to try, they're ordered by preference from cursory research.
 
-## Check out iTerm2's option "Use built-in Powerline glyphs"
-
 ## Create bin/ directory
 
 ## japi-cc

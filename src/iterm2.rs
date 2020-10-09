@@ -43,6 +43,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
                 "Normal Font": make_font(20),
                 "Use Non-ASCII Font" : false, // Use the same font for non-ASCII text
                 "Ambiguous Double Width": false,
+                "Draw Powerline Glyphs" : true,
                 // Window
                 "Background Image Location": bgs_dir.join("holland-beach-sunset.jpg").to_str_safe()?,
                 "Blend": 0.4,
@@ -123,5 +124,5 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
 }
 
 fn make_font(size: u32) -> String {
-    format!("InconsolataForPowerline {}", size)
+    format!("Inconsolata {}", size)
 }
