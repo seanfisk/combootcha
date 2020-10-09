@@ -38,6 +38,7 @@ impl Command {
         self
     }
 
+    #[allow(dead_code)] // We might not need it right now, but it's a core feature of the library we've developed
     pub(crate) fn cwd<P: AsRef<Path>>(&mut self, dir: P) -> &mut Command {
         self.cwd = Some(dir.as_ref().to_owned());
         self
