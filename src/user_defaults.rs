@@ -78,7 +78,7 @@ impl App {
             "Setting application with ID {:?} user defaults key {:?} to {} value {:?}",
             self.id, key, type_, value
         );
-        info!("{:?} => {:?}", key, value);
+        info!("{:?} → {:?}", key, value);
     }
 }
 
