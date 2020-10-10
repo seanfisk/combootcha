@@ -22,6 +22,8 @@ pub(crate) fn install() -> Result<()> {
     );
     let bytes = reqwest::blocking::get(&url)
         .context("Downloading japi-compliance-checker")?
+        .error_for_status()
+        .context("HTTP server reported failure")?
         .bytes()
         .context("Getting japi-compliance-checker archive bytes")?;
     let temp_dir = tempfile::tempdir()
