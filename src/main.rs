@@ -1,3 +1,4 @@
+mod default_browser;
 mod env;
 mod fs;
 mod hammerspoon;
@@ -106,6 +107,7 @@ fn main() -> Result<()> {
     karabiner::configure(&standard_user)?;
     network_link_conditioner::install()?;
     japicc::install()?;
+    default_browser::set(&standard_user)?;
 
     preferences::set(&standard_user)?;
 
