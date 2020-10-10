@@ -21,3 +21,7 @@ A program will be built for each environment. Currently planned:
 
 - Work laptop
 - vROps boxes (mostly just to have a second environment, which forces me to consider it)
+
+## Executing the setup
+
+TODO
