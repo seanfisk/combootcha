@@ -17,3 +17,7 @@ https://jdhao.github.io/2019/10/08/zsh_plugin_managers_compare/
 
 1. https://github.com/eendroroy/alien
 1. https://github.com/reujab/silver
+
+## Port relevant sections from dotfiles
+
+## Port Emacs config
