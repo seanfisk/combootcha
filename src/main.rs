@@ -1,6 +1,7 @@
 mod default_browser;
 mod env;
 mod fs;
+mod git;
 mod hammerspoon;
 mod homebrew;
 mod iterm2;
@@ -105,9 +106,10 @@ fn main() -> Result<()> {
     quicksilver::configure(&standard_user)?;
     hammerspoon::configure(&standard_user)?;
     karabiner::configure(&standard_user)?;
+    git::configure(&standard_user)?;
     network_link_conditioner::install()?;
     japicc::install()?;
-    default_browser::set(&standard_user)?;
+    // default_browser::set(&standard_user)?;
 
     preferences::set(&standard_user)?;
 
