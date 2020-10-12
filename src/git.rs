@@ -4,13 +4,11 @@ use users::User;
 use crate::verbose_command::Command;
 
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
-    let config = Gitconfig::new(&standard_user);
-    config
-        .section(&["user"])
+    let c = Gitconfig::new(&standard_user);
+    c.section(&["user"])
         .set("name", "Sean Fisk")?
         .set("email", "sean@seanfisk.com")?;
-    config
-        .section(&["core"])
+    c.section(&["core"])
         .set("excludesfile", "~/.gitignore-global")?;
     Ok(())
 }
