@@ -1,9 +1,11 @@
 use anyhow::Result;
+use log::info;
 use users::User;
 
 use crate::verbose_command::Command;
 
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
+    info!("Setting up personal Git preferences");
     let c = Gitconfig::new(&standard_user);
     c.section(&["user"])
         .string("name", "Sean Fisk")?
@@ -34,7 +36,18 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
     c.section(&["clean"]).bool("requireForce", false)?;
     c.section(&["push"]).string("default", "simple")?;
     c.section(&["submodule"]).bool("recurse", true)?; // Automatically update submodules on 'git checkout'
-    Ok(())
+
+    info!(
+        "Setting up Git LFS for user with name {:?}",
+        standard_user.name()
+    );
+    // All this does at this time of writing is to add the LFS filter to ~/.gitconfig
+    Command::new("git")
+        .args(&["lfs", "install"])
+        // We shouldn't be in a repo when we run this, but be explicit that we don't want any repo setup
+        .arg("--skip-repo")
+        .user(&standard_user)
+        .run()
 }
 
 struct Gitconfig<'a> {
