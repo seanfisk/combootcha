@@ -16,6 +16,7 @@ mod path;
 mod preferences;
 mod quicksilver;
 mod scripts;
+mod ssh;
 mod user;
 mod user_defaults;
 mod verbose_command;
@@ -100,6 +101,7 @@ fn main() -> Result<()> {
     // homebrew::install_deps(&standard_user)?;
 
     login_shells::set(&standard_user)?;
+    ssh::configure(&standard_user)?;
     // TODO Fix Zsh startup helper?
 
     iterm2::configure(&standard_user)?;

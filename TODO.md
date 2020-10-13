@@ -20,7 +20,6 @@ https://jdhao.github.io/2019/10/08/zsh_plugin_managers_compare/
 
 ## Port relevant sections from dotfiles
 
-- Ssh config
 - Capture
 - Shell configurations
 

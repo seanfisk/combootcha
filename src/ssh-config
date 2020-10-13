@@ -1,0 +1,41 @@
+# SSH configuration
+# See here for some great tips: <http://blogs.perl.org/users/smylers/2011/08/ssh-productivity-tips.html>
+# See here for some tips on multi-hop SSH: <https://web.archive.org/web/20140213090011/http://sshmenu.sourceforge.net/articles/transparent-mulithop.html>
+
+# Only the *first* value of each directive is used. See `man ssh_config' for more info.
+# Also, this file is indentation-insensitive and the `Host' directive causes all following directives to apply to it. Hence the `Host *' at the end.
+
+# --------------------------------------------------------------------------------
+# Blue Medora
+Host vro??-sfisk
+HostName %h.bluemedora.localnet
+User root
+
+Host vr*-sfisk
+HostName %h.bluemedora.localnet
+User root
+
+Host javadocs
+HostName %h.bluemedora.localnet
+User root
+
+# --------------------------------------------------------------------------------
+# General configurations.
+Host *
+# Enable multiple connections for all hosts except the ones excluded above.
+ControlMaster auto
+# Double-quote to handle possible spaces in the temporary directory path.
+#
+# We originally used to query for the system's temporary directory, but on macOS
+# that can result in paths that are too long. That's because the max path length
+# for a Unix socket is typically 104 on macOS and 108 on GNU/Linux. Just use
+# /tmp here to get a very short name -- it should work on most platforms.
+#
+#                        Host
+#                          |Port
+#                          |  | Username
+#                          V  V  V
+ControlPath "/tmp/ssh_mux_%h_%p_%r"
+
+# Persist connections for 2 hours.
+ControlPersist 2h
