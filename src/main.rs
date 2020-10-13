@@ -3,6 +3,7 @@ mod env;
 mod fs;
 mod git;
 mod hammerspoon;
+mod hg;
 mod homebrew;
 mod iterm2;
 mod japicc;
@@ -107,6 +108,7 @@ fn main() -> Result<()> {
     hammerspoon::configure(&standard_user)?;
     karabiner::configure(&standard_user)?;
     git::configure(&standard_user)?;
+    hg::configure(&standard_user)?;
     network_link_conditioner::install()?;
     japicc::install()?;
     // default_browser::set(&standard_user)?;
