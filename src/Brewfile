@@ -91,3 +91,6 @@ brew 'xclip'
 cask 'inkscape'
 
 mas 'LastPass Password Manager', id: 926036361
+
+tap 'profclems/tap'
+brew 'glab'
