@@ -21,7 +21,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
         .string("cia", "commit --all")? // commit all tracked
         .string("ciam", "commit --all -m")? // commit all tracked with a message
         .string("cim", "commit -m")? // commit with a message
-        .string("clone", "clone --recursive")?
+        .string("cl", "clone --recursive")? // note: we can't alias 'clone --recursive' to 'clone'; it just runs the original clone behavior
         .string("co", "checkout")?
         .string("cob", "checkout -b")? // create a new branch
         .string("pr", "remote prune origin")?
