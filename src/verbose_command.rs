@@ -113,6 +113,8 @@ impl Command {
 impl std::fmt::Display for Command {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
         // TODO I'm sure there is a more efficient way to do this
+        // TODO Try this instead
+        // f.debug_list().entries(iter::once(&self.program).chain(&self.args)).finish()
         let mut argv = Vec::new();
         argv.push(self.program.clone());
         for arg in &self.args {

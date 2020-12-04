@@ -39,3 +39,9 @@ ControlPath "/tmp/ssh_mux_%h_%p_%r"
 
 # Persist connections for 2 hours.
 ControlPersist 2h
+
+# On macOS, ensure that SSH keys are added to ssh-agent
+# https://apple.stackexchange.com/a/264974
+# https://blog.elao.com/en/tech/ssh-agent-does-not-automatically-load-passphrases-on-the-osx-sierra-keychain/
+AddKeysToAgent yes
+UseKeychain yes
