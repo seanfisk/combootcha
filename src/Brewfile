@@ -77,10 +77,11 @@ cask 'jettison'
 cask 'karabiner-elements'
 cask 'lastpass'
 cask 'quicksilver'
+cask 'retroarch-metal' # 'retroarch' cask is also available, but I think the Metal renderer is supposed to be better
 cask 'speedcrunch'
 cask 'spotify'
 cask 'wireshark'
-cask 'zoomus'
+cask 'zoom'
 cask 'zulu8' # Java used at VMware
 
 # X11-based software
