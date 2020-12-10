@@ -1,8 +1,7 @@
+use crate::verbose_command::Command;
 use anyhow::Result;
 use log::info;
-use users::User;
-
-use crate::verbose_command::Command;
+use users::{os::unix::UserExt, User};
 
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
     info!("Setting up personal Git preferences");
@@ -103,6 +102,7 @@ impl<'a> Section<'a> {
             .arg("--")
             .arg(dotted_path)
             .arg(value)
+            .cwd(self.user.home_dir()) // Running in a repo shouldn't be a problem, but let's not do it anyway
             .user(self.user)
             .run()?;
         Ok(self)
