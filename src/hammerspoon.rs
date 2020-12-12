@@ -1,9 +1,7 @@
-use anyhow::Result;
-use users::{os::unix::UserExt, User};
-
-use std::io::Write;
-
 use crate::user::UserExt as OtherUserExt;
+use anyhow::Result;
+use std::io::Write;
+use users::{os::unix::UserExt, User};
 
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
     let bytes = include_bytes!("hammerspoon-init.lua");
