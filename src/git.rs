@@ -36,6 +36,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
     c.section(&["push"]).string("default", "simple")?;
     c.section(&["pull"]).bool("rebase", false)?;
     c.section(&["submodule"]).bool("recurse", true)?; // Automatically update submodules on 'git checkout'
+    c.section(&["init"]).string("defaultBranch", "master")?;
 
     info!(
         "Setting up Git LFS for user with name {:?}",
