@@ -6,17 +6,13 @@
 # Also, this file is indentation-insensitive and the `Host' directive causes all following directives to apply to it. Hence the `Host *' at the end.
 
 # --------------------------------------------------------------------------------
-# Blue Medora
-Host vro??-sfisk
-HostName %h.bluemedora.localnet
-User root
-
+# VMware
 Host vr*-sfisk
-HostName %h.bluemedora.localnet
+HostName %h.tvs.vmware.com
 User root
 
 Host javadocs
-HostName %h.bluemedora.localnet
+HostName %h.tvs.vmware.com
 User root
 
 # --------------------------------------------------------------------------------
