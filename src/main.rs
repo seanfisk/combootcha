@@ -70,6 +70,16 @@ fn main() -> Result<()> {
         .help("Standard user to run as; defaults to value of SUDO_USER environment variable")
         .takes_value(true);
 
+    let homebrew_arg_name = "homebrew";
+    let homebrew_arg = Arg::with_name(homebrew_arg_name)
+        .short("-H")
+        .help("Install Homebrew formulae and casks (takes a long time)");
+
+    let browser_arg_name = "set-default-browser";
+    let browser_arg = Arg::with_name(browser_arg_name)
+        .short("-B")
+        .help("Set the default browser (shows a prompt every time)");
+
     let color_mode = logging::read_color_mode_from_env()?;
 
     let app = App::new(crate_name!())
@@ -82,7 +92,9 @@ fn main() -> Result<()> {
             ColorMode::Auto => AppSettings::ColorAuto,
         })
         .arg(log_level_arg)
-        .arg(standard_user_arg);
+        .arg(standard_user_arg)
+        .arg(homebrew_arg)
+        .arg(browser_arg);
 
     let matches = app.get_matches();
 
@@ -97,8 +109,10 @@ fn main() -> Result<()> {
         )
     })?;
 
-    // homebrew::install_system(&standard_user)?;
-    // homebrew::install_deps(&standard_user)?;
+    if matches.is_present(homebrew_arg_name) {
+        homebrew::install_system(&standard_user)?;
+        homebrew::install_deps(&standard_user)?;
+    }
 
     login_shells::set(&standard_user)?;
     ssh::configure(&standard_user)?;
@@ -113,7 +127,10 @@ fn main() -> Result<()> {
     hg::configure(&standard_user)?;
     network_link_conditioner::install()?;
     japicc::install()?;
-    // default_browser::set(&standard_user)?;
+
+    if matches.is_present(browser_arg_name) {
+        default_browser::set(&standard_user)?;
+    }
 
     preferences::set(&standard_user)?;
 
