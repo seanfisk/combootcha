@@ -31,3 +31,7 @@ https://jdhao.github.io/2019/10/08/zsh_plugin_managers_compare/
 - `unattend`
 
 ## Port Emacs config
+
+## macOS do not wake on enhanced notifications
+
+https://osxdaily.com/2017/12/20/stop-enhanced-notifications-waking-mac-sleep/
