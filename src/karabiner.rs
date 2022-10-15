@@ -32,6 +32,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
                                   "to_if_alone": [{ "key_code": "spacebar" }],
                                   "type": "basic",
                                   // I use spacebar for the speed toggle in RetroArch and the space to ctrl mapping does not work well with this
+                                  // See https://github.com/pqrs-org/Karabiner-Elements/issues/1109
                                   "conditions": [
                                       {
                                           "type": "frontmost_application_unless",
