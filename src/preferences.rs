@@ -303,7 +303,7 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             // .int("closeViewZoomMode", 0)?
             .bool("closeViewHotkeysEnabled", false)?
             //   Use scroll gesture with modifier keys to zoom.
-            .bool("closeViewScrollWheelToggle", true)?
+            // .bool("closeViewScrollWheelToggle", true)? // TODO This is causing the sync to fail for some reason
             //   Use Ctrl as the modifier key (the number is a key code or something).
             //   This seems not to work correctly (?).
             // .int("closeViewScrollWheelModifiersInt", 262_144)?
