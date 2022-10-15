@@ -25,12 +25,19 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
                 ],
                 "complex_modifications": {
                     "rules": [
-                        { "description": "Pressing spacebar inserts space. Holding spacebar holds control.",
+                        { "description": "Pressing spacebar inserts space. Holding spacebar holds control. Disabled in RetroArch.",
                            "manipulators": [
                                { "from": { "key_code": "spacebar", "modifiers": { "optional": ["any"] } },
                                   "to": [{ "key_code": "left_control" }],
                                   "to_if_alone": [{ "key_code": "spacebar" }],
                                   "type": "basic",
+                                  // I use spacebar for the speed toggle in RetroArch and the space to ctrl mapping does not work well with this
+                                  "conditions": [
+                                      {
+                                          "type": "frontmost_application_unless",
+                                          "bundle_identifiers": ["^libretro\\.RetroArch$"]
+                                      }
+                                  ]
                                },
                            ],
                         },
