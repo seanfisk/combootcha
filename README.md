@@ -1,4 +1,4 @@
-# Sean Fisk's Personal Computing Setup
+# Sean Fisk's Computing Setup
 
 A set of programs to automate my personal computing setup.
 
@@ -20,7 +20,7 @@ This also removes the decision of where to put customizations. The emacs repo wa
 A program will be built for each environment. Currently planned:
 
 - Work laptop
-- vROps boxes (mostly just to have a second environment, which forces me to consider it)
+- Personal laptop
 
 ## Executing the setup
 
