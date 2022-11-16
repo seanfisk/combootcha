@@ -1,5 +1,5 @@
 [package]
-name = "personal-computing-setup"
+name = "computing-setup"
 version = "0.1.0"
 authors = ["Sean Fisk <sean@seanfisk.com>"]
 edition = "2018"
