@@ -56,8 +56,8 @@ fn main() -> Result<()> {
         return Err(anyhow!("This program must be run as root!"));
     }
 
-    const log_level_arg_name: &str = "log-level";
-    let log_level_arg = Arg::with_name(log_level_arg_name)
+    const LOG_LEVEL_ARG_NAME: &str = "log-level";
+    let log_level_arg = Arg::with_name(LOG_LEVEL_ARG_NAME)
         .short("l")
         .long("log-level")
         .possible_values(&logging::LogLevel::variants())
@@ -65,24 +65,24 @@ fn main() -> Result<()> {
         .takes_value(true)
         .value_name("LEVEL");
 
-    const standard_user_arg_name: &str = "username";
-    let standard_user_arg = Arg::with_name(standard_user_arg_name)
+    const STANDARD_USER_ARG_NAME: &str = "username";
+    let standard_user_arg = Arg::with_name(STANDARD_USER_ARG_NAME)
         .short("u")
         .long("standard-user")
         .help("Standard user to run as; defaults to value of SUDO_USER environment variable")
         .takes_value(true)
         .value_name("USERNAME");
 
-    const homebrew_arg_name: &str = "homebrew";
-    let homebrew_arg = Arg::with_name(homebrew_arg_name)
+    const HOMEBREW_ARG_NAME: &str = "homebrew";
+    let homebrew_arg = Arg::with_name(HOMEBREW_ARG_NAME)
         .short("-H")
-        .long(homebrew_arg_name)
+        .long(HOMEBREW_ARG_NAME)
         .help("Install Homebrew formulae and casks (takes a long time)");
 
-    const browser_arg_name: &str = "set-default-browser";
-    let browser_arg = Arg::with_name(browser_arg_name)
+    const BROWSER_ARG_NAME: &str = "set-default-browser";
+    let browser_arg = Arg::with_name(BROWSER_ARG_NAME)
         .short("-B")
-        .long(browser_arg_name)
+        .long(BROWSER_ARG_NAME)
         .help("Set the default browser (shows a prompt every time)");
 
     let color_mode = logging::read_color_mode_from_env()?;
@@ -103,10 +103,10 @@ fn main() -> Result<()> {
 
     let matches = app.get_matches();
 
-    logging::init(color_mode, matches.value_of(log_level_arg_name))?;
+    logging::init(color_mode, matches.value_of(LOG_LEVEL_ARG_NAME))?;
     debug!("Logger was succesfully instantiated");
 
-    let standard_username = get_standard_username(matches.value_of(standard_user_arg_name))?;
+    let standard_username = get_standard_username(matches.value_of(STANDARD_USER_ARG_NAME))?;
     let standard_user = get_user_by_name(&standard_username).ok_or_else(|| {
         anyhow!(
             "User with name {:?} does not exist on this system!",
@@ -114,7 +114,7 @@ fn main() -> Result<()> {
         )
     })?;
 
-    if matches.is_present(homebrew_arg_name) {
+    if matches.is_present(HOMEBREW_ARG_NAME) {
         homebrew::install_system(&standard_user)?;
         homebrew::install_deps(&standard_user)?;
     }
@@ -133,7 +133,7 @@ fn main() -> Result<()> {
     network_link_conditioner::install()?;
     japicc::install()?;
 
-    if matches.is_present(browser_arg_name) {
+    if matches.is_present(BROWSER_ARG_NAME) {
         default_browser::set(&standard_user)?;
     }
 
