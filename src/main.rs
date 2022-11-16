@@ -56,28 +56,33 @@ fn main() -> Result<()> {
         return Err(anyhow!("This program must be run as root!"));
     }
 
-    let log_level_arg = Arg::with_name("log-level")
+    const log_level_arg_name: &str = "log-level";
+    let log_level_arg = Arg::with_name(log_level_arg_name)
         .short("l")
+        .long("log-level")
         .possible_values(&logging::LogLevel::variants())
         .help("Set the minimum log level")
-        .long("log-level")
         .takes_value(true)
         .value_name("LEVEL");
 
-    let standard_user_arg = Arg::with_name("USERNAME")
+    const standard_user_arg_name: &str = "username";
+    let standard_user_arg = Arg::with_name(standard_user_arg_name)
         .short("u")
         .long("standard-user")
         .help("Standard user to run as; defaults to value of SUDO_USER environment variable")
-        .takes_value(true);
+        .takes_value(true)
+        .value_name("USERNAME");
 
-    let homebrew_arg_name = "homebrew";
+    const homebrew_arg_name: &str = "homebrew";
     let homebrew_arg = Arg::with_name(homebrew_arg_name)
         .short("-H")
+        .long(homebrew_arg_name)
         .help("Install Homebrew formulae and casks (takes a long time)");
 
-    let browser_arg_name = "set-default-browser";
+    const browser_arg_name: &str = "set-default-browser";
     let browser_arg = Arg::with_name(browser_arg_name)
         .short("-B")
+        .long(browser_arg_name)
         .help("Set the default browser (shows a prompt every time)");
 
     let color_mode = logging::read_color_mode_from_env()?;
@@ -98,10 +103,10 @@ fn main() -> Result<()> {
 
     let matches = app.get_matches();
 
-    logging::init(color_mode, matches.value_of("log-level"))?;
+    logging::init(color_mode, matches.value_of(log_level_arg_name))?;
     debug!("Logger was succesfully instantiated");
 
-    let standard_username = get_standard_username(matches.value_of("USERNAME"))?;
+    let standard_username = get_standard_username(matches.value_of(standard_user_arg_name))?;
     let standard_user = get_user_by_name(&standard_username).ok_or_else(|| {
         anyhow!(
             "User with name {:?} does not exist on this system!",
