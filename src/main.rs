@@ -21,10 +21,22 @@ mod user_defaults;
 mod verbose_command;
 
 use anyhow::{anyhow, Result};
-use clap::{crate_authors, crate_description, crate_name, App, AppSettings::StrictUtf8, Arg};
+use clap::{
+    arg_enum, crate_authors, crate_description, crate_name, App, AppSettings::StrictUtf8, Arg,
+};
 use clap_logging::AppExt;
 use log::{debug, info, LevelFilter};
 use users::get_user_by_name;
+
+arg_enum! {
+    #[derive(Debug)]
+    // We prefer to use case-sensitive names and want them to be all-lowercase. While it's possible to implement the enum ourselves, using clap::arg_enum is much easier. We simply have to put up with non-standard Rust naming, which is acceptable.
+    #[allow(non_camel_case_types)]
+    enum Config {
+        work,
+        personal,
+    }
+}
 
 fn is_root() -> bool {
     nix::unistd::Uid::current().is_root()
@@ -77,6 +89,12 @@ fn main() -> Result<()> {
         .long(BROWSER_ARG_NAME)
         .help("Set the default browser (shows a prompt every time)");
 
+    const CONFIG_ARG_NAME: &str = "config";
+    let config_arg = Arg::with_name(CONFIG_ARG_NAME)
+        .index(1)
+        .help("Configuration/purpose for this machine")
+        .possible_values(&Config::variants());
+
     let app = App::new(crate_name!())
         .global_settings(&clap_logging_config.clap_settings())
         .global_setting(StrictUtf8)
@@ -85,7 +103,8 @@ fn main() -> Result<()> {
         .log_level_arg()
         .arg(standard_user_arg)
         .arg(homebrew_arg)
-        .arg(browser_arg);
+        .arg(browser_arg)
+        .arg(config_arg);
 
     let matches = app.get_matches();
 
