@@ -29,8 +29,8 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
     for app in vec![
         "Flux",
         "Jettison",
-        "Quicksilver",
-        "gfxCardStatus",
+        // "Quicksilver",
+        // "gfxCardStatus",
         "iTerm",
         "Hammerspoon",
     ] {

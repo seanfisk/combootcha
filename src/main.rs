@@ -134,13 +134,21 @@ fn main() -> Result<()> {
 
     iterm2::configure(&standard_user)?;
     login_items::configure(&standard_user)?;
-    quicksilver::configure(&standard_user)?;
     hammerspoon::configure(&standard_user)?;
     karabiner::configure(&standard_user)?;
     git::configure(&standard_user)?;
-    hg::configure(&standard_user)?;
     network_link_conditioner::install()?;
-    japicc::install()?;
+
+    match config {
+        Config::personal => {
+            // quicksilver::configure(&standard_user)?;
+            // hg::configure(&standard_user)?; // TODO Do I need this?
+        },
+        Config::work => {
+            japicc::install()?;
+        }
+    }
+
 
     if matches.is_present(BROWSER_ARG_NAME) {
         default_browser::set(&standard_user)?;
