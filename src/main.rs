@@ -30,7 +30,7 @@ use log::{debug, info, LevelFilter};
 use users::get_user_by_name;
 
 arg_enum! {
-    #[derive(Debug)]
+    #[derive(Debug, Copy, Clone, PartialEq)]
     // We prefer to use case-sensitive names and want them to be all-lowercase. While it's possible to implement the enum ourselves, using clap::arg_enum is much easier. We simply have to put up with non-standard Rust naming, which is acceptable.
     #[allow(non_camel_case_types)]
     // TODO pub(crate) or hack?
@@ -129,7 +129,7 @@ fn main() -> Result<()> {
     }
 
     login_shells::set(&standard_user)?;
-    ssh::configure(&standard_user)?;
+    ssh::configure(config, &standard_user)?;
     // TODO Fix Zsh startup helper?
 
     iterm2::configure(&standard_user)?;
@@ -143,12 +143,11 @@ fn main() -> Result<()> {
         Config::personal => {
             // quicksilver::configure(&standard_user)?;
             // hg::configure(&standard_user)?; // TODO Do I need this?
-        },
+        }
         Config::work => {
             japicc::install()?;
         }
     }
-
 
     if matches.is_present(BROWSER_ARG_NAME) {
         default_browser::set(&standard_user)?;

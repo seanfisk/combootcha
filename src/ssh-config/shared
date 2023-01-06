@@ -6,12 +6,6 @@
 # Also, this file is indentation-insensitive and the `Host' directive causes all following directives to apply to it. Hence the `Host *' at the end.
 
 # --------------------------------------------------------------------------------
-# VMware
-Host vr*-sfisk
-HostName %h.tvs.vmware.com
-User root
-
-# --------------------------------------------------------------------------------
 # General configurations.
 Host *
 # Enable multiple connections for all hosts except the ones excluded above.
