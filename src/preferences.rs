@@ -198,9 +198,9 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             //   Show all filename extensions
             .bool("AppleShowAllExtensions", true)?
             //   Enable spring loading for directories
-            .bool("com.apple.springing.enabled", true)?
+            // .bool("com.apple.springing.enabled", true)?
             // Remove the spring loading delay for directories
-            .int("com.apple.springing.delay", 0)?
+            // .int("com.apple.springing.delay", 0)?
             .sync()?;
 
         // Automatically quit printer app once the print jobs complete
@@ -269,10 +269,10 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             .bool("showhidden", true)?
             .sync()?;
 
-        App::new("com.apple.TimeMachine")?
-            // Prevent Time Machine from prompting to use new hard drives as backup volume
-            .bool("DoNotOfferNewDisksForBackup", true)?
-            .sync()?;
+        // App::new("com.apple.TimeMachine")?
+        //     // Prevent Time Machine from prompting to use new hard drives as backup volume
+        //     .bool("DoNotOfferNewDisksForBackup", true)?
+        //     .sync()?;
 
         // App::new("com.apple.TextEdit")?
         //     // Use plain text mode for new TextEdit documents
