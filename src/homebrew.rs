@@ -7,6 +7,7 @@ use std::path::Path;
 
 use crate::user::UserExt as OtherUserExt;
 use crate::verbose_command::Command;
+use crate::Config;
 
 pub(crate) fn install_system(standard_user: &User) -> Result<()> {
     info!("Considering Homebrew installation");
@@ -27,14 +28,27 @@ pub(crate) fn install_system(standard_user: &User) -> Result<()> {
     }
 }
 
-pub(crate) fn install_deps(standard_user: &User) -> Result<()> {
+pub(crate) fn install_deps(config: Config, standard_user: &User) -> Result<()> {
     info!("Installing Homebrew dependencies via Brewfile");
-    let bytes = include_bytes!("Brewfile");
     let path = standard_user.home_dir().join(".Brewfile");
 
     standard_user.as_effective_user(|| {
         let mut file = crate::fs::create_file(&path)?;
-        file.write_all(bytes)?;
+        {
+            let bytes = include_bytes!("brewfiles/shared.rb");
+            file.write_all(bytes)?;
+        }
+        match config {
+            Config::personal => {
+                let bytes =include_bytes!("brewfiles/personal.rb");
+                file.write_all(bytes)?;
+            }
+            Config::work => {
+                let bytes = include_bytes!("brewfiles/work.rb");
+                file.write_all(bytes)?;
+            },
+        };
+
         Ok(())
     })?;
 

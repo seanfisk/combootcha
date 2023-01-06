@@ -22,7 +22,7 @@ mod verbose_command;
 
 use anyhow::{anyhow, Result};
 use clap::{
-    arg_enum, crate_authors, crate_description, crate_name, App, AppSettings::StrictUtf8, Arg,
+    arg_enum, crate_authors, crate_description, crate_name, App, AppSettings::StrictUtf8, Arg, value_t,
 };
 use clap_logging::AppExt;
 use log::{debug, info, LevelFilter};
@@ -32,9 +32,10 @@ arg_enum! {
     #[derive(Debug)]
     // We prefer to use case-sensitive names and want them to be all-lowercase. While it's possible to implement the enum ourselves, using clap::arg_enum is much easier. We simply have to put up with non-standard Rust naming, which is acceptable.
     #[allow(non_camel_case_types)]
-    enum Config {
-        work,
+    // TODO pub(crate) or hack?
+    pub enum Config {
         personal,
+        work,
     }
 }
 
@@ -119,9 +120,11 @@ fn main() -> Result<()> {
         )
     })?;
 
+    let config = value_t!(matches.value_of(CONFIG_ARG_NAME), Config)?;
+
     if matches.is_present(HOMEBREW_ARG_NAME) {
         homebrew::install_system(&standard_user)?;
-        homebrew::install_deps(&standard_user)?;
+        homebrew::install_deps(config,&standard_user)?;
     }
 
     login_shells::set(&standard_user)?;
