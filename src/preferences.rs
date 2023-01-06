@@ -34,9 +34,9 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             .bool("CVStartAsLargeWindow", false)?
             .sync()?;
 
-        App::new("com.apple.iChat")? // Messages.app
-            .bool("SaveConversationsOnClose", true)? // Save history when conversations are closed
-            .sync()?;
+        // App::new("com.apple.iChat")? // Messages.app
+        //     .bool("SaveConversationsOnClose", true)? // Save history when conversations are closed
+        //     .sync()?;
 
         App::new("com.lightheadsw.caffeine")?
             .bool("ActivateOnLaunch", true)? // Turn on Caffeine when the app is started.
@@ -67,10 +67,10 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
 
         // Note: shouldStartAtLogin doesn't actually work, because gfxCardStatus uses
         // login items like most other applications. So don't bother setting it.
-        App::new("com.codykrieger.gfxCardStatus-Preferences")?
-            .bool("shouldCheckForUpdatesOnStartup", true)?
-            .bool("shouldUseSmartMenuBarIcons", true)?
-            .sync()?;
+        // App::new("com.codykrieger.gfxCardStatus-Preferences")?
+        //     .bool("shouldCheckForUpdatesOnStartup", true)?
+        //     .bool("shouldUseSmartMenuBarIcons", true)?
+        //     .sync()?;
 
         App::new("com.stclairsoft.Jettison")?
             .bool("autoEjectAtLogout", false)?
@@ -118,16 +118,16 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             .int("askForPasswordDelay", 5)?
             .sync()?;
 
-        App::new("com.skitch.skitch")?
-            // Save New Skitch Notes to Evernote:
-            //
-            // 1: Always
-            // 2: Ask
-            // 3: Manual
-            //
-            // The default is Always, which quickly burns up the Evernote upload quota.
-            .int("auto_save_selector", 3)?
-            .sync()?;
+        // App::new("com.skitch.skitch")?
+        //     // Save New Skitch Notes to Evernote:
+        //     //
+        //     // 1: Always
+        //     // 2: Ask
+        //     // 3: Manual
+        //     //
+        //     // The default is Always, which quickly burns up the Evernote upload quota.
+        //     .int("auto_save_selector", 3)?
+        //     .sync()?;
 
         App::new("org.macosforge.xquartz.X11")?
             // Input
@@ -165,8 +165,7 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
 
         // A note on settings: if the value is zero, set it as an integer 0 instead of
         // float 0.0. Otherwise, it will be "cast" to a float by the defaults system
-        // and the resource will be updated every time. In addition, if the dock
-        // settings are updated, the mac_os_x cookbook will `killall dock' every time.
+        // and the resource will be updated every time.
         App::new("NSGlobalDomain")?
             // Always show scrollbars
             .string("AppleShowScrollBars", "Always")?
@@ -182,7 +181,7 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             .bool("PMPrintingExpandedStateForPrint2", true)?
             // Save to disk (not to iCloud) by default
             .bool("NSDocumentSaveNewDocumentsToCloud", false)?
-            // Disable natural (Lion-style) scrolling
+            // Disable natural scrolling
             .bool("com.apple.swipescrolldirection", false)?
             // Display ASCII control characters using caret notation in standard text
             // views
@@ -210,9 +209,9 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             .sync()?;
 
         // Set Help Viewer windows to non-floating mode
-        App::new("com.apple.helpviewer")?
-            .bool("DevMode", true)?
-            .sync()?;
+        // App::new("com.apple.helpviewer")?
+        //     .bool("DevMode", true)?
+        //     .sync()?;
 
         // TODO
         // Reveal IP address, hostname, OS version, etc. when clicking the clock in the
@@ -254,10 +253,10 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             .bool("DSDontWriteNetworkStores", true)?
             .sync()?;
 
-        App::new("com.apple.NetworkBrowser")?
-            // Enable AirDrop over Ethernet and on unsupported Macs running Lion
-            .bool("BrowseAllInterfaces", true)?
-            .sync()?;
+        // App::new("com.apple.NetworkBrowser")?
+        //     // Enable AirDrop over Ethernet
+        //     .bool("BrowseAllInterfaces", true)?
+        //     .sync()?;
 
         App::new("com.apple.dock")?
             // Remove the auto-hiding Dock delay
@@ -275,13 +274,13 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             .bool("DoNotOfferNewDisksForBackup", true)?
             .sync()?;
 
-        App::new("com.apple.TextEdit")?
-            // Use plain text mode for new TextEdit documents
-            .int("RichText", 0)?
-            // Open and save files as UTF-8 in TextEdit
-            .int("PlainTextEncoding", 4)?
-            .int("PlainTextEncodingForWrite", 4)?
-            .sync()?;
+        // App::new("com.apple.TextEdit")?
+        //     // Use plain text mode for new TextEdit documents
+        //     .int("RichText", 0)?
+        //     // Open and save files as UTF-8 in TextEdit
+        //     .int("PlainTextEncoding", 4)?
+        //     .int("PlainTextEncodingForWrite", 4)?
+        //     .sync()?;
 
         App::new("com.apple.DiskUtility")?
             // Enable the debug menu in Disk Utility

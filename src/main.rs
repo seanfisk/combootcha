@@ -22,7 +22,8 @@ mod verbose_command;
 
 use anyhow::{anyhow, Result};
 use clap::{
-    arg_enum, crate_authors, crate_description, crate_name, App, AppSettings::StrictUtf8, Arg, value_t,
+    arg_enum, crate_authors, crate_description, crate_name, value_t, App, AppSettings::StrictUtf8,
+    Arg,
 };
 use clap_logging::AppExt;
 use log::{debug, info, LevelFilter};
@@ -124,7 +125,7 @@ fn main() -> Result<()> {
 
     if matches.is_present(HOMEBREW_ARG_NAME) {
         homebrew::install_system(&standard_user)?;
-        homebrew::install_deps(config,&standard_user)?;
+        homebrew::install_deps(config, &standard_user)?;
     }
 
     login_shells::set(&standard_user)?;

@@ -1,3 +1,5 @@
+# Personal only
+
 # brew 'aria2'
 # brew 'dfc' # An improved version of df with colors.
 # brew 'gibo'

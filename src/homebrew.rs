@@ -40,13 +40,13 @@ pub(crate) fn install_deps(config: Config, standard_user: &User) -> Result<()> {
         }
         match config {
             Config::personal => {
-                let bytes =include_bytes!("brewfiles/personal.rb");
+                let bytes = include_bytes!("brewfiles/personal.rb");
                 file.write_all(bytes)?;
             }
             Config::work => {
                 let bytes = include_bytes!("brewfiles/work.rb");
                 file.write_all(bytes)?;
-            },
+            }
         };
 
         Ok(())
