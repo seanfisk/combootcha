@@ -11,10 +11,6 @@ Host vr*-sfisk
 HostName %h.tvs.vmware.com
 User root
 
-Host javadocs
-HostName %h.tvs.vmware.com
-User root
-
 # --------------------------------------------------------------------------------
 # General configurations.
 Host *
