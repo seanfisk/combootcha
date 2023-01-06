@@ -1,8 +1,9 @@
 # Tasks
 
-- Switch to Clap Logging
 - Split into work and personal modes
   - This will require some work on Homebrew because we'll have some formulae and casks that we want for both, and some exclusive
+- Upgrade to Clap 4.x
+- Switch to Clap Logging
 
 # Things to add
 

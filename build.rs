@@ -28,7 +28,7 @@ fn main() -> std::result::Result<(), Error> {
 
     bindgen::Builder::default()
         .header(process_input_file("user_defaults.h")?)
-        .whitelist_function("user_defaults_.+")
+        .allowlist_function("user_defaults_.+")
         .generate()
         .map_err(|_| anyhow!("Could not generate bindings"))?
         .write_to_file(out_path.join("user_defaults.rs"))?;

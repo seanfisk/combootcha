@@ -2,23 +2,21 @@
 name = "computing-setup"
 version = "0.1.0"
 authors = ["Sean Fisk <sean@seanfisk.com>"]
-edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+edition = "2021"
 
 [dependencies]
-nix = "0.18.0"
-clap = "2.33"
+nix = "0.26"
+clap = "2.34"
 anyhow = "1.0"
-log = { version = "0.4.8", features = ["std"] }
-users = "0.10"
-chrono = "0.4.10"
-atty = "0.2.14"
-serde_json = "1.0"
+log = { version = "0.4", features = ["std"] }
+users = "0.11"
+chrono = "0.4"
+atty = "0.2"
+serde_json = "1"
 plist = "1"
 subprocess = "0.2"
-reqwest = { version = "0.10", features = ["blocking"] }
-tempfile = "3.1"
+reqwest = { version = "0.11", features = ["blocking"] }
+tempfile = "3.3"
 #directories = "2.0.2"
 #Inflector = "0.11.4"
 
@@ -37,4 +35,4 @@ ansi_term = "0.11.0" # Synchronized with clap to prevent an extra dependency
 [build-dependencies]
 anyhow = "1.0"
 cc = "1.0"
-bindgen = "0.53.1"
+bindgen = "0.63"
