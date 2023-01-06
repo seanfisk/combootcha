@@ -8,7 +8,6 @@ mod homebrew;
 mod iterm2;
 mod japicc;
 mod karabiner;
-mod logging;
 mod login_items;
 mod login_shells;
 mod network_link_conditioner;
@@ -22,9 +21,9 @@ mod user_defaults;
 mod verbose_command;
 
 use anyhow::{anyhow, Result};
-use clap::{crate_authors, crate_description, crate_name, App, AppSettings, Arg};
-use log::{debug, info};
-use logging::ColorMode;
+use clap::{crate_authors, crate_description, crate_name, App, AppSettings::StrictUtf8, Arg};
+use clap_logging::AppExt;
+use log::{debug, info, LevelFilter};
 use users::get_user_by_name;
 
 fn is_root() -> bool {
@@ -56,14 +55,7 @@ fn main() -> Result<()> {
         return Err(anyhow!("This program must be run as root!"));
     }
 
-    const LOG_LEVEL_ARG_NAME: &str = "log-level";
-    let log_level_arg = Arg::with_name(LOG_LEVEL_ARG_NAME)
-        .short("l")
-        .long("log-level")
-        .possible_values(&logging::LogLevel::variants())
-        .help("Set the minimum log level")
-        .takes_value(true)
-        .value_name("LEVEL");
+    let clap_logging_config = clap_logging::Config::new()?;
 
     const STANDARD_USER_ARG_NAME: &str = "username";
     let standard_user_arg = Arg::with_name(STANDARD_USER_ARG_NAME)
@@ -85,25 +77,19 @@ fn main() -> Result<()> {
         .long(BROWSER_ARG_NAME)
         .help("Set the default browser (shows a prompt every time)");
 
-    let color_mode = logging::read_color_mode_from_env()?;
-
     let app = App::new(crate_name!())
+        .global_settings(&clap_logging_config.clap_settings())
+        .global_setting(StrictUtf8)
         .about(crate_description!())
         .author(crate_authors!())
-        .setting(AppSettings::ColoredHelp)
-        .setting(match color_mode {
-            ColorMode::Never => AppSettings::ColorNever,
-            ColorMode::Always => AppSettings::ColorAlways,
-            ColorMode::Auto => AppSettings::ColorAuto,
-        })
-        .arg(log_level_arg)
+        .log_level_arg()
         .arg(standard_user_arg)
         .arg(homebrew_arg)
         .arg(browser_arg);
 
     let matches = app.get_matches();
 
-    logging::init(color_mode, matches.value_of(LOG_LEVEL_ARG_NAME))?;
+    clap_logging_config.init_logger(&matches, "SETUP_LOG_LEVEL", LevelFilter::Info)?;
     debug!("Logger was succesfully instantiated");
 
     let standard_username = get_standard_username(matches.value_of(STANDARD_USER_ARG_NAME))?;

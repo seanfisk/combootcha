@@ -161,6 +161,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "clap-logging"
+version = "0.2.0"
+source = "git+https://github.com/seanfisk/clap-logging.git?tag=v0.2.0#9e117aee78725e575b497960c9ebafe84c8f29e7"
+dependencies = [
+ "ansi_term 0.11.0",
+ "atty",
+ "chrono",
+ "clap",
+ "log",
+ "thiserror",
+]
+
+[[package]]
 name = "codespan-reporting"
 version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -181,6 +194,7 @@ dependencies = [
  "cc",
  "chrono",
  "clap",
+ "clap-logging",
  "log",
  "nix",
  "plist",
@@ -1069,6 +1083,26 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d326610f408c7a4eb6f51c37c330e496b08506c9457c9d34287ecc38809fb060"
 dependencies = [
  "unicode-width",
+]
+
+[[package]]
+name = "thiserror"
+version = "1.0.38"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6a9cd18aa97d5c45c6603caea1da6628790b37f7a34b6ca89522331c5180fed0"
+dependencies = [
+ "thiserror-impl",
+]
+
+[[package]]
+name = "thiserror-impl"
+version = "1.0.38"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1fb327af4685e4d03fa8cbcf1716380da910eeb2bb8be417e7f9fd3fb164f36f"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
