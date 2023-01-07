@@ -57,16 +57,8 @@ cask 'karabiner-elements'
 cask 'lastpass'
 cask 'speedcrunch'
 cask 'wireshark'
+cask 'inkscape' # No longer needs XQuartz
 
 tap 'homebrew/cask-fonts'
 cask 'font-inconsolata'
 cask 'font-ubuntu'
-
-
-# X11-based software
-# Note: XQuartz is installed to /Applications/Utilities/XQuartz.app
-#cask 'xquartz'
-# These formulae require XQuartz to be installed first
-#brew 'xclip'
-# Let's try it without XQuartz first and see what happens
-cask 'inkscape'
