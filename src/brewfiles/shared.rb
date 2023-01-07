@@ -15,7 +15,6 @@ brew 'defaultbrowser'
 brew 'dos2unix'
 brew 'duti'
 brew 'editorconfig'
-brew 'emacs-mac', args: ['with-spacemacs-icon']
 brew 'exa'
 brew 'fasd'
 brew 'git'
@@ -39,6 +38,9 @@ brew 'watch'
 brew 'wget'
 brew 'xz'
 brew 'zsh'
+
+tap 'railwaycat/emacsmacport'
+brew 'emacs-mac', args: ['with-spacemacs-icon']
 
 cask 'atext'
 cask 'caffeine'
