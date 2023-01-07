@@ -47,6 +47,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
         .args(&["lfs", "install"])
         // We shouldn't be in a repo when we run this, but be explicit that we don't want any repo setup
         .arg("--skip-repo")
+        .cwd(standard_user.home_dir()) // Running in a repo shouldn't be a problem, but let's not do it anyway
         .user(&standard_user)
         .run()
 }
