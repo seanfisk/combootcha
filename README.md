@@ -32,6 +32,7 @@ Next, change some permissions that Homebrew needs to install Zsh completions. Wh
 
 ```bash
 sudo chown -R $(whoami) /usr/local/share/zsh
+chmod u+w /usr/local/share/zsh
 ```
 
 Next, install Homebrew manually by [following the instructions](https://brew.sh/#install). I am having trouble automating Homebrew system install in this current setup and it doesn't seem worth fretting over automating it right now since it's a one-time install.
