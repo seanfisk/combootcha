@@ -1,7 +1,9 @@
 # Tasks
 
 - Add homebrew tvs stuff
-- Network Link Conditioner is broken under Ventura it seems
+- Shell setup
+- fasd/iterm2 integration
+- Use Hammerspoon instead of Quicksilver to shortcut 
 - Upgrade to Clap 4.x
 
 # Things to add

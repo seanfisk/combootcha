@@ -49,3 +49,7 @@ This file lists parts of macOS setup that are not automated. Typically, this is 
 * Privacy & Security approvals
   - Hammerspoon & Accessbility
   - Karabiner driver
+
+* Dash license
+
+  Transfer it to the new machine and run `open license.dash-license`.
