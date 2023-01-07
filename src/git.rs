@@ -8,7 +8,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
     let c = Gitconfig::new(&standard_user);
     c.section(&["user"])
         .string("name", "Sean Fisk")?
-        .string("email", "sean@seanfisk.com")?;
+        .string("email", "sean@seanfisk.com")?; // TODO Use work email when everything else is settled
     c.section(&["core"])
         .string("excludesfile", "~/.gitignore-global")?;
     c.section(&["alias"])
@@ -43,12 +43,10 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
         standard_user.name()
     );
     // All this does at this time of writing is to add the LFS filter to ~/.gitconfig
-    Command::new("git")
+    git(&standard_user)
         .args(&["lfs", "install"])
         // We shouldn't be in a repo when we run this, but be explicit that we don't want any repo setup
         .arg("--skip-repo")
-        .cwd(standard_user.home_dir()) // Running in a repo shouldn't be a problem, but let's not do it anyway
-        .user(&standard_user)
         .run()
 }
 
@@ -95,7 +93,7 @@ impl<'a> Section<'a> {
             .cloned()
             .collect::<Vec<_>>()
             .join(".");
-        let mut command = Command::new("git");
+        let mut command = git(&self.user);
         command.arg("config").arg("--global");
         if let Some(type_) = type_ {
             command.arg("--type").arg(type_);
@@ -104,9 +102,15 @@ impl<'a> Section<'a> {
             .arg("--")
             .arg(dotted_path)
             .arg(value)
-            .cwd(self.user.home_dir()) // Running in a repo shouldn't be a problem, but let's not do it anyway
             .user(self.user)
             .run()?;
         Ok(self)
     }
+}
+
+fn git(user: &User) -> Command {
+    let mut command = Command::new("git");
+    command.user(user);
+    command.cwd(user.home_dir()); // Running in a repo shouldn't be a problem, but let's not do it anyway
+    command
 }
