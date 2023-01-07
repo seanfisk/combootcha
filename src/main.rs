@@ -139,12 +139,15 @@ fn main() -> Result<()> {
     git::configure(&standard_user)?;
 
     // TODO Not working under macOS Ventura
-    //network_link_conditioner::install()?;
+    // network_link_conditioner::install()?;
 
     match config {
         Config::personal => {
+            // Trying to work without Quicksilver
             // quicksilver::configure(&standard_user)?;
-            // hg::configure(&standard_user)?; // TODO Do I need this?
+
+            // TODO Do I need this?
+            // hg::configure(&standard_user)?;
         }
         Config::work => {
             japicc::install()?;
