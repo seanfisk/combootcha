@@ -18,5 +18,5 @@
 #cask 'gfxcardstatus'
 #cask 'quicksilver'
 #cask 'retroarch-metal' # 'retroarch' cask is also available, but I think the Metal renderer is supposed to be better
-cask 'firefox' # Note: Firefox is auto-installed by VMware on my work laptop
+cask 'firefox'
 cask 'spotify'

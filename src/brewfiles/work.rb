@@ -5,5 +5,7 @@ brew 'ruby-build'
 brew 'rbenv'
 brew 'rbenv-default-gems'
 
-cask 'zoom'
+# Auto-installed apps:
+# • zoom
+# • firefox
 cask 'zulu8' # Java used at VMware
