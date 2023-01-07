@@ -18,9 +18,10 @@ pub(crate) fn install_system(standard_user: &User) -> Result<()> {
     } else {
         info!("Installing Homebrew…");
         // Yeah, we could pull this down with reqwest, but it's a bit simpler to use the exact command that Hombrew provides
+        // TODO I think we should consider making this simpler (and possibly using reqwest); the nested shell execution is a bit ugly
         Command::new("/bin/bash")
             .arg("-c")
-            .arg("$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)")
+            .arg("NONINTERACTIVE=1 /bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"")
             .user(&standard_user)
             .run()?;
         info!("Homebrew installed successfully");
