@@ -1,6 +1,7 @@
 # Tasks
 
 - Add homebrew tvs stuff
+- Network Link Conditioner is broken under Ventura it seems
 - Upgrade to Clap 4.x
 
 # Things to add
