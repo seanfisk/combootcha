@@ -45,3 +45,7 @@ This file lists parts of macOS setup that are not automated. Typically, this is 
 * Karabiner
 
   This does not start up properly when using the launch agent approach, so we just use native startup support through the app itself.
+
+* Privacy & Security approvals
+  - Hammerspoon & Accessbility
+  - Karabiner driver
