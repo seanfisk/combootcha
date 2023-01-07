@@ -137,7 +137,9 @@ fn main() -> Result<()> {
     hammerspoon::configure(&standard_user)?;
     karabiner::configure(&standard_user)?;
     git::configure(&standard_user)?;
-    network_link_conditioner::install()?;
+
+    // TODO Not working under macOS Ventura
+    //network_link_conditioner::install()?;
 
     match config {
         Config::personal => {
