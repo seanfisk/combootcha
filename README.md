@@ -24,6 +24,8 @@ A program will be built for each environment. Currently planned:
 
 ## Executing the setup
 
+### First time
+
 Before doing anything, it is important to set up Time Machine. Select a free partition on an external hard drive and add it to Time Machine. I don't think the partition needs to be erased and reformatted — I think Time Machine will do this automatically. Add the disk and run a backup before going farther.
 
 Next, install either Xcode or Command Line Tools. For Homebrew, Python, Ruby, and normal C++ compiles, we can get along with just the Command Line Tools. However, to compile Mac applications using Qt, we need the full Xcode installation.
@@ -46,3 +48,13 @@ Next, transfer the compiled executable to the new system and execute it:
 ```bash
 sudo ./computing-setup --homebrew --set-default-browser work
 ```
+
+### Subsequent updates
+
+This is easy:
+
+```bash
+sudo ./computing-setup --homebrew work
+```
+
+If you don't feel like updating Homebrew, that can of course be omitted.
