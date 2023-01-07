@@ -3,7 +3,7 @@
 - Add homebrew tvs stuff
 - Shell setup
 - fasd/iterm2 integration
-- Use Hammerspoon instead of Quicksilver to shortcut 
+- Use Hammerspoon instead of Quicksilver to activate shortcuts for iTerm and Firefox
 - Upgrade to Clap 4.x
 
 # Things to add
