@@ -24,7 +24,9 @@ A program will be built for each environment. Currently planned:
 
 ## Executing the setup
 
-First, install either Xcode or Command Line Tools with `xcode-select --install`. With Homebrew and normal C++ compiles, we can get along with just the Command Line Tools. However, to compile Mac applications using Qt, we need the full Xcode installation.
+First, install either Xcode or Command Line Tools. For Homebrew, Python, Ruby, and normal C++ compiles, we can get along with just the Command Line Tools. However, to compile Mac applications using Qt, we need the full Xcode installation.
+
+If using Command Line Tools, run `xcode-select --install`. If using Xcode, open the Mac App Store and install Xcode from there.
 
 Next, transfer the compiled executable to the new system and execute it:
 
