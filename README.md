@@ -24,4 +24,10 @@ A program will be built for each environment. Currently planned:
 
 ## Executing the setup
 
-TODO
+First, install either Xcode or Command Line Tools with `xcode-select --install`. With Homebrew and normal C++ compiles, we can get along with just the Command Line Tools. However, to compile Mac applications using Qt, we need the full Xcode installation.
+
+Next, transfer the compiled executable to the new system and execute it:
+
+```bash
+sudo ./computing-setup --homebrew --set-default-browser work
+```

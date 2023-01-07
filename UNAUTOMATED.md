@@ -3,10 +3,6 @@ Unautomated Setup
 
 This file lists parts of macOS setup that are not automated. Typically, this is due to technical or practical reasons.
 
-* Xcode / Command Line Tools
-
-  Run `xcode-select --install`. With Homebrew and normal C++ compiles, we can get along with just the Command Line Tools. However, to compile Mac applications using Qt, we need the full Xcode installation.
-
 * SSH key generation
 
   Run `ssh-keygen`, upload to GitHub, and copy the public key to necessary servers.
