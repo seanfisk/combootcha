@@ -1,6 +1,8 @@
 # Tasks
 
 - Add homebrew tvs stuff
+  - All formulae
+  - .bm_pref and stuff from developer guide
 - Shell setup
 - fasd/iterm2 integration
 - Use Hammerspoon instead of Quicksilver to activate shortcuts for iTerm and Firefox
