@@ -1,5 +1,6 @@
 # Tasks
 
+- Add homebrew tvs stuff
 - Upgrade to Clap 4.x
 
 # Things to add
