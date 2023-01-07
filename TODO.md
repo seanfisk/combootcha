@@ -1,7 +1,6 @@
 # Tasks
 
-- Split into work and personal modes
-  - This will require some work on Homebrew because we'll have some formulae and casks that we want for both, and some exclusive
+- Homebrew is failing to install zsh completion to `/usr/local/share/zsh/site-functions/_brew`
 - Upgrade to Clap 4.x
 
 # Things to add
