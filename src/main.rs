@@ -130,7 +130,7 @@ fn main() -> Result<()> {
 
     login_shells::set(&standard_user)?;
     ssh::configure(config, &standard_user)?;
-    // TODO Fix Zsh startup helper?
+    // Note: Zsh interaction with path_helper was fixed, at least since Ventura
 
     iterm2::configure(&standard_user)?;
     login_items::configure(&standard_user)?;
