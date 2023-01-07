@@ -4,6 +4,7 @@
 - Shell setup
 - fasd/iterm2 integration
 - Use Hammerspoon instead of Quicksilver to activate shortcuts for iTerm and Firefox
+- emacs-mac/cask conflict: https://github.com/d12frosted/homebrew-emacs-plus#known-issues
 - Upgrade to Clap 4.x
 
 # Things to add
