@@ -1,6 +1,5 @@
 # Tasks
 
-- Font packages have changed, need to fix this, looks like they're now in `cask-fonts`
 - Upgrade to Clap 4.x
 
 # Things to add

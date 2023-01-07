@@ -8,4 +8,7 @@ brew 'rbenv-default-gems'
 # Auto-installed apps:
 # • zoom
 # • firefox
-cask 'zulu8' # Java used at VMware
+
+# Java used at VMware
+tap 'homebrew/cask-versions'
+cask 'zulu8'

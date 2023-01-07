@@ -47,8 +47,6 @@ cask 'dash'
 cask 'deeper'
 cask 'disk-inventory-x'
 cask 'flux'
-cask 'font-inconsolata'
-cask 'font-ubuntu'
 cask 'gimp'
 cask 'hammerspoon'
 cask 'iterm2'
@@ -57,6 +55,11 @@ cask 'karabiner-elements'
 cask 'lastpass'
 cask 'speedcrunch'
 cask 'wireshark'
+
+tap 'homebrew/cask-fonts'
+cask 'font-inconsolata'
+cask 'font-ubuntu'
+
 
 # X11-based software
 # Note: XQuartz is installed to /Applications/Utilities/XQuartz.app
