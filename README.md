@@ -28,6 +28,8 @@ First, install either Xcode or Command Line Tools. For Homebrew, Python, Ruby, a
 
 If using Command Line Tools, run `xcode-select --install`. If using Xcode, open the Mac App Store and install Xcode from there.
 
+Next, install Homebrew manually by [following the instructions](https://brew.sh/#install). I am having trouble automating Homebrew system install in this current setup and it doesn't seem worth fretting over automating it right now since it's a one-time install.
+
 Next, transfer the compiled executable to the new system and execute it:
 
 ```bash

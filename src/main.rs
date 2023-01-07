@@ -124,7 +124,7 @@ fn main() -> Result<()> {
     let config = value_t!(matches.value_of(CONFIG_ARG_NAME), Config)?;
 
     if matches.is_present(HOMEBREW_ARG_NAME) {
-        homebrew::install_system(&standard_user)?;
+        // homebrew::install_system(&standard_user)?;
         homebrew::install_deps(config, &standard_user)?;
     }
 
