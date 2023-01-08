@@ -4,6 +4,7 @@ brew 'perl' # For installing japi-compliance-checker
 brew 'ruby-build'
 brew 'rbenv'
 brew 'rbenv-default-gems'
+brew 'slack'
 
 # Auto-installed apps:
 # • zoom
