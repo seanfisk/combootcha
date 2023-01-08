@@ -51,7 +51,7 @@ fn write_launch_agent<P: AsRef<Path>>(
     use plist::Value;
 
     let mut dict = plist::dictionary::Dictionary::new();
-    dict.insert("Key".to_owned(), Value::String(label.to_owned()));
+    dict.insert("Label".to_owned(), Value::String(label.to_owned()));
     dict.insert(
         "ProgramArguments".to_owned(),
         Value::Array(vec![
