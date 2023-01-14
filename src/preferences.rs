@@ -73,6 +73,7 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
         //     .sync()?;
 
         App::new("com.stclairsoft.Jettison")?
+            .bool("askedToLaunchAtLogin", true)? // We use launchd to start Jettison at login
             .bool("autoEjectAtLogout", false)?
             .bool("autoEjectEnabled", true)? // This really means autoEjectAtSleep
             .bool("ejectDiskImages", true)?
