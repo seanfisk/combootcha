@@ -53,3 +53,7 @@ This file lists parts of macOS setup that are not automated. Typically, this is 
 * Dash license
 
   Transfer it to the new machine and run `open license.dash-license`.
+
+* Zoom
+
+  Needs to be given rights to access camera, microphone, and screen in Security & Privacy. App will prompt for this.
