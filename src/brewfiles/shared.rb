@@ -42,7 +42,6 @@ brew 'zsh'
 tap 'railwaycat/emacsmacport'
 brew 'emacs-mac', args: ['with-spacemacs-icon']
 
-cask 'atext'
 cask 'caffeine'
 # TODO Cathode
 cask 'dash'
