@@ -62,3 +62,5 @@ cask 'inkscape' # No longer needs XQuartz
 tap 'homebrew/cask-fonts'
 cask 'font-inconsolata'
 cask 'font-ubuntu'
+
+mas 'Microsoft To Do', id: 1274495053
