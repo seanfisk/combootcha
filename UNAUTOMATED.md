@@ -20,6 +20,10 @@ This file lists parts of macOS setup that are not automated. Typically, this is 
 
   This is licensed software that is installed using Homebrew Cask. I purchased a license that has to be manually activated.
 
+  Made an archive of the app with this command:
+
+      tar --uid 0 --uname root --gid 0 --gname root -cJvf Cathode-2.4.1.tar.xz -C /Applications Cathode.app
+
 * Desktop backgrounds
 
   This is a little overkill. It's nice to automate, but I change these from time to time manually, and that would be just one more thing to change every time.
