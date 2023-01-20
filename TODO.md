@@ -4,6 +4,8 @@
   - All formulae
   - .bm_pref and stuff from developer guide
 - Shell setup
+- Zip up Cathode.app from my current computer and include it and the license directly in the app
+- Find the license at and install it directly to `~/Library/Application Support/Cathode/License.cathodelicense`
 - fasd/iterm2 integration
 - Use Hammerspoon instead of Quicksilver to activate shortcuts for iTerm and Firefox
 - emacs-mac/cask conflict: https://github.com/d12frosted/homebrew-emacs-plus#known-issues
