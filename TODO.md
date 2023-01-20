@@ -2,6 +2,7 @@
 
 - Firefox remember tabs on work machine
 - Start at login on work machine
+  - Firefox
   - Outlook
   - Slack
 - Add homebrew tvs stuff
