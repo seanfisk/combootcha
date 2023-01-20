@@ -1,5 +1,9 @@
 # Tasks
 
+- Firefox remember tabs on work machine
+- Start at login on work machine
+  - Outlook
+  - Slack
 - Add homebrew tvs stuff
   - All formulae
   - .bm_pref and stuff from developer guide
