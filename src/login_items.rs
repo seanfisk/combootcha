@@ -38,6 +38,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
         info!("Setting app {} to launch upon login", app);
         let label = format!("com.seanfisk.login.{}", app.to_lowercase());
         let agent_path = install_dir.join(format!("{}.plist", label));
+        // TODO: Don't write the file if it's already in place with the correct content. It creates an annoying set of notifications every time.
         write_launch_agent(agent_path, &label, &standard_user, app)?;
     }
     Ok(())
