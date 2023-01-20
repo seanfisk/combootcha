@@ -34,10 +34,6 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             .bool("CVStartAsLargeWindow", false)?
             .sync()?;
 
-        // App::new("com.apple.iChat")? // Messages.app
-        //     .bool("SaveConversationsOnClose", true)? // Save history when conversations are closed
-        //     .sync()?;
-
         // com.lightheadsw.caffeine was the old key for the original Caffeine. If you find this, delete it: it is not used anymore.
         App::new("com.intelliscapesolutions.caffeine")?
             .bool("ActivateOnLaunch", false)? // Don't activate on app launch, since we now run Caffeine at login
