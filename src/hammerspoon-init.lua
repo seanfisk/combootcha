@@ -32,6 +32,11 @@ hs.hotkey.bind({"cmd", "alt"}, ";", function()
     hs.application.launchOrFocus("Firefox")
 end)
 
+hs.hotkey.bind({"cmd"}, ";", function()
+    hs.application.launchOrFocus("iTerm")
+end)
+
+
 -- hs.hotkey.bind({"cmd", "alt"}, "w", function()
 --     local laptop = "Color LCD"
 --     -- These have the same name, so we can't identify them only by name. See here: https://github.com/Hammerspoon/hammerspoon/issues/195

@@ -113,10 +113,11 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
             .bool("UseBorder", false)?
             .bool("HideScrollbar", true)?
             // Keys
-            .bool("Hotkey", true)?
-            .int("HotkeyChar", 59)?
-            .int("HotkeyCode", 41)?
-            .int("HotkeyModifiers", 1_048_840)?
+            // This sets ⌘: as the global shortcut for iTerm. However, we can do this with Hammerspoon which works for all apps and not just iTerm. As a bonus, it will launch iTerm if it is not already open.
+            // .bool("Hotkey", true)?
+            // .int("HotkeyChar", 59)?
+            // .int("HotkeyCode", 41)?
+            // .int("HotkeyModifiers", 1_048_840)?
             .sync()?;
 
         Ok(())
