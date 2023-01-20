@@ -79,6 +79,7 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             .bool("ejectHardDisks", true)?
             .bool("ejectNetworkDisks", true)?
             .bool("ejectOpticalDisks", false)?
+            .bool("askedAboutSDCards", true)? // We are telling the app right below
             .bool("ejectSDCards", false)?
             .bool("hideMenuBarIcon", false)?
             .bool("moveToApplicationsFolderAlertSuppress", true)?
