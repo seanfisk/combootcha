@@ -33,6 +33,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
         // "gfxCardStatus",
         "iTerm",
         "Hammerspoon",
+        "Caffeine",
     ] {
         info!("Setting app {} to launch upon login", app);
         let label = format!("com.seanfisk.login.{}", app.to_lowercase());
