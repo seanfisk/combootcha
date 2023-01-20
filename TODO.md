@@ -10,6 +10,11 @@
 - Use Hammerspoon instead of Quicksilver to activate shortcuts for iTerm and Firefox
 - emacs-mac/cask conflict: https://github.com/d12frosted/homebrew-emacs-plus#known-issues
 - Upgrade to Clap 4.x
+- Make a pack of licenses I can transfer to a new computer, stored privately
+  - aText 2
+  - Jettison
+  - Dash
+  - Cathode
 
 # Things to add
 
