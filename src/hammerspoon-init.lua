@@ -28,6 +28,14 @@ for i, key in pairs({[0]="Up", [1]="Down"}) do
   end)
 end
 
+hs.hotkey.bind({"cmd"}, "'", function()
+    hs.application.launchOrFocus("Emacs")
+end)
+
+hs.hotkey.bind({"cmd", "alt"}, "'", function()
+    hs.application.launchOrFocus("Dash")
+end)
+
 hs.hotkey.bind({"cmd", "alt"}, ";", function()
     hs.application.launchOrFocus("Firefox")
 end)
