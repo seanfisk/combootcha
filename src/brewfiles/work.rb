@@ -9,7 +9,10 @@ brew 'perl' # For installing japi-compliance-checker
 brew 'ruby-build'
 brew 'rbenv'
 brew 'rbenv-default-gems'
-cask 'typeit4me' # Trialing this as a replacement for aText
+
+# TODO Choose one
+cask 'typeit4me'
+cask 'atext'
 
 # Java used at VMware
 tap 'homebrew/cask-versions'
