@@ -17,3 +17,5 @@ cask 'atext'
 # Java used at VMware
 tap 'homebrew/cask-versions'
 cask 'zulu8'
+
+mas 'Bitwarden', id: 1352778147
