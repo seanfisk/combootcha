@@ -10,8 +10,6 @@ brew 'ruby-build'
 brew 'rbenv'
 brew 'rbenv-default-gems'
 
-# TODO Choose one
-cask 'typeit4me'
 cask 'atext'
 
 # Java used at VMware
