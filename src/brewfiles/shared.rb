@@ -21,6 +21,7 @@ brew 'git'
 brew 'git-lfs'
 brew 'gnu-tar'
 brew 'graphicsmagick'
+brew 'imagemagick' # Useful for HEIC and ICO
 brew 'hub'
 brew 'nmap'
 # I prefer ohcount to cloc and sloccount.
