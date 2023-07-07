@@ -7,6 +7,41 @@ use crate::user::UserExt as OtherUserExt;
 
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
     let config_dir = standard_user.home_dir().join(".config/karabiner");
+    let mut devices = Vec::new();
+    // These keyboards have the same vendor ID for some reason
+    let product_ids: [u32; 2] = [
+        0x4545, // Filco Majestouch 2
+        0x0356, // Ducky One 2
+    ];
+    for product_id in product_ids {
+        devices.push(json!({
+            "identifiers": {
+                "is_keyboard": true,
+                "is_pointing_device": false,
+                "product_id": product_id,
+                "vendor_id": 0x04d9,
+            },
+            // Swap Option and Command
+            "simple_modifications": [
+                {
+                    "from": { "key_code": "left_option" },
+                    "to": { "key_code": "left_command" }
+                },
+                {
+                    "from": { "key_code": "left_command" },
+                    "to": { "key_code": "left_option" }
+                },
+                {
+                    "from": { "key_code": "right_option" },
+                    "to": { "key_code": "right_command" }
+                },
+                {
+                    "from": { "key_code": "right_command" },
+                    "to": { "key_code": "right_option" }
+                },
+            ],
+        }));
+    }
     let json = json!({
         "profiles": [
             {
@@ -44,36 +79,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
                         },
                     ],
                 },
-                "devices": [
-                    {
-                        "identifiers": {
-                            "is_keyboard": true,
-                            "is_pointing_device": false,
-                            // Filco Majestouch 2
-                            "product_id": 17_733,
-                            "vendor_id": 1_241,
-                        },
-                        // Swap Option and Command
-                        "simple_modifications": [
-                            {
-                                "from": { "key_code": "left_option" },
-                                "to": { "key_code": "left_command" }
-                            },
-                            {
-                                "from": { "key_code": "left_command" },
-                                "to": { "key_code": "left_option" }
-                            },
-                            {
-                                "from": { "key_code": "right_option" },
-                                "to": { "key_code": "right_command" }
-                            },
-                            {
-                                "from": { "key_code": "right_command" },
-                                "to": { "key_code": "right_option" }
-                            },
-                        ],
-                    },
-                ],
+                "devices": devices,
             }
         ]
     });
