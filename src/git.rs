@@ -33,7 +33,10 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
         .bool("lineNumber", true)?
         .string("patternType", "perl")?;
     c.section(&["clean"]).bool("requireForce", false)?;
-    c.section(&["push"]).string("default", "simple")?;
+    c.section(&["push"])
+        .string("default", "simple")?
+        // https://stackoverflow.com/a/6089415
+        .bool("autoSetupRemote", true)?;
     c.section(&["pull"]).bool("rebase", false)?;
     c.section(&["submodule"]).bool("recurse", true)?; // Automatically update submodules on 'git checkout'
     c.section(&["init"]).string("defaultBranch", "master")?;
