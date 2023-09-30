@@ -33,6 +33,10 @@ This file lists parts of macOS setup that are not automated. Typically, this is 
   - Hammerspoon & Accessbility
   - Karabiner driver
 
+* Touch ID
+
+  Add prints for right pointer, right middle, and left pointer fingers.
+
 ## Work
 
 * Zoom
