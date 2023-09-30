@@ -41,8 +41,7 @@ https://jdhao.github.io/2019/10/08/zsh_plugin_managers_compare/
 
 ## Prompts
 
-1. https://github.com/eendroroy/alien
-1. https://github.com/reujab/silver
+Starship, recommended by Alex
 
 ## Port relevant sections from dotfiles
 
