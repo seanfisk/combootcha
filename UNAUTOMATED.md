@@ -4,6 +4,24 @@ This file lists parts of macOS setup that are not automated. Typically, this is 
 
 ## Shared
 
+* Homebrew
+
+  Installing Homebrew automatically is not working due to permission issues. It alternates between:
+
+  ```
+  /usr/local/Homebrew/.git: Permission denied
+  ```
+
+  and
+
+  ```
+  touch: /Users/sfisk/Library/Caches/Homebrew/.cleaned: Permission denied
+  ```
+
+  I think there is some problem with me running this program as root, then changing the user of the subprocess, then Homebrew using sudo, etc.
+
+  Install Homebrew manually by following the instructions [here](https://brew.sh/#install).
+
 * SSH key generation
 
   Run `ssh-keygen`, upload to GitHub, and copy the public key to necessary servers.
