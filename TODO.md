@@ -16,11 +16,13 @@
 - emacs-mac/cask conflict: https://github.com/d12frosted/homebrew-emacs-plus#known-issues
 - Upgrade to Clap 4.x
 - In battery, set *Wake for network access* to *Never*
-- Make a pack of licenses I can transfer to a new computer, stored privately
-  - aText 2
-  - Jettison
-  - Dash
-  - Cathode
+
+
+Install Cathode
+
+Made an archive of the app with this command:
+
+      tar --uid 0 --uname root --gid 0 --gname root -cJvf Cathode-2.4.1.tar.xz -C /Applications Cathode.app
 
 # Things to add
 

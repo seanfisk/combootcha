@@ -14,15 +14,7 @@ This file lists parts of macOS setup that are not automated. Typically, this is 
 
 * Jettison
 
-  This is licensed software that is installed using Homebrew. I purchased a license that has to be manually entered/activated. Don't get confused: I initially purchased Jettison from the Mac App Store, but bought a separate license when I found that the Mac App Store version isn't up-to-date.
-
-* Cathode
-
-  This is licensed software that is installed using Homebrew Cask. I purchased a license that has to be manually activated.
-
-  Made an archive of the app with this command:
-
-      tar --uid 0 --uname root --gid 0 --gname root -cJvf Cathode-2.4.1.tar.xz -C /Applications Cathode.app
+  This is licensed software that is installed using Homebrew. I purchased a license that has to be manually entered/activated. Don't get confused: I initially purchased Jettison from the Mac App Store, but bought a separate license when I found that the Mac App Store version isn't up-to-date. The license is stored in LastPass.
 
 * Desktop backgrounds
 
@@ -33,9 +25,9 @@ This file lists parts of macOS setup that are not automated. Typically, this is 
   - Disable the auto-redirection of domains. Specifically this is annoying for `localhost`. Hopefully this will be synced. See http://cdivilly.wordpress.com/2013/08/15/disable-firefox-redirecting-to-localhost-com/.
   - Google Talk plugin needs to be blocked, as it forces a transition to the discrete GPU even when the plugin really isn't being used [i.e., not in hangouts]).
 
-* Dash license
+* Dash
 
-  Transfer it to the new machine and run `open license.dash-license`.
+  This is licensed software that is installed using Homebrew. Grab the license from LastPass and run `open license.dash-license`.
 
 * Privacy & Security approvals
   - Hammerspoon & Accessbility
