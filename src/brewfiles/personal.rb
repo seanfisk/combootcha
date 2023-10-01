@@ -20,4 +20,3 @@
 #cask 'retroarch-metal' # 'retroarch' cask is also available, but I think the Metal renderer is supposed to be better
 cask 'firefox'
 cask 'spotify'
-cask 'atext'

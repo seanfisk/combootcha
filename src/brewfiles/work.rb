@@ -10,8 +10,6 @@ brew 'ruby-build'
 brew 'rbenv'
 brew 'rbenv-default-gems'
 
-cask 'atext'
-
 # Java used at VMware
 tap 'homebrew/cask-versions'
 cask 'zulu8'
