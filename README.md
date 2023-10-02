@@ -1,4 +1,4 @@
-# Sean Fisk's Computing Setup
+# Combootstrap
 
 A set of programs to automate my personal computing setup.
 
@@ -46,7 +46,7 @@ After this, run `brew doctor` and attempt to address any problems that are repor
 Next, transfer the compiled executable to the new system and execute it:
 
 ```bash
-sudo ./computing-setup --homebrew --set-default-browser work
+sudo ./combootstrap --homebrew --set-default-browser work
 ```
 
 ### Subsequent updates
@@ -54,7 +54,7 @@ sudo ./computing-setup --homebrew --set-default-browser work
 This is easy:
 
 ```bash
-sudo ./computing-setup --homebrew work
+sudo ./combootstrap --homebrew work
 ```
 
 If you don't feel like updating Homebrew, that can of course be omitted.

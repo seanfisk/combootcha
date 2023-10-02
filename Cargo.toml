@@ -1,5 +1,5 @@
 [package]
-name = "computing-setup"
+name = "combootstrap"
 version = "0.1.0"
 authors = ["Sean Fisk <sean@seanfisk.com>"]
 edition = "2021"
