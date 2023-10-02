@@ -10,6 +10,7 @@ use crate::Config;
 
 pub(crate) fn install_deps(config: Config, standard_user: &User) -> Result<()> {
     info!("Installing Homebrew dependencies via Brewfile");
+    // This is the global Brewfile path (activated by --global)
     let path = standard_user.home_dir().join(".Brewfile");
 
     standard_user.as_effective_user(|| {
