@@ -14,7 +14,7 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
     info!("Querying Homebrew bin directory");
     let brew_prefix_output = Command::new("brew")
         .arg("--prefix")
-        .user(&standard_user)
+        .user(standard_user)
         .output()?;
     let brew_prefix = Path::new(std::str::from_utf8(&brew_prefix_output)?.trim_end_matches('\n'));
     let brew_bin = brew_prefix.join("bin");
@@ -34,7 +34,7 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
         set
     };
 
-    for shell in vec!["bash", "zsh"] {
+    for shell in ["bash", "zsh"] {
         let shell_path = brew_bin.join(shell);
         info!(
             "Considering adding {:?} to {:?}",

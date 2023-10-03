@@ -26,7 +26,7 @@ use crate::user::UserExt as OtherUserExt;
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
     let install_dir = standard_user.home_dir().join("Library/LaunchAgents");
     standard_user.as_effective_user(|| crate::fs::ensure_dir(&install_dir))?;
-    for app in vec![
+    for app in [
         "Flux",
         "Jettison",
         // "Quicksilver",
@@ -37,9 +37,9 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
     ] {
         info!("Setting app {} to launch upon login", app);
         let label = format!("com.seanfisk.login.{}", app.to_lowercase());
-        let agent_path = install_dir.join(format!("{}.plist", label));
+        let agent_path = install_dir.join(format!("{label}.plist"));
         // TODO: Don't write the file if it's already in place with the correct content. It creates an annoying set of notifications every time.
-        write_launch_agent(agent_path, &label, &standard_user, app)?;
+        write_launch_agent(agent_path, &label, standard_user, app)?;
     }
     Ok(())
 }

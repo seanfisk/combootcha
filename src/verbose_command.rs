@@ -2,9 +2,9 @@ use anyhow::{anyhow, Context, Result};
 use log::info;
 use users::User;
 
-use std::ffi::{OsStr, OsString};
+use std::ffi::OsString;
 use std::iter;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 pub(crate) struct Command {
     program: OsString,
@@ -65,21 +65,22 @@ impl Command {
         let mut popen = self.popen(false, true)?;
         let (stdout, _stderr) = popen.communicate_bytes(None)?;
         self.wait(&mut popen)?;
-        Ok(stdout.ok_or_else(|| anyhow!("Stdout was not piped and therefore not captured"))?)
+        stdout.ok_or_else(|| anyhow!("Stdout was not piped and therefore not captured"))
     }
 
     fn popen(&self, pipe_stdin: bool, pipe_stdout: bool) -> Result<subprocess::Popen> {
+        use subprocess::{Popen, PopenConfig, Redirection};
+
         info!("=> {}", self);
 
         // TODO I'm sure there is a more efficient way to do this
         let mut argv = Vec::new();
         argv.push(&self.program);
-        for arg in self.args.iter() {
+        for arg in &self.args {
             argv.push(arg);
         }
 
         // Note: Can't use Exec because it doesn't allow access to setuid, which we need
-        use subprocess::{Popen, PopenConfig, Redirection};
         Popen::create(
             &argv,
             PopenConfig {
@@ -95,11 +96,11 @@ impl Command {
                 },
                 stderr: Redirection::None,
                 cwd: self.current_dir.as_ref().map(|p| p.as_os_str().to_owned()),
-                setuid: self.user.as_ref().map(|u| u.uid()),
+                setuid: self.user.as_ref().map(User::uid),
                 ..Default::default()
             },
         )
-        .with_context(|| format!("Could not launch process {}", self))
+        .with_context(|| format!("Could not launch process {self}"))
     }
 
     fn wait(&self, popen: &mut subprocess::Popen) -> Result<()> {

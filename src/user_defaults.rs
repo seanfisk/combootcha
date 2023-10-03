@@ -33,29 +33,29 @@ impl App {
 
     pub(crate) fn bool(&self, key: &str, value: bool) -> Result<&App> {
         self.log_setting("boolean", key, value);
-        let c_key = to_cstring(&key)?;
+        let c_key = to_cstring(key)?;
         unsafe { sys::user_defaults_set_bool(self.c_id.as_ptr(), c_key.as_ptr(), value) }
         Ok(self)
     }
 
     pub(crate) fn int(&self, key: &str, value: i64) -> Result<&App> {
         self.log_setting("integer", key, value);
-        let c_key = to_cstring(&key)?;
+        let c_key = to_cstring(key)?;
         unsafe { sys::user_defaults_set_i64(self.c_id.as_ptr(), c_key.as_ptr(), value) }
         Ok(self)
     }
 
     pub(crate) fn float(&self, key: &str, value: f64) -> Result<&App> {
         self.log_setting("float", key, value);
-        let c_key = to_cstring(&key)?;
+        let c_key = to_cstring(key)?;
         unsafe { sys::user_defaults_set_f64(self.c_id.as_ptr(), c_key.as_ptr(), value) }
         Ok(self)
     }
 
     pub(crate) fn string(&self, key: &str, value: &str) -> Result<&App> {
         self.log_setting("string", key, value);
-        let c_key = to_cstring(&key)?;
-        let c_value = to_cstring(&value)?;
+        let c_key = to_cstring(key)?;
+        let c_value = to_cstring(value)?;
         unsafe {
             sys::user_defaults_set_string(self.c_id.as_ptr(), c_key.as_ptr(), c_value.as_ptr())
         }
@@ -82,6 +82,6 @@ impl App {
     }
 }
 
-fn to_cstring(str: &str) -> Result<CString> {
-    CString::new(str).with_context(|| format!("Converting string {:?} to CString", str))
+fn to_cstring(s: &str) -> Result<CString> {
+    CString::new(s).with_context(|| format!("Converting string {s:?} to CString"))
 }

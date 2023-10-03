@@ -15,7 +15,7 @@ pub(crate) fn configure(config: Config, standard_user: &User) -> Result<()> {
         let mut file = crate::fs::create_file(&path)?;
         file.write_all(include_bytes!("ssh-config/shared"))?;
         if config == Config::work {
-            file.write(b"\n")?;
+            file.write_all(b"\n")?;
             file.write_all(include_bytes!("ssh-config/work"))?;
         }
         Ok(())

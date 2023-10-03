@@ -16,10 +16,7 @@ pub(crate) fn install() -> Result<()> {
     }
 
     let version = "2.4";
-    let url = format!(
-        "https://github.com/lvc/japi-compliance-checker/archive/{}.tar.gz",
-        version
-    );
+    let url = format!("https://github.com/lvc/japi-compliance-checker/archive/{version}.tar.gz");
     let bytes = reqwest::blocking::get(url)
         .context("Downloading japi-compliance-checker")?
         .error_for_status()
@@ -33,7 +30,7 @@ pub(crate) fn install() -> Result<()> {
         .arg("-x") // extract
         .arg("-z") // gz
         .arg("-v") // verbose
-        .current_dir(&temp_dir.path())
+        .current_dir(temp_dir.path())
         .run_with_input(&bytes)?;
 
     // The Makefile is broken and should have the 'install' target marked as phony, but doesn't. This causes the target not to run. Just run what it would have executed anyway.
@@ -44,7 +41,7 @@ pub(crate) fn install() -> Result<()> {
         .current_dir(
             temp_dir
                 .path()
-                .join(format!("japi-compliance-checker-{}", version)),
+                .join(format!("japi-compliance-checker-{version}")),
         )
         .run()?;
 
