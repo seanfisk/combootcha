@@ -44,6 +44,7 @@ impl Command {
         self
     }
 
+    // I am interested in the possibility of accepting &User instead of User, but it's of low importance
     pub(crate) fn user(&mut self, user: User) -> &mut Command {
         self.user = Some(user);
         self
