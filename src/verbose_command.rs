@@ -44,9 +44,8 @@ impl Command {
         self
     }
 
-    pub(crate) fn user(&mut self, user: &User) -> &mut Command {
-        // TODO Don't accept a ref just to clone it
-        self.user = Some(user.clone());
+    pub(crate) fn user(&mut self, user: User) -> &mut Command {
+        self.user = Some(user);
         self
     }
 

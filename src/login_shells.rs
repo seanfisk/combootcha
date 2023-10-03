@@ -10,11 +10,11 @@ use std::path::Path;
 use crate::path::PathExt;
 use crate::verbose_command::Command;
 
-pub(crate) fn set(standard_user: &User) -> Result<()> {
+pub(crate) fn set(standard_user: User) -> Result<()> {
     info!("Querying Homebrew bin directory");
     let brew_prefix_output = Command::new("brew")
         .arg("--prefix")
-        .user(standard_user)
+        .user(standard_user.clone())
         .output()?;
     let brew_prefix = Path::new(std::str::from_utf8(&brew_prefix_output)?.trim_end_matches('\n'));
     let brew_bin = brew_prefix.join("bin");
@@ -65,7 +65,7 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
         );
     } else {
         // Annoying that we have to clone this
-        standard_user.clone().with_shell(&zsh_path);
+        standard_user.with_shell(&zsh_path);
         info!(
             "Set login shell for user {:?} to {:?}",
             username, zsh_path_str

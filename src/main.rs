@@ -122,11 +122,11 @@ fn main() -> Result<()> {
     let config = value_t!(matches.value_of(CONFIG_ARG_NAME), Config)?;
 
     if matches.is_present(HOMEBREW_ARG_NAME) {
-        // homebrew::install_system(&standard_user)?;
-        homebrew::install_deps(config, &standard_user)?;
+        // homebrew::install_system(standard_user.clone())?;
+        homebrew::install_deps(config, standard_user.clone())?;
     }
 
-    login_shells::set(&standard_user)?;
+    login_shells::set(standard_user.clone())?;
     ssh::configure(config, &standard_user)?;
     // Note: Zsh interaction with path_helper was fixed, at least since Ventura
 
@@ -134,15 +134,15 @@ fn main() -> Result<()> {
     login_items::configure(&standard_user)?;
     hammerspoon::configure(&standard_user)?;
     karabiner::configure(&standard_user)?;
-    git::configure(&standard_user)?;
+    git::configure(standard_user.clone())?;
 
     match config {
         Config::personal => {
             // Trying to work without Quicksilver
-            // quicksilver::configure(&standard_user)?;
+            // quicksilver::configure(standard_user.clone())?;
 
             // TODO Do I need this?
-            // hg::configure(&standard_user)?;
+            // hg::configure(standard_user.clone())?;
         }
         Config::work => {
             japicc::install()?;
@@ -150,7 +150,7 @@ fn main() -> Result<()> {
     }
 
     if matches.is_present(BROWSER_ARG_NAME) {
-        default_browser::set(&standard_user)?;
+        default_browser::set(standard_user.clone())?;
     }
 
     preferences::set(&standard_user)?;

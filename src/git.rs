@@ -3,9 +3,9 @@ use anyhow::Result;
 use log::info;
 use users::{os::unix::UserExt, User};
 
-pub(crate) fn configure(standard_user: &User) -> Result<()> {
+pub(crate) fn configure(standard_user: User) -> Result<()> {
     info!("Setting up personal Git preferences");
-    let c = Gitconfig::new(standard_user);
+    let c = Gitconfig::new(standard_user.clone());
     c.section(&["user"])
         .string("name", "Sean Fisk")?
         .string("email", "sean@seanfisk.com")?; // TODO Use work email when everything else is settled
@@ -53,27 +53,27 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
         .run()
 }
 
-struct Gitconfig<'a> {
-    user: &'a User,
+struct Gitconfig {
+    user: User,
 }
 
-impl<'a> Gitconfig<'a> {
-    fn new(user: &'a User) -> Gitconfig {
+impl<'a> Gitconfig {
+    fn new(user: User) -> Gitconfig {
         Gitconfig { user }
     }
 
     fn section(&self, path: &'a [&'a str]) -> Section<'a> {
-        Section::new(self.user, path)
+        Section::new(self.user.clone(), path)
     }
 }
 
 struct Section<'a> {
     path: &'a [&'a str],
-    user: &'a User,
+    user: User,
 }
 
 impl<'a> Section<'a> {
-    fn new(user: &'a User, path: &'a [&'a str]) -> Section<'a> {
+    fn new(user: User, path: &'a [&'a str]) -> Section<'a> {
         Section { path, user }
     }
 
@@ -93,24 +93,19 @@ impl<'a> Section<'a> {
             .copied()
             .collect::<Vec<_>>()
             .join(".");
-        let mut command = git(self.user);
+        let mut command = git(self.user.clone());
         command.arg("config").arg("--global");
         if let Some(type_) = type_ {
             command.arg("--type").arg(type_);
         }
-        command
-            .arg("--")
-            .arg(dotted_path)
-            .arg(value)
-            .user(self.user)
-            .run()?;
+        command.arg("--").arg(dotted_path).arg(value).run()?;
         Ok(self)
     }
 }
 
-fn git(user: &User) -> Command {
+fn git(user: User) -> Command {
     let mut command = Command::new("git");
-    command.user(user);
     command.current_dir(user.home_dir()); // Running in a repo shouldn't be a problem, but let's not do it anyway
+    command.user(user);
     command
 }
