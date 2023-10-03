@@ -138,9 +138,6 @@ fn main() -> Result<()> {
     karabiner::configure(&standard_user)?;
     git::configure(&standard_user)?;
 
-    // TODO Not working under macOS Ventura
-    // network_link_conditioner::install()?;
-
     match config {
         Config::personal => {
             // Trying to work without Quicksilver

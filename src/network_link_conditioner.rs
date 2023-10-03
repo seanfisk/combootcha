@@ -7,6 +7,8 @@ use crate::verbose_command::Command;
 
 // Although it's possible to install to ~/Library/PreferencePanes and Network Link Conditioner *seems* to work if we do, it doesn't show up in System Preferences and must be launched via the "open" utility. So, install to the global location.
 
+// TODO Not working under macOS Ventura
+#[allow(dead_code)]
 pub(crate) fn install() -> Result<()> {
     info!("Considering installing Network Link Conditioner");
     let prefix = Path::new("/Library/PreferencePanes");
