@@ -14,33 +14,33 @@ pub(crate) struct Command {
 }
 
 impl Command {
-    pub(crate) fn new<S: AsRef<OsStr>>(program: S) -> Command {
+    pub(crate) fn new<S: Into<OsString>>(program: S) -> Command {
         Command {
-            program: program.as_ref().to_owned(),
+            program: program.into(),
             args: Vec::new(),
             current_dir: None,
             user: None,
         }
     }
 
-    pub(crate) fn arg<S: AsRef<OsStr>>(&mut self, arg: S) -> &mut Command {
-        self.args.push(arg.as_ref().to_owned());
+    pub(crate) fn arg<S: Into<OsString>>(&mut self, arg: S) -> &mut Command {
+        self.args.push(arg.into());
         self
     }
 
-    pub(crate) fn args<I, S>(&mut self, args: I) -> &mut Command
+    pub(crate) fn args<I>(&mut self, args: I) -> &mut Command
     where
-        I: IntoIterator<Item = S>,
-        S: AsRef<OsStr>,
+        I: IntoIterator,
+        I::Item: Into<OsString>,
     {
         for arg in args {
-            self.arg(arg.as_ref());
+            self.arg(arg);
         }
         self
     }
 
-    pub(crate) fn current_dir<P: AsRef<Path>>(&mut self, dir: P) -> &mut Command {
-        self.current_dir = Some(dir.as_ref().to_owned());
+    pub(crate) fn current_dir<P: Into<PathBuf>>(&mut self, path: P) -> &mut Command {
+        self.current_dir = Some(path.into());
         self
     }
 
@@ -72,9 +72,9 @@ impl Command {
 
         // TODO I'm sure there is a more efficient way to do this
         let mut argv = Vec::new();
-        argv.push(self.program.clone());
-        for arg in &self.args {
-            argv.push(arg.clone());
+        argv.push(&self.program);
+        for arg in self.args.iter() {
+            argv.push(arg);
         }
 
         // Note: Can't use Exec because it doesn't allow access to setuid, which we need
