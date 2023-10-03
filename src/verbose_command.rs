@@ -6,6 +6,15 @@ use std::ffi::OsString;
 use std::iter;
 use std::path::PathBuf;
 
+// Advice on creating builders:
+// https://doc.rust-lang.org/1.0.0/style/ownership/builders.html
+// https://rust-unofficial.github.io/patterns/patterns/creational/builder.html
+//
+// The way that std::process::Command manages to implement a non-consuming builder is by converting borrowed OS strings to owned C strings when each builder method is called.
+// For example: https://github.com/rust-lang/rust/blob/1.72.1/library/std/src/sys/unix/process/process_common.rs#L248-L250
+//
+// Since we're wrapping another library, we don't have that luxury.
+
 pub(crate) struct Command {
     program: OsString,
     args: Vec<OsString>,
