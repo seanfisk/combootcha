@@ -33,7 +33,7 @@ pub(crate) fn install() -> Result<()> {
         .arg("-x") // extract
         .arg("-z") // gz
         .arg("-v") // verbose
-        .cwd(&temp_dir.path())
+        .current_dir(&temp_dir.path())
         .run_with_input(&bytes)?;
 
     // The Makefile is broken and should have the 'install' target marked as phony, but doesn't. This causes the target not to run. Just run what it would have executed anyway.
@@ -41,7 +41,7 @@ pub(crate) fn install() -> Result<()> {
         .arg("Makefile.pl")
         .arg("-install")
         .args(&["-prefix", prefix.to_str_safe()?])
-        .cwd(
+        .current_dir(
             temp_dir
                 .path()
                 .join(format!("japi-compliance-checker-{}", version)),

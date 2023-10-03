@@ -29,7 +29,7 @@ pub(crate) fn install() -> Result<()> {
         .arg("-x") // extract
         .arg("-J") // xz
         .arg("-v") // verbose
-        .cwd(prefix)
+        .current_dir(prefix)
         .run_with_input(bytes)?;
     info!("Network Link Conditioner installed successfully");
     Ok(())

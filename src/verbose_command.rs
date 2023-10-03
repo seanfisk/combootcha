@@ -9,7 +9,7 @@ use std::path::{Path, PathBuf};
 pub(crate) struct Command {
     program: OsString,
     args: Vec<OsString>,
-    cwd: Option<PathBuf>,
+    current_dir: Option<PathBuf>,
     user: Option<User>,
 }
 
@@ -18,7 +18,7 @@ impl Command {
         Command {
             program: program.as_ref().to_owned(),
             args: Vec::new(),
-            cwd: None,
+            current_dir: None,
             user: None,
         }
     }
@@ -39,8 +39,8 @@ impl Command {
         self
     }
 
-    pub(crate) fn cwd<P: AsRef<Path>>(&mut self, dir: P) -> &mut Command {
-        self.cwd = Some(dir.as_ref().to_owned());
+    pub(crate) fn current_dir<P: AsRef<Path>>(&mut self, dir: P) -> &mut Command {
+        self.current_dir = Some(dir.as_ref().to_owned());
         self
     }
 
@@ -93,7 +93,7 @@ impl Command {
                     Redirection::None
                 },
                 stderr: Redirection::None,
-                cwd: self.cwd.as_ref().map(|p| p.as_os_str().to_owned()),
+                cwd: self.current_dir.as_ref().map(|p| p.as_os_str().to_owned()),
                 setuid: self.user.as_ref().map(|u| u.uid()),
                 ..Default::default()
             },
@@ -116,15 +116,12 @@ impl std::fmt::Display for Command {
         f.debug_list()
             .entries(iter::once(&self.program).chain(&self.args))
             .finish()?;
-        write!(
-            f,
-            "{}{}",
-            self.cwd
-                .as_ref()
-                .map_or("".to_owned(), |d| format!(" (cwd: {:?})", d)),
-            self.user
-                .as_ref()
-                .map_or("".to_owned(), |u| format!(" (user: {:?})", u.name()))
-        )
+        if let Some(dir) = &self.current_dir {
+            write!(f, " (cwd: {dir:?})")?;
+        }
+        if let Some(user) = &self.user {
+            write!(f, " (user: {:?})", user.name())?;
+        }
+        Ok(())
     }
 }

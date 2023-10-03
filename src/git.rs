@@ -111,6 +111,6 @@ impl<'a> Section<'a> {
 fn git(user: &User) -> Command {
     let mut command = Command::new("git");
     command.user(user);
-    command.cwd(user.home_dir()); // Running in a repo shouldn't be a problem, but let's not do it anyway
+    command.current_dir(user.home_dir()); // Running in a repo shouldn't be a problem, but let's not do it anyway
     command
 }
