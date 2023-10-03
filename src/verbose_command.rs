@@ -73,7 +73,6 @@ impl Command {
 
         info!("=> {}", self);
 
-        // TODO I'm sure there is a more efficient way to do this
         let mut argv = Vec::new();
         argv.push(&self.program);
         for arg in &self.args {
