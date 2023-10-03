@@ -4,6 +4,7 @@ use users::User;
 
 use std::ffi::{OsStr, OsString};
 use std::path::{Path, PathBuf};
+use std::iter;
 
 pub(crate) struct Command {
     program: OsString,
@@ -112,19 +113,10 @@ impl Command {
 
 impl std::fmt::Display for Command {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
-        // TODO I'm sure there is a more efficient way to do this
-        // TODO Try this instead
-        // f.debug_list().entries(iter::once(&self.program).chain(&self.args)).finish()
-        let mut argv = Vec::new();
-        argv.push(self.program.clone());
-        for arg in &self.args {
-            argv.push(arg.clone());
-        }
-
+        f.debug_list().entries(iter::once(&self.program).chain(&self.args)).finish()?;
         write!(
             f,
-            "{:?}{}{}",
-            argv,
+            "{}{}",
             self.cwd
                 .as_ref()
                 .map_or("".to_owned(), |d| format!(" (cwd: {:?})", d)),

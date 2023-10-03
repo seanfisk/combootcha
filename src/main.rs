@@ -46,32 +46,33 @@ fn is_root() -> bool {
 
 fn get_standard_username(cli_value: Option<&str>) -> Result<String> {
     debug!("Looking for standard user from CLI");
-    match cli_value {
-        Some(v) => {
-            debug!("Standard user set to {:?} from command line", v);
-            Ok(v.to_owned())
-        }
-        None => {
-            debug!("Looking for standard user from SUDO_USER environment variable");
-            match env::get("SUDO_USER")? {
-                Some(v) => {
-                    debug!("Standard user set to {:?} from SUDO_USER environment variable", v);
-                    Ok(v)
-                }
-                None => Err(anyhow!("Standard user not given by --standard-user command-line option nor SUDO_USER environment variable")),
+    if let Some(v) = cli_value {
+        debug!("Standard user set to {:?} from command line", v);
+        Ok(v.to_owned())
+    } else {
+        debug!("Looking for standard user from SUDO_USER environment variable");
+        match env::get("SUDO_USER")? {
+            Some(v) => {
+                debug!("Standard user set to {:?} from SUDO_USER environment variable", v);
+                Ok(v)
             }
+            None => Err(anyhow!("Standard user not given by --standard-user command-line option nor SUDO_USER environment variable")),
         }
     }
 }
 
 fn main() -> Result<()> {
+    const STANDARD_USER_ARG_NAME: &str = "username";
+    const HOMEBREW_ARG_NAME: &str = "homebrew";
+    const BROWSER_ARG_NAME: &str = "set-default-browser";
+    const CONFIG_ARG_NAME: &str = "config";
+
     if !is_root() {
         return Err(anyhow!("This program must be run as root!"));
     }
 
     let clap_logging_config = clap_logging::Config::new()?;
 
-    const STANDARD_USER_ARG_NAME: &str = "username";
     let standard_user_arg = Arg::with_name(STANDARD_USER_ARG_NAME)
         .short("u")
         .long("standard-user")
@@ -79,19 +80,16 @@ fn main() -> Result<()> {
         .takes_value(true)
         .value_name("USERNAME");
 
-    const HOMEBREW_ARG_NAME: &str = "homebrew";
     let homebrew_arg = Arg::with_name(HOMEBREW_ARG_NAME)
         .short("-H")
         .long(HOMEBREW_ARG_NAME)
         .help("Install Homebrew formulae and casks (takes a long time)");
 
-    const BROWSER_ARG_NAME: &str = "set-default-browser";
     let browser_arg = Arg::with_name(BROWSER_ARG_NAME)
         .short("-B")
         .long(BROWSER_ARG_NAME)
         .help("Set the default browser (shows a prompt every time)");
 
-    const CONFIG_ARG_NAME: &str = "config";
     let config_arg = Arg::with_name(CONFIG_ARG_NAME)
         .index(1)
         .help("Configuration/purpose for this machine")
