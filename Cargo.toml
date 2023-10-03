@@ -5,7 +5,7 @@ authors = ["Sean Fisk <sean@seanfisk.com>"]
 edition = "2021"
 
 [dependencies]
-nix = "0.27"
+nix = { version = "0.27", default-features = false, features = ["user"] }
 clap = "2.34"
 clap-logging = { git = "https://github.com/seanfisk/clap-logging.git", tag = "v0.2.0" }
 anyhow = "1.0"
