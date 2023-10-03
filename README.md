@@ -1,6 +1,6 @@
-# Combootstrap
+# Combootcha
 
-A set of programs to automate my personal computing setup.
+A set of programs to bootstrap my personal computing setup.
 
 I had previously used these three repos to automate my setup, which use the following tools:
 
@@ -46,7 +46,7 @@ After this, run `brew doctor` and attempt to address any problems that are repor
 Next, transfer the compiled executable to the new system and execute it:
 
 ```bash
-sudo ./combootstrap --homebrew --set-default-browser work
+sudo ./combootcha --homebrew --set-default-browser work
 ```
 
 ### Subsequent updates
@@ -54,7 +54,7 @@ sudo ./combootstrap --homebrew --set-default-browser work
 This is easy:
 
 ```bash
-sudo ./combootstrap --homebrew work
+sudo ./combootcha --homebrew work
 ```
 
 If you don't feel like updating Homebrew, that can of course be omitted.
