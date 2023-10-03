@@ -3,8 +3,8 @@ use log::info;
 use users::User;
 
 use std::ffi::{OsStr, OsString};
-use std::path::{Path, PathBuf};
 use std::iter;
+use std::path::{Path, PathBuf};
 
 pub(crate) struct Command {
     program: OsString,
@@ -113,7 +113,9 @@ impl Command {
 
 impl std::fmt::Display for Command {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
-        f.debug_list().entries(iter::once(&self.program).chain(&self.args)).finish()?;
+        f.debug_list()
+            .entries(iter::once(&self.program).chain(&self.args))
+            .finish()?;
         write!(
             f,
             "{}{}",
