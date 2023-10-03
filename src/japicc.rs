@@ -20,7 +20,7 @@ pub(crate) fn install() -> Result<()> {
         "https://github.com/lvc/japi-compliance-checker/archive/{}.tar.gz",
         version
     );
-    let bytes = reqwest::blocking::get(&url)
+    let bytes = reqwest::blocking::get(url)
         .context("Downloading japi-compliance-checker")?
         .error_for_status()
         .context("HTTP server reported failure")?

@@ -38,6 +38,6 @@ pub(crate) fn install_deps(config: Config, standard_user: &User) -> Result<()> {
         .arg("install")
         .arg("--verbose")
         .arg("--global")
-        .user(&standard_user)
+        .user(standard_user)
         .run()
 }

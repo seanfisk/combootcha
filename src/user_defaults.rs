@@ -26,7 +26,7 @@ impl App {
             info!("Setting user defaults for application {:?}", id.as_ref());
             App {
                 id: id.as_ref().to_owned(),
-                c_id: c_id,
+                c_id,
             }
         })
     }

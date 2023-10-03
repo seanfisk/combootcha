@@ -9,11 +9,8 @@ fn main() -> std::result::Result<(), Error> {
     std::env::set_var("LLVM_CONFIG_PATH", "/usr/local/opt/llvm/bin/llvm-config"); // Homebrew
 
     let macos_min_version = "10.10";
-    let macos_min_version_flag = format!("-mmacosx-version-min={}", macos_min_version);
-    println!(
-        "cargo:rustc-env=MACOSX_DEPLOYMENT_TARGET={}",
-        macos_min_version
-    );
+    let macos_min_version_flag = format!("-mmacosx-version-min={macos_min_version}");
+    println!("cargo:rustc-env=MACOSX_DEPLOYMENT_TARGET={macos_min_version}");
 
     let ffi_dir = Path::new("src/ffi");
     let out_path = PathBuf::from(

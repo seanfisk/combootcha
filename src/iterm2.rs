@@ -125,5 +125,5 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
 }
 
 fn make_font(size: u32) -> String {
-    format!("Inconsolata {}", size)
+    format!("Inconsolata {size}")
 }

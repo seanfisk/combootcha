@@ -5,7 +5,7 @@ use users::{os::unix::UserExt, User};
 
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
     info!("Setting up personal Git preferences");
-    let c = Gitconfig::new(&standard_user);
+    let c = Gitconfig::new(standard_user);
     c.section(&["user"])
         .string("name", "Sean Fisk")?
         .string("email", "sean@seanfisk.com")?; // TODO Use work email when everything else is settled
@@ -46,7 +46,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
         standard_user.name()
     );
     // All this does at this time of writing is to add the LFS filter to ~/.gitconfig
-    git(&standard_user)
+    git(standard_user)
         .args(&["lfs", "install"])
         // We shouldn't be in a repo when we run this, but be explicit that we don't want any repo setup
         .arg("--skip-repo")
@@ -59,11 +59,11 @@ struct Gitconfig<'a> {
 
 impl<'a> Gitconfig<'a> {
     fn new(user: &'a User) -> Gitconfig {
-        Gitconfig { user: user }
+        Gitconfig { user }
     }
 
     fn section(&self, path: &'a [&'a str]) -> Section<'a> {
-        Section::new(&self.user, &path)
+        Section::new(self.user, path)
     }
 }
 
@@ -74,10 +74,7 @@ struct Section<'a> {
 
 impl<'a> Section<'a> {
     fn new(user: &'a User, path: &'a [&'a str]) -> Section<'a> {
-        Section {
-            path: path,
-            user: user,
-        }
+        Section { path, user }
     }
 
     fn string(&self, key: &str, value: &str) -> Result<&Section> {
@@ -93,10 +90,10 @@ impl<'a> Section<'a> {
             .path
             .iter()
             .chain(std::iter::once(&key))
-            .cloned()
+            .copied()
             .collect::<Vec<_>>()
             .join(".");
-        let mut command = git(&self.user);
+        let mut command = git(self.user);
         command.arg("config").arg("--global");
         if let Some(type_) = type_ {
             command.arg("--type").arg(type_);

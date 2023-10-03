@@ -4,8 +4,9 @@ use log::info;
 use std::path::Path;
 
 pub(crate) fn create_file<P: AsRef<Path>>(path: P) -> Result<std::fs::File> {
-    info!("Creating file {:?}", path.as_ref().to_string_lossy());
     use std::os::unix::fs::OpenOptionsExt;
+
+    info!("Creating file {:?}", path.as_ref().to_string_lossy());
     Ok(std::fs::OpenOptions::new()
         .create(true)
         .write(true)
