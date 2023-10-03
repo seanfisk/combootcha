@@ -34,6 +34,6 @@ tempfile = "3"
 ansi_term = "0.11.0" # Synchronized with clap to prevent an extra dependency
 
 [build-dependencies]
-anyhow = "1.0"
-cc = "1.0"
-bindgen = "0.63"
+anyhow = "1"
+cc = "1"
+bindgen = "0.68"
