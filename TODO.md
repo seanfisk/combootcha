@@ -17,6 +17,7 @@
 - Upgrade to Clap 4.x
 - In battery, set *Wake for network access* to *Never*
 
+Seagate's Paragon NTFS driver: https://www.seagate.com/support/software/paragon/
 
 Install Cathode
 
