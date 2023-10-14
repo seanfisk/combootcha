@@ -1,3 +1,4 @@
+mod cathode;
 mod default_browser;
 mod env;
 mod fs;
@@ -135,6 +136,7 @@ fn main() -> Result<()> {
     hammerspoon::configure(&standard_user)?;
     karabiner::configure(&standard_user)?;
     git::configure(standard_user.clone())?;
+    cathode::install(standard_user.clone())?;
 
     match config {
         Config::personal => {

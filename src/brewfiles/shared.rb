@@ -45,7 +45,6 @@ brew 'emacs-mac', args: ['with-spacemacs-icon']
 
 cask 'atext'
 cask 'caffeine'
-# TODO Cathode
 cask 'dash'
 cask 'deeper'
 cask 'disk-inventory-x'

@@ -47,6 +47,10 @@ This file lists parts of macOS setup that are not automated. Typically, this is 
 
   This is licensed software that is installed using Homebrew. Grab the license from LastPass and run `open license.dash-license`.
 
+* Cathode
+
+  This is licensed software bundled with and installed by Combootcha. Copy the license file directly to `~/Library/Application Support/Cathode/License.cathodelicense` to license the software.
+
 * Privacy & Security approvals
   - Hammerspoon & Accessbility
   - Karabiner driver
