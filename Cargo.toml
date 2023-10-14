@@ -37,3 +37,9 @@ ansi_term = "0.11.0" # Synchronized with clap to prevent an extra dependency
 anyhow = "1"
 cc = "1"
 bindgen = "0.68"
+
+[profile.release]
+opt-level = 'z' # Optimize for size
+lto = true # https://github.com/johnthagen/min-sized-rust#enable-link-time-optimization-lto
+codegen-units = 1 # https://github.com/johnthagen/min-sized-rust#reduce-parallel-code-generation-units-to-increase-optimization
+strip = "symbols"
