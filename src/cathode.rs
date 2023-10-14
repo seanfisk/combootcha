@@ -4,6 +4,10 @@ use log::info;
 use std::path::Path;
 use users::User;
 
+// I made an archive of the app with this command:
+//
+//     tar --uid 0 --uname root --gid 0 --gname root -cJvf Cathode-2.4.1.tar.xz -C /Applications Cathode.app
+//
 pub(crate) fn install(standard_user: User) -> Result<()> {
     info!("Considering installing Cathode terminal emulator");
 

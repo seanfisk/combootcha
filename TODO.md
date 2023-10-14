@@ -17,12 +17,6 @@
 
 Seagate's Paragon NTFS driver: https://www.seagate.com/support/software/paragon/
 
-Install Cathode
-
-Made an archive of the app with this command:
-
-      tar --uid 0 --uname root --gid 0 --gname root -cJvf Cathode-2.4.1.tar.xz -C /Applications Cathode.app
-
 https://apple.stackexchange.com/questions/144656/can-i-make-the-trackpad-tracking-speed-faster-than-allowed-in-system-preferences
 
 https://gist.github.com/brandonb927/3195465
