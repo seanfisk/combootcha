@@ -20,8 +20,6 @@ https://apple.stackexchange.com/questions/144656/can-i-make-the-trackpad-trackin
 
 https://gist.github.com/brandonb927/3195465
 
-https://github.com/mathiasbynens/dotfiles/blob/master/.macos
-
 # Things to add
 
 When there are several options to try, they're ordered by preference from cursory research.
