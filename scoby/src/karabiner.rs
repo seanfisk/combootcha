@@ -3,7 +3,7 @@ use users::{os::unix::UserExt, User};
 
 use serde_json::json;
 
-use crate::user::UserExt as OtherUserExt;
+use crate::UserExt as OtherUserExt;
 
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
     let config_dir = standard_user.home_dir().join(".config/karabiner");

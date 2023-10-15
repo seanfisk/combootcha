@@ -3,7 +3,7 @@ use users::{os::unix::UserExt, User};
 
 use std::io::Write;
 
-use crate::user::UserExt as OtherUserExt;
+use crate::UserExt as OtherUserExt;
 
 pub(crate) fn configure(standard_user: &User, config_extra_bytes: Option<&[u8]>) -> Result<()> {
     let ssh_dir = standard_user.home_dir().join(".ssh");

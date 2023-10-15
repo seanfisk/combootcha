@@ -18,7 +18,7 @@ mod quicksilver;
 mod scripts;
 mod ssh;
 pub mod user;
-pub use user::UserExt;
+pub use user::Ext as UserExt;
 pub mod user_defaults;
 mod verbose_command;
 

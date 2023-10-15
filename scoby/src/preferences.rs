@@ -2,9 +2,9 @@ use anyhow::{Context, Result};
 use std::io::Cursor;
 use users::User;
 
-use crate::user::UserExt;
 use crate::user_defaults::App;
 use crate::verbose_command::Command;
+use crate::UserExt;
 
 pub(crate) fn set(standard_user: &User) -> Result<()> {
     // Any preferences that don't already have specific install instructions go here.

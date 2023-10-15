@@ -1,7 +1,7 @@
 use anyhow::Result;
 use users::{os::unix::UserExt, User};
 
-use crate::user::UserExt as OtherUserExt;
+use crate::UserExt as OtherUserExt;
 
 pub(crate) fn install(standard_user: &User) -> Result<()> {
     let bin_dir = standard_user.home_dir().join("bin");

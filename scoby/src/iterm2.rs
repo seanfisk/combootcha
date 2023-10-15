@@ -6,7 +6,7 @@ use users::{os::unix::UserExt, User};
 use std::path::Path;
 
 use crate::path::PathExt;
-use crate::user::UserExt as OtherUserExt;
+use crate::UserExt as OtherUserExt;
 
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
     let app_support_dir = standard_user

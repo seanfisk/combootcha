@@ -1,4 +1,4 @@
-use crate::user::UserExt as OtherUserExt;
+use crate::UserExt as OtherUserExt;
 use anyhow::Result;
 use std::io::Write;
 use users::{os::unix::UserExt, User};

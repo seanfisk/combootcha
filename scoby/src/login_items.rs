@@ -5,7 +5,7 @@ use users::{os::unix::UserExt, User};
 use std::io::Write;
 use std::path::Path;
 
-use crate::user::UserExt as OtherUserExt;
+use crate::UserExt as OtherUserExt;
 
 // Login items
 //

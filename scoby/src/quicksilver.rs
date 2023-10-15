@@ -3,7 +3,7 @@ use users::{os::unix::UserExt, User};
 
 use std::io::Write;
 
-use crate::user::UserExt as OtherUserExt;
+use crate::UserExt as OtherUserExt;
 
 // TODO Trying to go without this app
 #[allow(dead_code)]

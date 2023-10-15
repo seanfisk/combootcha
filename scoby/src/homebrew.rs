@@ -4,8 +4,8 @@ use users::{os::unix::UserExt, User};
 
 use std::io::Write;
 
-use crate::user::UserExt as OtherUserExt;
 use crate::verbose_command::Command;
+use crate::UserExt as OtherUserExt;
 
 pub(crate) fn install_deps(standard_user: User, brewfile_extra_bytes: Option<&[u8]>) -> Result<()> {
     info!("Installing Homebrew dependencies via Brewfile");
