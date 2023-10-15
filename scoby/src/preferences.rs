@@ -6,7 +6,7 @@ use crate::user_defaults::App;
 use crate::verbose_command::Command;
 use crate::UserExt;
 
-pub(crate) fn set(standard_user: &User) -> Result<()> {
+pub(crate) fn set(standard_user: User) -> Result<()> {
     // Any preferences that don't already have specific install instructions go here.
 
     // Apps such as iTerm2 which have specific instructions in this program should set their preferences in their specific function/file.
@@ -343,12 +343,15 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
                 .sync()?;
         }
 
-        // Needed for the Do Not Disturb changes to take effect. The process will automatically be restarted.
-        Command::new("/usr/bin/killall")
-            .arg("-v")
-            .arg("usernoted")
-            .run()?;
-
         Ok(())
-    })
+    })?;
+
+    // Needed for the Do Not Disturb changes to take effect. The process will automatically be restarted.
+    Command::new("/usr/bin/killall")
+        .arg("-v")
+        .arg("usernoted")
+        .user(standard_user)
+        .run()?;
+
+    Ok(())
 }

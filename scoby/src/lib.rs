@@ -129,7 +129,7 @@ pub fn run_shared_setup(
 
     // Preferences
     power_management::configure()?;
-    preferences::set(&standard_user)?;
+    preferences::set(standard_user.clone())?;
     login_items::configure(&standard_user)?;
 
     Ok(standard_user)
