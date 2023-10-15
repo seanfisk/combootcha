@@ -3,12 +3,12 @@ use anyhow::Result;
 use log::info;
 use users::{os::unix::UserExt, User};
 
-pub(crate) fn configure(standard_user: User) -> Result<()> {
+pub(crate) fn configure(email: &str, standard_user: User) -> Result<()> {
     info!("Setting up personal Git preferences");
     let c = Gitconfig::new(standard_user.clone());
     c.section(&["user"])
         .string("name", "Sean Fisk")?
-        .string("email", "sean@seanfisk.com")?; // TODO Use work email when everything else is settled
+        .string("email", email)?;
     c.section(&["core"])
         .string("excludesfile", "~/.gitignore-global")?;
     c.section(&["alias"])
@@ -104,7 +104,7 @@ impl<'a> Section<'a> {
 }
 
 fn git(user: User) -> Command {
-    let mut command = Command::new("git");
+    let mut command = Command::new("/usr/local/bin/git"); // Always use the Homebrew version
     command.current_dir(user.home_dir()); // Running in a repo shouldn't be a problem, but let's not do it anyway
     command.user(user);
     command

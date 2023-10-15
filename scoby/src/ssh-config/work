@@ -1,5 +1,0 @@
-# --------------------------------------------------------------------------------
-# VMware
-Host vr*-sfisk
-HostName %h.tvs.vmware.com
-User root

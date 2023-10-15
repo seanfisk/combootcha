@@ -31,17 +31,6 @@ use clap_logging::AppExt;
 use log::{debug, info, LevelFilter};
 use users::get_user_by_name;
 
-arg_enum! {
-    #[derive(Debug, Copy, Clone, PartialEq)]
-    // We prefer to use case-sensitive names and want them to be all-lowercase. While it's possible to implement the enum ourselves, using clap::arg_enum is much easier. We simply have to put up with non-standard Rust naming, which is acceptable.
-    #[allow(non_camel_case_types)]
-    // TODO pub(crate) or hack?
-    pub enum Config {
-        personal,
-        work,
-    }
-}
-
 fn is_root() -> bool {
     nix::unistd::Uid::current().is_root()
 }
@@ -63,11 +52,15 @@ fn get_standard_username(cli_value: Option<&str>) -> Result<String> {
     }
 }
 
-pub fn run_cli() -> Result<()> {
+// I do not love this mega-function with a bunch of options. Going with it for now but registering the desire to improve it in the future.
+pub fn run_shared_setup(
+    brewfile_extra_bytes: Option<&[u8]>,
+    ssh_config_extra_bytes:  Option<&[u8]>,
+    git_email: &str,
+) -> Result<User> {
     const STANDARD_USER_ARG_NAME: &str = "username";
     const HOMEBREW_ARG_NAME: &str = "homebrew";
     const BROWSER_ARG_NAME: &str = "set-default-browser";
-    const CONFIG_ARG_NAME: &str = "config";
 
     if !is_root() {
         return Err(anyhow!("This program must be run as root!"));
@@ -92,11 +85,6 @@ pub fn run_cli() -> Result<()> {
         .long(BROWSER_ARG_NAME)
         .help("Set the default browser (shows a prompt every time)");
 
-    let config_arg = Arg::with_name(CONFIG_ARG_NAME)
-        .index(1)
-        .help("Configuration/purpose for this machine")
-        .possible_values(&Config::variants());
-
     let app = App::new(crate_name!())
         .global_settings(&clap_logging_config.clap_settings())
         .global_setting(StrictUtf8)
@@ -105,8 +93,7 @@ pub fn run_cli() -> Result<()> {
         .log_level_arg()
         .arg(standard_user_arg)
         .arg(homebrew_arg)
-        .arg(browser_arg)
-        .arg(config_arg);
+        .arg(browser_arg);
 
     let matches = app.get_matches();
 
@@ -121,47 +108,32 @@ pub fn run_cli() -> Result<()> {
         )
     })?;
 
-    let config = value_t!(matches.value_of(CONFIG_ARG_NAME), Config)?;
-
+    // Run Homebrew first as it installs tools needed for later steps.
+    // Yes, this can be disabled but we trust that the user will only disable it on subsequent runs.
     if matches.is_present(HOMEBREW_ARG_NAME) {
-        // homebrew::install_system(standard_user.clone())?;
-        homebrew::install_deps(config, standard_user.clone())?;
+        homebrew::install_deps(standard_user.clone(), brewfile_extra_bytes)?;
     }
 
+    // Command line tools
     login_shells::set(standard_user.clone())?;
-    ssh::configure(config, &standard_user)?;
     // Note: Zsh interaction with path_helper was fixed, at least since Ventura
+    ssh::configure(&standard_user, ssh_config_extra_bytes)?;
+    git::configure(git_email, standard_user.clone())?;
+    scripts::install(&standard_user)?;
 
+    // Graphical programs
     iterm2::configure(&standard_user)?;
-    login_items::configure(&standard_user)?;
+    cathode::install(standard_user.clone())?;
     hammerspoon::configure(&standard_user)?;
     karabiner::configure(&standard_user)?;
-    git::configure(standard_user.clone())?;
-    cathode::install(standard_user.clone())?;
-    power_management::configure()?;
-
-    match config {
-        Config::personal => {
-            // Trying to work without Quicksilver
-            // quicksilver::configure(standard_user.clone())?;
-
-            // TODO Do I need this?
-            // hg::configure(standard_user.clone())?;
-        }
-        Config::work => {
-            japicc::install()?;
-        }
-    }
-
     if matches.is_present(BROWSER_ARG_NAME) {
         default_browser::set(standard_user.clone())?;
     }
 
+    // Preferences
+    power_management::configure()?;
     preferences::set(&standard_user)?;
+    login_items::configure(&standard_user)?;
 
-    scripts::install(&standard_user)?;
-
-    info!("Setup complete!");
-
-    Ok(())
+    Ok(standard_user)
 }

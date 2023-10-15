@@ -15,13 +15,13 @@ mod sys {
     include!(concat!(env!("OUT_DIR"), "/user_defaults.rs"));
 }
 
-pub(crate) struct App {
+pub struct App {
     id: String,
     c_id: CString,
 }
 
 impl App {
-    pub(crate) fn new<S: AsRef<str>>(id: S) -> Result<App> {
+    pub fn new<S: AsRef<str>>(id: S) -> Result<App> {
         to_cstring(id.as_ref()).map(|c_id| {
             info!("Setting user defaults for application {:?}", id.as_ref());
             App {
@@ -31,28 +31,28 @@ impl App {
         })
     }
 
-    pub(crate) fn bool(&self, key: &str, value: bool) -> Result<&App> {
+    pub fn bool(&self, key: &str, value: bool) -> Result<&App> {
         self.log_setting("boolean", key, value);
         let c_key = to_cstring(key)?;
         unsafe { sys::user_defaults_set_bool(self.c_id.as_ptr(), c_key.as_ptr(), value) }
         Ok(self)
     }
 
-    pub(crate) fn int(&self, key: &str, value: i64) -> Result<&App> {
+    pub fn int(&self, key: &str, value: i64) -> Result<&App> {
         self.log_setting("integer", key, value);
         let c_key = to_cstring(key)?;
         unsafe { sys::user_defaults_set_i64(self.c_id.as_ptr(), c_key.as_ptr(), value) }
         Ok(self)
     }
 
-    pub(crate) fn float(&self, key: &str, value: f64) -> Result<&App> {
+    pub fn float(&self, key: &str, value: f64) -> Result<&App> {
         self.log_setting("float", key, value);
         let c_key = to_cstring(key)?;
         unsafe { sys::user_defaults_set_f64(self.c_id.as_ptr(), c_key.as_ptr(), value) }
         Ok(self)
     }
 
-    pub(crate) fn string(&self, key: &str, value: &str) -> Result<&App> {
+    pub fn string(&self, key: &str, value: &str) -> Result<&App> {
         self.log_setting("string", key, value);
         let c_key = to_cstring(key)?;
         let c_value = to_cstring(value)?;
@@ -62,7 +62,7 @@ impl App {
         Ok(self)
     }
 
-    pub(crate) fn data(&self, key: &str, value: &[u8]) -> Result<&App> {
+    pub fn data(&self, key: &str, value: &[u8]) -> Result<&App> {
         self.log_setting("data", key, value); // TODO This doesn't look great; consider "buffer with length 123"
         let c_key = to_cstring(key)?;
         let size = i64::try_from(value.len()).context("Could not convert data length into i64")?;
@@ -73,7 +73,7 @@ impl App {
     }
 
     // Would be nice to do this using Drop but it can fail and we want to propagate those failures
-    pub(crate) fn sync(&self) -> Result<()> {
+    pub fn sync(&self) -> Result<()> {
         // TODO logging
         let success = unsafe { sys::user_defaults_sync(self.c_id.as_ptr()) };
         if success {

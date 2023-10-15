@@ -100,22 +100,6 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             .bool("toggleMassStorageDriver", false)?
             .sync()?;
 
-        {
-            let lastpass_cmd_shift_key = "1179914";
-            App::new("com.lastpass.LastPass")?
-                // Some preferences are prefixed by a hash, which seems to be stored in
-                // 'lp_local_pwhash'. We don't know what that hash means, or whether it's
-                // consistent, so just leave those alone.
-                .string("global_StartOnLogin", "1")?
-                // ⌘⇧L
-                .string("global_SearchHotKeyMod", lastpass_cmd_shift_key)?
-                .string("global_SearchHotKeyVK", "37")?
-                // ⌘⇧V
-                .string("global_VaultHotKeyMod", lastpass_cmd_shift_key)?
-                .string("global_VaultHotKeyVK", "9")?
-                .sync()?;
-        }
-
         App::new("com.apple.screensaver")?
             .bool("askForPassword", false)?
             .int("askForPasswordDelay", 5)?
