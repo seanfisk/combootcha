@@ -35,4 +35,3 @@ ansi_term = "0.11.0" # Synchronized with clap to prevent an extra dependency
 anyhow = "1"
 cc = "1"
 bindgen = "0.68"
-

@@ -5,11 +5,12 @@ members = [
 ]
 
 [workspace.package]
-# version = "0.1.0" TODO
-description  = "A set of programs to bootstrap my personal computing setup"
+version = "0.1.0"
 authors = ["Sean Fisk <sean@seanfisk.com>"]
+description  = "A set of programs to bootstrap my personal computing setup"
 edition = "2021"
 repository = "https://github.com/seanfisk/combootcha"
+homepage = "https://github.com/seanfisk/combootcha"
 categories = ["command-line-utilities", "development-tools"]
 readme = "README.md"
 
@@ -18,3 +19,5 @@ opt-level = 'z' # Optimize for size
 lto = true # https://github.com/johnthagen/min-sized-rust#enable-link-time-optimization-lto
 codegen-units = 1 # https://github.com/johnthagen/min-sized-rust#reduce-parallel-code-generation-units-to-increase-optimization
 strip = "symbols"
+
+# TODO Add workspace dependencies
