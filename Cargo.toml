@@ -1,4 +1,5 @@
 [workspace]
+resolver = "2" # See https://doc.rust-lang.org/cargo/reference/workspaces.html#virtual-workspace
 members = [
   "scoby",
   "combootcha",
@@ -11,7 +12,6 @@ description  = "A set of programs to bootstrap my personal computing setup"
 edition = "2021"
 repository = "https://github.com/seanfisk/combootcha"
 homepage = "https://github.com/seanfisk/combootcha"
-categories = ["command-line-utilities", "development-tools"]
 readme = "README.md"
 
 [profile.release]
