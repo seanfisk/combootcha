@@ -13,6 +13,7 @@ mod login_items;
 mod login_shells;
 mod network_link_conditioner;
 mod path;
+mod power_management;
 mod preferences;
 mod quicksilver;
 mod scripts;
@@ -20,7 +21,6 @@ mod ssh;
 mod user;
 mod user_defaults;
 mod verbose_command;
-mod power_management;
 
 use anyhow::{anyhow, Result};
 use clap::{

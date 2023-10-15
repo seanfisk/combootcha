@@ -1,4 +1,5 @@
-use anyhow::Result;
+use anyhow::{Context, Result};
+use std::io::Cursor;
 use users::User;
 
 use crate::user::UserExt;
@@ -329,6 +330,27 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             //         3. Tiled along edge
             .int("closeViewWindowMode", 1)?
             .sync()?;
+
+        {
+            // Source: https://github.com/tiiiecherle/osx_install_config/blob/933f82629dcf35b64d2e691983f3555f27ef560b/11_system_and_app_preferences/11c_macos_preferences_14.sh#L275-L297
+            let mut dict = plist::Dictionary::new();
+            for (name, value) in [
+                ("dndDisplayLock", true),
+                ("dndDisplaySleep", true),
+                ("dndMirrored", true),
+                ("facetimeCanBreakDND", false),
+                ("repeatedFacetimeCallsBreaksDND", false),
+            ] {
+                dict.insert(name.to_owned(), plist::Value::Boolean(value));
+            }
+
+            let mut buffer = Cursor::new(Vec::new());
+            plist::to_writer_binary(&mut buffer, &dict)
+                .context("Could not write notification center plist to in-memory buffer")?;
+            App::new("com.apple.ncprefs")?
+                .data("dnd_prefs_TEST", buffer.get_ref())?
+                .sync()?;
+        }
 
         Ok(())
     })

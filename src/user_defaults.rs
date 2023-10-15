@@ -2,7 +2,7 @@ use anyhow::{anyhow, Context, Result};
 use log::{debug, info};
 
 use std::ffi::CString;
-use std::fmt::{Debug, Display};
+use std::fmt::Debug;
 
 // Using core-foundation-rs might also be an option: https://github.com/servo/core-foundation-rs
 //
@@ -62,6 +62,16 @@ impl App {
         Ok(self)
     }
 
+    pub(crate) fn data(&self, key: &str, value: &[u8]) -> Result<&App> {
+        self.log_setting("data", key, value);
+        let c_key = to_cstring(key)?;
+        let size = i64::try_from(value.len()).context("Could not convert data length into i64")?;
+        unsafe {
+            sys::user_defaults_set_data(self.c_id.as_ptr(), c_key.as_ptr(), value.as_ptr(), size)
+        }
+        Ok(self)
+    }
+
     // Would be nice to do this using Drop but it can fail and we want to propagate those failures
     pub(crate) fn sync(&self) -> Result<()> {
         // TODO logging
@@ -73,7 +83,7 @@ impl App {
         }
     }
 
-    fn log_setting<V: Debug + Display>(&self, type_: &str, key: &str, value: V) {
+    fn log_setting<V: Debug>(&self, type_: &str, key: &str, value: V) {
         debug!(
             "Setting application with ID {:?} user defaults key {:?} to {} value {:?}",
             self.id, key, type_, value
