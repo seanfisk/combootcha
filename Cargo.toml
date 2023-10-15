@@ -5,7 +5,7 @@ members = [
 ]
 
 [workspace.package]
-version = "0.1.0"
+# version = "0.1.0" TODO
 description  = "A set of programs to bootstrap my personal computing setup"
 authors = ["Sean Fisk <sean@seanfisk.com>"]
 edition = "2021"
