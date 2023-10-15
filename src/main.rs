@@ -20,6 +20,7 @@ mod ssh;
 mod user;
 mod user_defaults;
 mod verbose_command;
+mod power_management;
 
 use anyhow::{anyhow, Result};
 use clap::{
