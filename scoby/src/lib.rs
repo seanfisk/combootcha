@@ -7,7 +7,6 @@ mod hammerspoon;
 mod hg;
 mod homebrew;
 mod iterm2;
-mod japicc;
 mod karabiner;
 mod login_items;
 mod login_shells;
@@ -18,18 +17,16 @@ mod preferences;
 mod quicksilver;
 mod scripts;
 mod ssh;
-mod user;
-mod user_defaults;
+pub mod user;
+pub use user::UserExt;
+pub mod user_defaults;
 mod verbose_command;
 
 use anyhow::{anyhow, Result};
-use clap::{
-    arg_enum, crate_authors, crate_description, crate_name, value_t, App, AppSettings::StrictUtf8,
-    Arg,
-};
+use clap::{crate_authors, crate_description, crate_name, App, AppSettings::StrictUtf8, Arg};
 use clap_logging::AppExt;
-use log::{debug, info, LevelFilter};
-use users::get_user_by_name;
+use log::{debug, LevelFilter};
+use users::{get_user_by_name, User};
 
 fn is_root() -> bool {
     nix::unistd::Uid::current().is_root()
@@ -55,7 +52,7 @@ fn get_standard_username(cli_value: Option<&str>) -> Result<String> {
 // I do not love this mega-function with a bunch of options. Going with it for now but registering the desire to improve it in the future.
 pub fn run_shared_setup(
     brewfile_extra_bytes: Option<&[u8]>,
-    ssh_config_extra_bytes:  Option<&[u8]>,
+    ssh_config_extra_bytes: Option<&[u8]>,
     git_email: &str,
 ) -> Result<User> {
     const STANDARD_USER_ARG_NAME: &str = "username";

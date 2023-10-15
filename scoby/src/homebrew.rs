@@ -6,7 +6,6 @@ use std::io::Write;
 
 use crate::user::UserExt as OtherUserExt;
 use crate::verbose_command::Command;
-use crate::Config;
 
 pub(crate) fn install_deps(standard_user: User, brewfile_extra_bytes: Option<&[u8]>) -> Result<()> {
     info!("Installing Homebrew dependencies via Brewfile");
@@ -19,7 +18,7 @@ pub(crate) fn install_deps(standard_user: User, brewfile_extra_bytes: Option<&[u
             let bytes = include_bytes!("Brewfile");
             file.write_all(bytes)?;
         }
-        if let Some(bytes) = extra_brewfile_bytes {
+        if let Some(bytes) = brewfile_extra_bytes {
             file.write_all(b"\n")?;
             file.write_all(bytes)?;
         }

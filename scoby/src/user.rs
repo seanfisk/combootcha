@@ -3,7 +3,7 @@ use log::debug;
 use nix::unistd::{seteuid, Uid};
 use users::User;
 
-pub(crate) trait UserExt {
+pub trait UserExt {
     // Just force the block to return Result so that we don't have to deal with a nested Result
     fn as_effective_user<T, F: FnOnce() -> Result<T>>(&self, block: F) -> Result<T>;
 }
