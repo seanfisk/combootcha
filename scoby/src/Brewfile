@@ -54,7 +54,6 @@ cask 'hammerspoon'
 cask 'iterm2'
 cask 'jettison'
 cask 'karabiner-elements'
-cask 'lastpass'
 cask 'speedcrunch'
 cask 'wireshark'
 cask 'inkscape' # No longer needs XQuartz
