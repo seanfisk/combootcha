@@ -63,7 +63,7 @@ impl App {
     }
 
     pub(crate) fn data(&self, key: &str, value: &[u8]) -> Result<&App> {
-        self.log_setting("data", key, value);
+        self.log_setting("data", key, value); // TODO This doesn't look great; consider "buffer with length 123"
         let c_key = to_cstring(key)?;
         let size = i64::try_from(value.len()).context("Could not convert data length into i64")?;
         unsafe {
