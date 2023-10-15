@@ -1,0 +1,8 @@
+[package]
+name = "combootcha-personal"
+version = "0.1.0"
+authors = ["Sean Fisk <sean@seanfisk.com>"]
+edition = "2021"
+
+[[bin]]
+name = "combootcha"
