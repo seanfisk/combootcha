@@ -110,7 +110,7 @@ fn main() -> Result<()> {
 
     let matches = app.get_matches();
 
-    clap_logging_config.init_logger(&matches, "SETUP_LOG_LEVEL", LevelFilter::Info)?;
+    clap_logging_config.init_logger(&matches, "COMBOOTCHA_LOG_LEVEL", LevelFilter::Info)?;
     debug!("Logger was succesfully instantiated");
 
     let standard_username = get_standard_username(matches.value_of(STANDARD_USER_ARG_NAME))?;
