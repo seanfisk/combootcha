@@ -1,8 +1,8 @@
 [package]
-name = "combootcha-personal"
-version = "0.1.0"
-authors = ["Sean Fisk <sean@seanfisk.com>"]
-edition = "2021"
-
-[[bin]]
 name = "combootcha"
+
+[dependencies]
+anyhow = "1"
+log = { version = "0.4", features = ["std"] }
+users = "0.11"
+scoby = { path = "../scoby" }

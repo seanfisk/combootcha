@@ -228,24 +228,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "combootcha"
+name = "combootcha-personal"
 version = "0.1.0"
 dependencies = [
- "ansi_term 0.11.0",
  "anyhow",
- "atty",
- "bindgen",
- "cc",
- "chrono",
- "clap",
- "clap-logging",
  "log",
- "nix",
- "plist",
- "reqwest",
- "serde_json",
- "subprocess",
- "tempfile",
+ "scoby",
  "users",
 ]
 
@@ -992,6 +980,28 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0c3733bf4cf7ea0880754e19cb5a462007c4a8c1914bff372ccc95b464f1df88"
 dependencies = [
  "windows-sys",
+]
+
+[[package]]
+name = "scoby"
+version = "0.1.0"
+dependencies = [
+ "ansi_term 0.11.0",
+ "anyhow",
+ "atty",
+ "bindgen",
+ "cc",
+ "chrono",
+ "clap",
+ "clap-logging",
+ "log",
+ "nix",
+ "plist",
+ "reqwest",
+ "serde_json",
+ "subprocess",
+ "tempfile",
+ "users",
 ]
 
 [[package]]

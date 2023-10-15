@@ -63,7 +63,7 @@ fn get_standard_username(cli_value: Option<&str>) -> Result<String> {
     }
 }
 
-fn main() -> Result<()> {
+pub fn run_cli() -> Result<()> {
     const STANDARD_USER_ARG_NAME: &str = "username";
     const HOMEBREW_ARG_NAME: &str = "homebrew";
     const BROWSER_ARG_NAME: &str = "set-default-browser";
