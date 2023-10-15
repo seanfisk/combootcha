@@ -138,6 +138,7 @@ fn main() -> Result<()> {
     karabiner::configure(&standard_user)?;
     git::configure(standard_user.clone())?;
     cathode::install(standard_user.clone())?;
+    power_management::configure()?;
 
     match config {
         Config::personal => {

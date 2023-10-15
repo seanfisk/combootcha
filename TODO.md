@@ -13,7 +13,6 @@
 - Use Hammerspoon instead of Quicksilver to activate shortcuts for iTerm and Firefox
 - emacs-mac/cask conflict: https://github.com/d12frosted/homebrew-emacs-plus#known-issues
 - Upgrade to Clap 4.x
-- In battery, set *Wake for network access* to *Never*
 
 Seagate's Paragon NTFS driver: https://www.seagate.com/support/software/paragon/
 
