@@ -7,7 +7,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
 
-use crate::path::PathExt;
+use crate::PathExt;
 use crate::verbose_command::Command;
 
 pub(crate) fn set(standard_user: User) -> Result<()> {

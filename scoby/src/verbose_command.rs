@@ -15,7 +15,7 @@ use std::path::PathBuf;
 //
 // Since we're wrapping another library, we don't have that luxury.
 
-pub(crate) struct Command {
+pub struct Command {
     program: OsString,
     args: Vec<OsString>,
     current_dir: Option<PathBuf>,
@@ -23,7 +23,7 @@ pub(crate) struct Command {
 }
 
 impl Command {
-    pub(crate) fn new<S: Into<OsString>>(program: S) -> Command {
+    pub fn new<S: Into<OsString>>(program: S) -> Command {
         Command {
             program: program.into(),
             args: Vec::new(),
@@ -32,12 +32,12 @@ impl Command {
         }
     }
 
-    pub(crate) fn arg<S: Into<OsString>>(&mut self, arg: S) -> &mut Command {
+    pub fn arg<S: Into<OsString>>(&mut self, arg: S) -> &mut Command {
         self.args.push(arg.into());
         self
     }
 
-    pub(crate) fn args<I>(&mut self, args: I) -> &mut Command
+    pub fn args<I>(&mut self, args: I) -> &mut Command
     where
         I: IntoIterator,
         I::Item: Into<OsString>,
@@ -48,29 +48,29 @@ impl Command {
         self
     }
 
-    pub(crate) fn current_dir<P: Into<PathBuf>>(&mut self, path: P) -> &mut Command {
+    pub fn current_dir<P: Into<PathBuf>>(&mut self, path: P) -> &mut Command {
         self.current_dir = Some(path.into());
         self
     }
 
     // I am interested in the possibility of accepting &User instead of User, but it's of low importance
-    pub(crate) fn user(&mut self, user: User) -> &mut Command {
+    pub fn user(&mut self, user: User) -> &mut Command {
         self.user = Some(user);
         self
     }
 
-    pub(crate) fn run(&self) -> Result<()> {
+    pub fn run(&self) -> Result<()> {
         let mut popen = self.popen(false, false)?;
         self.wait(&mut popen)
     }
 
-    pub(crate) fn run_with_input(&self, input: &[u8]) -> Result<()> {
+    pub fn run_with_input(&self, input: &[u8]) -> Result<()> {
         let mut popen = self.popen(true, false)?;
         popen.communicate_bytes(Some(input))?;
         self.wait(&mut popen)
     }
 
-    pub(crate) fn output(&self) -> Result<Vec<u8>> {
+    pub fn output(&self) -> Result<Vec<u8>> {
         let mut popen = self.popen(false, true)?;
         let (stdout, _stderr) = popen.communicate_bytes(None)?;
         self.wait(&mut popen)?;

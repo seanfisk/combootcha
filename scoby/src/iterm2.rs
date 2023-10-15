@@ -5,7 +5,7 @@ use users::{os::unix::UserExt, User};
 
 use std::path::Path;
 
-use crate::path::PathExt;
+use crate::PathExt;
 use crate::UserExt as OtherUserExt;
 
 pub(crate) fn configure(standard_user: &User) -> Result<()> {

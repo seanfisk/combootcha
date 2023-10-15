@@ -11,16 +11,18 @@ mod karabiner;
 mod login_items;
 mod login_shells;
 mod network_link_conditioner;
-mod path;
+pub mod path;
 mod power_management;
 mod preferences;
 mod quicksilver;
 mod scripts;
 mod ssh;
 pub mod user;
-pub use user::Ext as UserExt;
 pub mod user_defaults;
-mod verbose_command;
+pub mod verbose_command;
+
+pub use path::Ext as PathExt;
+pub use user::Ext as UserExt;
 
 use anyhow::{anyhow, Result};
 use clap::{crate_authors, crate_description, crate_name, App, AppSettings::StrictUtf8, Arg};
