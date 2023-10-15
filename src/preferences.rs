@@ -4,6 +4,7 @@ use users::User;
 
 use crate::user::UserExt;
 use crate::user_defaults::App;
+use crate::verbose_command::Command;
 
 pub(crate) fn set(standard_user: &User) -> Result<()> {
     // Any preferences that don't already have specific install instructions go here.
@@ -332,7 +333,10 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             .sync()?;
 
         {
+            // These preferences are stored in an embedded binary plist data value at key dnd_prefs.
             // Source: https://github.com/tiiiecherle/osx_install_config/blob/933f82629dcf35b64d2e691983f3555f27ef560b/11_system_and_app_preferences/11c_macos_preferences_14.sh#L275-L297
+
+            // Build the plist structure in memory
             let mut dict = plist::Dictionary::new();
             for (name, value) in [
                 ("dndDisplayLock", true),
@@ -344,13 +348,22 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
                 dict.insert(name.to_owned(), plist::Value::Boolean(value));
             }
 
+            // Write it to an in-memory buffer
             let mut buffer = Cursor::new(Vec::new());
             plist::to_writer_binary(&mut buffer, &dict)
                 .context("Could not write notification center plist to in-memory buffer")?;
+
+            // Set the user default using Core Foundation native API
             App::new("com.apple.ncprefs")?
-                .data("dnd_prefs_TEST", buffer.get_ref())?
+                .data("dnd_prefs", buffer.get_ref())?
                 .sync()?;
         }
+
+        // Needed for the Do Not Disturb changes to take effect. The process will automatically be restarted.
+        Command::new("/usr/bin/killall")
+            .arg("-v")
+            .arg("usernoted")
+            .run()?;
 
         Ok(())
     })
