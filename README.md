@@ -58,3 +58,7 @@ sudo ./combootcha --homebrew work
 ```
 
 If you don't feel like updating Homebrew, that can of course be omitted.
+
+## References on automating macOS
+
+- https://github.com/tiiiecherle/osx_install_config
