@@ -302,10 +302,10 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             //         0. Continuously with pointer
             //         1. Only when the pointer reaches an edge
             //         2. So the pointer is at or near the center of the screen
-            .int("closeViewPanningMode", 1)?
+            // .int("closeViewPanningMode", 1)? // TODO This is causing the sync to fail for some reason, but seems to be non-deterministic
             //   Picture-in-picture settings
             //     Use system cursor in zoom.
-            .int("closeViewCursorType", 0)?
+            // .int("closeViewCursorType", 0)? // TODO This is causing the sync to fail for some reason, but seems to be non-deterministic
             //     Enable temporary zoom (with Ctrl-Cmd)
             .bool("closeViewPressOnReleaseOff", true)?
             //     Choices:
@@ -313,7 +313,7 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
             //         1. Stationary
             //         2. Follow mouse cursor
             //         3. Tiled along edge
-            .int("closeViewWindowMode", 1)?
+            // .int("closeViewWindowMode", 1)? // TODO This is causing the sync to fail for some reason, but seems to be non-deterministic
             .sync()?;
 
         {
