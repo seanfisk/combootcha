@@ -7,8 +7,8 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
 
-use crate::PathExt;
 use crate::verbose_command::Command;
+use crate::PathExt;
 
 pub(crate) fn set(standard_user: User) -> Result<()> {
     info!("Querying Homebrew bin directory");

@@ -25,7 +25,7 @@ pub use path::Ext as PathExt;
 pub use user::Ext as UserExt;
 
 use anyhow::{anyhow, Result};
-use clap::{crate_authors, crate_description, crate_name, App, AppSettings::StrictUtf8, Arg};
+use clap::{AppSettings::StrictUtf8, Arg, ArgMatches};
 use clap_logging::AppExt;
 use log::{debug, LevelFilter};
 use users::{get_user_by_name, User};
@@ -33,6 +33,18 @@ use users::{get_user_by_name, User};
 fn is_root() -> bool {
     nix::unistd::Uid::current().is_root()
 }
+
+pub fn check_root() -> Result<()> {
+    if is_root() {
+        Ok(())
+    } else {
+        Err(anyhow!("This program must be run as root!"))
+    }
+}
+
+const STANDARD_USER_ARG_NAME: &str = "username";
+const HOMEBREW_ARG_NAME: &str = "homebrew";
+const BROWSER_ARG_NAME: &str = "set-default-browser";
 
 fn get_standard_username(cli_value: Option<&str>) -> Result<String> {
     debug!("Looking for standard user from CLI");
@@ -51,88 +63,94 @@ fn get_standard_username(cli_value: Option<&str>) -> Result<String> {
     }
 }
 
-// I do not love this mega-function with a bunch of options. Going with it for now but registering the desire to improve it in the future.
-pub fn run_shared_setup(
-    brewfile_extra_bytes: Option<&[u8]>,
-    ssh_config_extra_bytes: Option<&[u8]>,
-    git_email: &str,
-) -> Result<User> {
-    const STANDARD_USER_ARG_NAME: &str = "username";
-    const HOMEBREW_ARG_NAME: &str = "homebrew";
-    const BROWSER_ARG_NAME: &str = "set-default-browser";
-
-    if !is_root() {
-        return Err(anyhow!("This program must be run as root!"));
-    }
-
-    let clap_logging_config = clap_logging::Config::new()?;
-
-    let standard_user_arg = Arg::with_name(STANDARD_USER_ARG_NAME)
-        .short("u")
-        .long("standard-user")
-        .help("Standard user to run as; defaults to value of SUDO_USER environment variable")
-        .takes_value(true)
-        .value_name("USERNAME");
-
-    let homebrew_arg = Arg::with_name(HOMEBREW_ARG_NAME)
-        .short("-H")
-        .long(HOMEBREW_ARG_NAME)
-        .help("Install Homebrew formulae and casks (takes a long time)");
-
-    let browser_arg = Arg::with_name(BROWSER_ARG_NAME)
-        .short("-B")
-        .long(BROWSER_ARG_NAME)
-        .help("Set the default browser (shows a prompt every time)");
-
-    let app = App::new(crate_name!())
-        .global_settings(&clap_logging_config.clap_settings())
-        .global_setting(StrictUtf8)
-        .about(crate_description!())
-        .author(crate_authors!())
-        .log_level_arg()
-        .arg(standard_user_arg)
-        .arg(homebrew_arg)
-        .arg(browser_arg);
-
-    let matches = app.get_matches();
-
-    clap_logging_config.init_logger(&matches, "COMBOOTCHA_LOG_LEVEL", LevelFilter::Info)?;
-    debug!("Logger was succesfully instantiated");
-
-    let standard_username = get_standard_username(matches.value_of(STANDARD_USER_ARG_NAME))?;
-    let standard_user = get_user_by_name(&standard_username).ok_or_else(|| {
+pub fn parse_standard_user(matches: &ArgMatches) -> Result<User> {
+    let username = get_standard_username(matches.value_of(STANDARD_USER_ARG_NAME))?;
+    get_user_by_name(&username).ok_or_else(|| {
         anyhow!(
             "User with name {:?} does not exist on this system!",
-            standard_username
+            username
         )
-    })?;
+    })
+}
 
-    // Run Homebrew first as it installs tools needed for later steps.
-    // Yes, this can be disabled but we trust that the user will only disable it on subsequent runs.
-    if matches.is_present(HOMEBREW_ARG_NAME) {
-        homebrew::install_deps(standard_user.clone(), brewfile_extra_bytes)?;
+pub struct SharedSetup {
+    clap_logging_config: clap_logging::Config,
+}
+
+impl SharedSetup {
+    pub fn new() -> Result<SharedSetup> {
+        let clap_logging_config = clap_logging::Config::new()?;
+        Ok(SharedSetup {
+            clap_logging_config,
+        })
     }
 
-    // Command line tools
-    login_shells::set(standard_user.clone())?;
-    // Note: Zsh interaction with path_helper was fixed, at least since Ventura
-    ssh::configure(&standard_user, ssh_config_extra_bytes)?;
-    git::configure(git_email, standard_user.clone())?;
-    scripts::install(&standard_user)?;
+    pub fn configure_cli<'a, 'b>(&self, app: clap::App<'a, 'b>) -> clap::App<'a, 'b> {
+        let standard_user_arg = Arg::with_name(STANDARD_USER_ARG_NAME)
+            .short("u")
+            .long("standard-user")
+            .help("Standard user to run as; defaults to value of SUDO_USER environment variable")
+            .takes_value(true)
+            .value_name("USERNAME");
 
-    // Graphical programs
-    iterm2::configure(&standard_user)?;
-    cathode::install(standard_user.clone())?;
-    hammerspoon::configure(&standard_user)?;
-    karabiner::configure(&standard_user)?;
-    if matches.is_present(BROWSER_ARG_NAME) {
-        default_browser::set(standard_user.clone())?;
+        let homebrew_arg = Arg::with_name(HOMEBREW_ARG_NAME)
+            .short("-H")
+            .long(HOMEBREW_ARG_NAME)
+            .help("Install Homebrew formulae and casks (takes a long time)");
+
+        let browser_arg = Arg::with_name(BROWSER_ARG_NAME)
+            .short("-B")
+            .long(BROWSER_ARG_NAME)
+            .help("Set the default browser (shows a prompt every time)");
+
+        app.global_settings(&self.clap_logging_config.clap_settings())
+            .global_setting(StrictUtf8)
+            .log_level_arg()
+            .arg(standard_user_arg)
+            .arg(homebrew_arg)
+            .arg(browser_arg)
     }
 
-    // Preferences
-    power_management::configure()?;
-    preferences::set(standard_user.clone())?;
-    login_items::configure(&standard_user)?;
+    // I do not love this mega-function with a bunch of options. Going with it for now but registering the desire to improve it in the future.
+    pub fn run(
+        &self,
+        matches: &ArgMatches,
+        standard_user: User,
+        brewfile_extra_bytes: Option<&[u8]>,
+        ssh_config_extra_bytes: Option<&[u8]>,
+        git_email: &str,
+    ) -> Result<()> {
+        self.clap_logging_config
+            .init_logger(matches, "COMBOOTCHA_LOG_LEVEL", LevelFilter::Info)?;
+        debug!("Logger was succesfully instantiated");
 
-    Ok(standard_user)
+        // Run Homebrew first as it installs tools needed for later steps.
+        // Yes, this can be disabled but we trust that the user will only disable it on subsequent runs.
+        if matches.is_present(HOMEBREW_ARG_NAME) {
+            homebrew::install_deps(standard_user.clone(), brewfile_extra_bytes)?;
+        }
+
+        // Command line tools
+        login_shells::set(standard_user.clone())?;
+        // Note: Zsh interaction with path_helper was fixed, at least since Ventura
+        ssh::configure(&standard_user, ssh_config_extra_bytes)?;
+        git::configure(git_email, standard_user.clone())?;
+        scripts::install(&standard_user)?;
+
+        // Graphical programs
+        iterm2::configure(&standard_user)?;
+        cathode::install(standard_user.clone())?;
+        hammerspoon::configure(&standard_user)?;
+        karabiner::configure(&standard_user)?;
+        if matches.is_present(BROWSER_ARG_NAME) {
+            default_browser::set(standard_user.clone())?;
+        }
+
+        // Preferences
+        power_management::configure()?;
+        login_items::configure(&standard_user)?;
+        preferences::set(standard_user)?;
+
+        Ok(())
+    }
 }
