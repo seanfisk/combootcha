@@ -1,10 +1,6 @@
 # Tasks
 
 - Firefox remember tabs on work machine
-- Start at login on work machine
-  - Firefox
-  - Outlook
-  - Slack
 - Shell setup
 - fasd/iterm2 integration
 - emacs-mac/cask conflict: https://github.com/d12frosted/homebrew-emacs-plus#known-issues
