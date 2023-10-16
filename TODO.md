@@ -10,8 +10,6 @@
 - fasd/iterm2 integration
 - emacs-mac/cask conflict: https://github.com/d12frosted/homebrew-emacs-plus#known-issues
 
-Seagate's Paragon NTFS driver: https://www.seagate.com/support/software/paragon/
-
 https://apple.stackexchange.com/questions/144656/can-i-make-the-trackpad-tracking-speed-faster-than-allowed-in-system-preferences
 
 https://gist.github.com/brandonb927/3195465
