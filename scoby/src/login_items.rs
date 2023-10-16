@@ -39,6 +39,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
         let label = format!("com.seanfisk.login.{}", app.to_lowercase());
         let agent_path = install_dir.join(format!("{label}.plist"));
         // TODO: Don't write the file if it's already in place with the correct content. It creates an annoying set of notifications every time.
+        // Is this still happening? As of 2023-10-16 I'm not seeing it.
         write_launch_agent(agent_path, &label, standard_user, app)?;
     }
     Ok(())
