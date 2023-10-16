@@ -63,14 +63,16 @@ fn get_standard_username(cli_value: Option<&str>) -> Result<String> {
     }
 }
 
-pub fn parse_standard_user(matches: &ArgMatches) -> Result<User> {
+// Return the username separately as we've already converted it to UTF-8
+pub fn parse_standard_user(matches: &ArgMatches) -> Result<(String, User)> {
     let username = get_standard_username(matches.value_of(STANDARD_USER_ARG_NAME))?;
-    get_user_by_name(&username).ok_or_else(|| {
+    let user = get_user_by_name(&username).ok_or_else(|| {
         anyhow!(
             "User with name {:?} does not exist on this system!",
             username
         )
-    })
+    })?;
+    Ok((username, user))
 }
 
 pub struct SharedSetup {

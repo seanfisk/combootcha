@@ -12,7 +12,7 @@ fn main() -> Result<()> {
     let shared_setup = scoby::SharedSetup::new()?;
     let app = shared_setup.configure_cli(app);
     let matches = app.get_matches();
-    let standard_user = scoby::parse_standard_user(&matches)?;
+    let (_standard_username, standard_user) = scoby::parse_standard_user(&matches)?;
 
     shared_setup.run(
         &matches,
