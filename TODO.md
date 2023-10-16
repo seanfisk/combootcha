@@ -5,7 +5,6 @@
   - Firefox
   - Outlook
   - Slack
-- .bm_pref and stuff from developer guide
 - Shell setup
 - fasd/iterm2 integration
 - emacs-mac/cask conflict: https://github.com/d12frosted/homebrew-emacs-plus#known-issues
