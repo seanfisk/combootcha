@@ -1,5 +1,6 @@
 use anyhow::{anyhow, Context, Error, Result};
 
+use std::process::Command;
 use std::path::{Path, PathBuf};
 
 fn main() -> std::result::Result<(), Error> {
@@ -36,6 +37,15 @@ fn main() -> std::result::Result<(), Error> {
         .file(process_input_file("user_defaults.c")?)
         .flag(&macos_min_version_flag)
         .compile("user_defaults");
+
+    let status = Command::new("cargo")
+        .args(["build", "--release"])
+        .current_dir("scripts")
+        .status()?;
+
+    if !status.success() {
+        return Err(anyhow!("Failed to build scoby scripts"));
+    }
 
     Ok(())
 }

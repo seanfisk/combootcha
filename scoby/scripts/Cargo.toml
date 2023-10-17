@@ -9,6 +9,12 @@ description  = "Personal scripts to install"
 anyhow = "1"
 clap = { version = "4", features = ["derive"] }
 
+[profile.release]
+opt-level = 'z' # Optimize for size
+lto = true # https://github.com/johnthagen/min-sized-rust#enable-link-time-optimization-lto
+codegen-units = 1 # https://github.com/johnthagen/min-sized-rust#reduce-parallel-code-generation-units-to-increase-optimization
+strip = "symbols"
+
 # Stop this crate from thinking it's part of the combootcha workspace
 # https://github.com/rust-lang/cargo/issues/5418#issuecomment-384999528
 [workspace]
