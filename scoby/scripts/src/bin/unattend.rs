@@ -1,5 +1,11 @@
 use anyhow::Result;
 use clap::Parser;
+use nix::unistd::{fork, ForkResult};
+use std::process::Command;
+
+// An interesting project would be to rewrite this in Swift without the calls to pmset or caffeinate.
+// pmset source: https://opensource.apple.com/source/PowerManagement/PowerManagement-703.1.5/pmset/pmset.c.auto.html
+// caffeinate source: https://opensource.apple.com/source/PowerManagement/PowerManagement-703.1.5/caffeinate/caffeinate.c.auto.html
 
 #[derive(Parser, Debug)]
 #[command(
@@ -8,8 +14,8 @@ use clap::Parser;
     trailing_var_arg = true,
 )]
 struct Args {
-    #[arg(long, default_value = "5s")]
-    delay: Option<humantime::Duration>,
+    #[arg(long, default_value_t = std::time::Duration::from_secs(5).into())]
+    delay: humantime::Duration,
 
     #[arg(help = "Command to run", allow_hyphen_values=true)]
     command: Vec<String>,
@@ -17,11 +23,30 @@ struct Args {
 
 fn main() -> Result<()> {
     let args = Args::parse();
-    println!("delay: {:?}", args.delay);
-    println!("command: {:?}", args.command);
 
-    Ok(())
+    // 1. Create power assertion to avoid idle sleep
+    // 2. Spawn the provided command
+    // 3. Sleep for the delay
+    // 4. Power off the display
+    // 5. Wait for command to finish
+    // 6. Sleep the system
+
+    use ForkResult::*;
+    match unsafe { fork() }.context("Fork failed")? {
+        Parent { child } => {
+
+            println!("Waiting for d")
+        },
+        Child => {
+            std::thread::sleep(args.delay);
+            Command::new("/usr/bin/pmset")
+                .arg("displaysleepnow")
+                .exec().context("Failed to exec pmset")
+        }
+    }
 }
+
+
 
 /*
 PMSET = '/usr/bin/pmset'
