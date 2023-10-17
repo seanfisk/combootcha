@@ -26,3 +26,4 @@ A program will be built for each environment. Currently planned:
 
 - https://github.com/tiiiecherle/osx_install_config
 - https://github.com/mathiasbynens/dotfiles/blob/master/.macos
+- https://gist.github.com/brandonb927/3195465

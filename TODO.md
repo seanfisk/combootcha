@@ -6,8 +6,6 @@
 
 https://apple.stackexchange.com/questions/144656/can-i-make-the-trackpad-tracking-speed-faster-than-allowed-in-system-preferences
 
-https://gist.github.com/brandonb927/3195465
-
 # Things to add
 
 When there are several options to try, they're ordered by preference from cursory research.
@@ -31,13 +29,6 @@ Starship, recommended by Alex
 
 - Capture
 - Shell configurations
-
-## Critical utilities
-
-- `e`
+- `alias e='/usr/local/bin/emacsclient --no-wait'`
 
 ## Port Emacs config
-
-## macOS do not wake on enhanced notifications
-
-https://osxdaily.com/2017/12/20/stop-enhanced-notifications-waking-mac-sleep/
