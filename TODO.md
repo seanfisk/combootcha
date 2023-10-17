@@ -1,6 +1,5 @@
 # Tasks
 
-- Firefox remember tabs on work machine
 - Shell setup
 - fasd/iterm2 integration
 - emacs-mac/cask conflict: https://github.com/d12frosted/homebrew-emacs-plus#known-issues
