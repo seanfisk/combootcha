@@ -38,6 +38,8 @@ fn main() -> std::result::Result<(), Error> {
         .flag(&macos_min_version_flag)
         .compile("user_defaults");
 
+    // TODO Do I need a rerun if changed for scripts too?
+
     let status = Command::new("cargo")
         .args(["build", "--release"])
         .current_dir("scripts")
