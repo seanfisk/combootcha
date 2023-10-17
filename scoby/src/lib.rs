@@ -1,6 +1,7 @@
 mod cathode;
 mod default_browser;
 mod env;
+mod firefox;
 mod fs;
 mod git;
 mod hammerspoon;
@@ -141,6 +142,7 @@ impl SharedSetup {
 
         // Graphical programs
         iterm2::configure(&standard_user)?;
+        firefox::configure(&standard_user)?;
         cathode::install(standard_user.clone())?;
         hammerspoon::configure(&standard_user)?;
         karabiner::configure(&standard_user)?;
@@ -148,7 +150,7 @@ impl SharedSetup {
             default_browser::set(standard_user.clone())?;
         }
 
-        // Preferences
+        // General preferences
         power_management::configure()?;
         login_items::configure(&standard_user)?;
         preferences::set(standard_user)?;
