@@ -34,9 +34,7 @@ Starship, recommended by Alex
 
 ## Critical utilities
 
-- `dns`
 - `e`
-- `rdns`
 - `unattend`
 
 ## Port Emacs config
