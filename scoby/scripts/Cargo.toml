@@ -1,0 +1,14 @@
+[package]
+name = "scripts"
+edition = "2021"
+version = "0.0.0"
+authors = ["Sean Fisk <sean@seanfisk.com>"]
+description  = "Personal scripts to install"
+
+[dependencies]
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+
+# Stop this crate from thinking it's part of the combootcha workspace
+# https://github.com/rust-lang/cargo/issues/5418#issuecomment-384999528
+[workspace]
