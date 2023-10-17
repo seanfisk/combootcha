@@ -1,7 +1,7 @@
 use anyhow::{anyhow, Context, Error, Result};
 
-use std::process::Command;
 use std::path::{Path, PathBuf};
+use std::process::Command;
 
 fn main() -> std::result::Result<(), Error> {
     // If we don't set this, bindgen will emit a warning. Things still seem to
@@ -41,7 +41,8 @@ fn main() -> std::result::Result<(), Error> {
     let status = Command::new("cargo")
         .args(["build", "--release"])
         .current_dir("scripts")
-        .status()?;
+        .status()
+        .context("Failed to build scoby scripts")?;
 
     if !status.success() {
         return Err(anyhow!("Failed to build scoby scripts"));
