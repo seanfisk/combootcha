@@ -38,16 +38,18 @@ fn main() -> std::result::Result<(), Error> {
         .flag(&macos_min_version_flag)
         .compile("user_defaults");
 
-    // TODO Do I need a rerun if changed for scripts too?
+    {
+        let scripts_dir = Path::new("scripts");
+        rerun_if_changed(scripts_dir)?;
+        let status = Command::new("cargo")
+            .args(["build", "--release"])
+            .current_dir(scripts_dir)
+            .status()
+            .context("Failed to build scoby scripts")?;
 
-    let status = Command::new("cargo")
-        .args(["build", "--release"])
-        .current_dir("scripts")
-        .status()
-        .context("Failed to build scoby scripts")?;
-
-    if !status.success() {
-        return Err(anyhow!("Failed to build scoby scripts"));
+        if !status.success() {
+            return Err(anyhow!("Failed to build scoby scripts"));
+        }
     }
 
     Ok(())
