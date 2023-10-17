@@ -8,22 +8,23 @@ use users::{os::unix::UserExt, User};
 
 use crate::UserExt as OtherUserExt;
 
+macro_rules! install_script {
+    ($install_dir : expr, $name : literal) => {
+        install_script(
+            $install_dir,
+            $name,
+            include_bytes!(concat!("../scripts/target/release/", $name)),
+        )
+    };
+}
+
 pub(crate) fn install(standard_user: &User) -> Result<()> {
     standard_user.as_effective_user(|| {
         let bin_dir = standard_user.home_dir().join("bin");
         crate::fs::ensure_dir(&bin_dir)?;
 
-        // TODO Reduce duplication? Would require some macro stuff
-        install_script(
-            &bin_dir,
-            "dns",
-            include_bytes!("../scripts/target/release/dns"),
-        )?;
-        install_script(
-            &bin_dir,
-            "rdns",
-            include_bytes!("../scripts/target/release/rdns"),
-        )?;
+        install_script!(&bin_dir, "dns")?;
+        install_script!(&bin_dir, "rdns")?;
 
         Ok(())
     })
