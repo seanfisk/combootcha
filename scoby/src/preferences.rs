@@ -181,6 +181,11 @@ pub(crate) fn set(standard_user: User) -> Result<()> {
             .int("KeyRepeat", 2)?
             //   Set low initial delay
             .int("InitialKeyRepeat", 15)?
+            // Trackpad (other trackpad settings are in com.apple.AppleMultitouchTrackpad)
+            //   Speed
+            .float("com.apple.trackpad.scaling", 0.6875)?
+            //   Click
+            .bool("com.apple.trackpad.forceClick", true)?
             // Finder
             //   Show all filename extensions
             .bool("AppleShowAllExtensions", true)?
@@ -188,6 +193,13 @@ pub(crate) fn set(standard_user: User) -> Result<()> {
             // .bool("com.apple.springing.enabled", true)?
             // Remove the spring loading delay for directories
             // .int("com.apple.springing.delay", 0)?
+            .sync()?;
+
+        App::new("com.apple.AppleMultitouchTrackpad")?
+            // Disable "Tap to click"
+            .bool("Clicking", false)?
+            // Silent clicking
+            .int("ActuationStrength", 0)?
             .sync()?;
 
         // Automatically quit printer app once the print jobs complete
