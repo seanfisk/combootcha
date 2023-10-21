@@ -2,7 +2,6 @@
 
 ## Must do
 
-- https://apple.stackexchange.com/questions/144656/can-i-make-the-trackpad-tracking-speed-faster-than-allowed-in-system-preferences
 - Port Emacs config
 - emacs-mac/cask conflict: https://github.com/d12frosted/homebrew-emacs-plus#known-issues
 - Shell basics including aliases
