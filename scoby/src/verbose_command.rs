@@ -6,12 +6,22 @@ use std::ffi::OsString;
 use std::iter;
 use std::path::PathBuf;
 
+// We are using the subprocess crate instead of std::process::Command because Command is vulnerable
+// to deadlock when writing to stdin:
+// http://doc.rust-lang.org/1.73.0/std/process/struct.Stdio.html#method.piped
+//
+// However, I'm not sure of the maintenance status of subprocess so we may want to switch to
+// std::process::Command eventually. The deadlock can be overcome with careful programming. In fact,
+// we can consult subprocess for how to avoid this!
+//
 // Advice on creating builders:
 // https://doc.rust-lang.org/1.0.0/style/ownership/builders.html
 // https://rust-unofficial.github.io/patterns/patterns/creational/builder.html
 //
-// The way that std::process::Command manages to implement a non-consuming builder is by converting borrowed OS strings to owned C strings when each builder method is called.
-// For example: https://github.com/rust-lang/rust/blob/1.72.1/library/std/src/sys/unix/process/process_common.rs#L248-L250
+// The way that std::process::Command manages to implement a non-consuming builder is by converting
+// borrowed OS strings to owned C strings when each builder method is called. For example:
+//
+// https://github.com/rust-lang/rust/blob/1.72.1/library/std/src/sys/unix/process/process_common.rs#L248-L250
 //
 // Since we're wrapping another library, we don't have that luxury.
 
