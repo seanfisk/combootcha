@@ -182,8 +182,9 @@ pub(crate) fn set(standard_user: User) -> Result<()> {
             //   Set low initial delay
             .int("InitialKeyRepeat", 15)?
             // Trackpad (other trackpad settings are in com.apple.AppleMultitouchTrackpad)
+            // TODO Having trouble getting these settings to take effect, even after a restart
             //   Speed
-            .float("com.apple.trackpad.scaling", 0.6875)?
+            .string("com.apple.trackpad.scaling", "0.6875")?
             //   Click
             .bool("com.apple.trackpad.forceClick", true)?
             // Finder
@@ -195,6 +196,7 @@ pub(crate) fn set(standard_user: User) -> Result<()> {
             // .int("com.apple.springing.delay", 0)?
             .sync()?;
 
+        // TODO Having trouble getting these settings to take effect, even after a restart
         App::new("com.apple.AppleMultitouchTrackpad")?
             // Disable "Tap to click"
             .bool("Clicking", false)?
