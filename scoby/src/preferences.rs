@@ -200,6 +200,7 @@ pub(crate) fn set(standard_user: User) -> Result<()> {
         App::new("com.apple.AppleMultitouchTrackpad")?
             // Disable "Tap to click"
             .bool("Clicking", false)?
+            // TODO Consider audible clicking
             // Silent clicking
             .int("ActuationStrength", 0)?
             .sync()?;
