@@ -20,6 +20,8 @@ fn main() -> Result<()> {
         /*brewfile_extra_bytes=*/ Some(include_bytes!("Brewfile")),
         /*ssh_config_extra_bytes=*/ None,
         /*git_email=*/ "sean@seanfisk.com",
+        /*zprofile_extra_bytes*/ None,
+        /*zshrc_extra_bytes=*/ None,
     )?;
 
     standard_user.as_effective_user(|| {

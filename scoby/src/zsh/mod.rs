@@ -7,19 +7,23 @@ use std::path::Path;
 
 use crate::UserExt as OtherUserExt;
 
-pub(crate) fn configure(standard_user: &User, rc_extra_bytes: Option<&[u8]>) -> Result<()> {
+pub(crate) fn configure(
+    standard_user: &User,
+    profile_extra_bytes: Option<&[u8]>,
+    rc_extra_bytes: Option<&[u8]>,
+) -> Result<()> {
     info!("Installing Zsh configuration files");
     let home_dir = standard_user.home_dir();
     standard_user.as_effective_user(|| {
         install_dotfile(
+            home_dir.join(".zprofile"),
+            include_bytes!("profile.zsh"),
+            profile_extra_bytes,
+        )?;
+        install_dotfile(
             home_dir.join(".zshrc"),
             include_bytes!("rc.zsh"),
             rc_extra_bytes,
-        )?;
-        install_dotfile(
-            home_dir.join(".zprofile"),
-            include_bytes!("profile.zsh"),
-            None,
         )
     })
 }

@@ -123,6 +123,8 @@ impl SharedSetup {
         brewfile_extra_bytes: Option<&[u8]>,
         ssh_config_extra_bytes: Option<&[u8]>,
         git_email: &str,
+        zprofile_extra_bytes: Option<&[u8]>,
+        zshrc_extra_bytes: Option<&[u8]>,
     ) -> Result<()> {
         self.clap_logging_config
             .init_logger(matches, "COMBOOTCHA_LOG_LEVEL", LevelFilter::Info)?;
@@ -140,7 +142,7 @@ impl SharedSetup {
         ssh::configure(&standard_user, ssh_config_extra_bytes)?;
         git::configure(git_email, standard_user.clone())?;
         scripts::install(&standard_user)?;
-        zsh::configure(&standard_user, None)?;
+        zsh::configure(&standard_user, zprofile_extra_bytes, zshrc_extra_bytes)?;
 
         // Graphical programs
         iterm2::configure(&standard_user)?;
