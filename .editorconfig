@@ -8,10 +8,23 @@ insert_final_newline = true
 charset = utf-8
 
 # https://doc.rust-lang.org/nightly/style-guide/cargo.html
-[*.{rs,toml}]
+[*.{rs,toml,md}]
 indent_style = space
 indent_size = 4
 
-[*.zsh]
-indent_style = tab
+# https://github.com/rubocop/ruby-style-guide#spaces-indentation
+[Brewfile]
+indent_style = space
 indent_size = 2
+
+# http://lua-users.org/wiki/LuaStyleGuide
+# Also used in: https://www.hammerspoon.org/go/#helloworld
+# https://github.com/ohmyzsh/ohmyzsh/wiki/Code-Style-Guide#indentation
+[*.{lua,zsh}]
+indent_style = space
+indent_size = 2
+
+# plutil exports with tabs and a size of 4 looks much better
+[*.plist]
+indent_style = tab
+indent_size = 4
