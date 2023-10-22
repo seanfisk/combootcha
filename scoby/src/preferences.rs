@@ -100,6 +100,19 @@ pub(crate) fn set(standard_user: User) -> Result<()> {
             .bool("toggleMassStorageDriver", false)?
             .sync()?;
 
+        let dict = {
+            use crate::user_defaults::DictValue::*;
+            std::collections::HashMap::from([
+                ("testBool", Bool(true)),
+                ("testInt", Int(42)),
+                ("testFloat", Float(1.234)),
+            ])
+        };
+        App::new("com.seanfisk.DictTest")?
+            .bool("prefExists", true)?
+            .dict("testDict", &dict)?
+            .sync()?;
+
         App::new("com.apple.screensaver")?
             .bool("askForPassword", false)?
             .int("askForPasswordDelay", 5)?
