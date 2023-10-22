@@ -4,7 +4,7 @@ use std::io::Write;
 use users::{os::unix::UserExt, User};
 
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
-    let bytes = include_bytes!("hammerspoon-init.lua");
+    let bytes = include_bytes!("init.lua");
     let hammerspoon_dir = standard_user.home_dir().join(".hammerspoon");
     let path = hammerspoon_dir.join("init.lua");
 

@@ -2,7 +2,6 @@
 
 ## Must do
 
-- Make modules where multiple files exist for a specific piece of software
 - Workspace dependencies
 - Zsh basics including aliases
   - `alias e='/usr/local/bin/emacsclient --no-wait'`

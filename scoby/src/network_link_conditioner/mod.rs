@@ -24,7 +24,7 @@ pub(crate) fn install() -> Result<()> {
     //
     //     /usr/bin/tar -C /Library/PreferencePanes -cJvf 'src/network-link-conditioner.tar.xz' 'Network Link Conditioner.prefPane'
     //
-    let bytes = include_bytes!("network-link-conditioner.tar.xz");
+    let bytes = include_bytes!("app.tar.xz");
     Command::new("/usr/bin/tar")
         .arg("-x") // extract
         .arg("-J") // xz
