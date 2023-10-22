@@ -7,7 +7,6 @@
 - Zsh basics including aliases
   - `alias e='/usr/local/bin/emacsclient --no-wait'`
   - Set `EDITOR` to emacsclient
-  - `tcping` (make sure we install ncat)
   - Exit if non-interactive
   - umask: Include this but have it commented out. It's not necessary on a macOS personal system.
   - PATH & friends
