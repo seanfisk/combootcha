@@ -56,3 +56,7 @@ Modify this to work with master or main
 ### Reduce duplication around writing files
 
  Lots of `create_file`, `write_all`, then `sync_all`. Could have better context on the errors. Maybe make a helper for it.
+
+### pyenv
+
+It's being installed by Homebrew but we're not configuring it. Definitely need it for work, but we may want to include it for personal too.
