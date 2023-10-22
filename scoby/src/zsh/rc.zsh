@@ -74,3 +74,20 @@ non-native-dns() {
 }
 alias nslookup='non-native-dns nslookup'
 alias host='non-native-dns host'
+
+# Paging
+#
+# Note: `|&' is Bash 4 and Zsh only.
+#
+# Note: We used to bind this to C-j, but that interferes with tmuxifier's `run_cmd "clear"' line in
+# `lib/layout-helpers.sh' for some reason. It causes the command strings to be piped to less, which
+# brings the terminal into less and doesn't execute the commands. Not sure about the cause.
+bindkey -s '\C-x\C-l' ' |& less\C-m'
+
+# Execute last command. This is equivalent to pressing C-p or the up arrow, then Enter.
+bindkey -s '\C-xp' '\C-p\C-m'
+
+# Up a directory, aliased to `u' for me. Note: `\ej' means `ESC+' then `j' as opposed to `\M-j',
+# which means `Meta' then `j'. I have both Option keys on my Mac configured to send `ESC+' in
+# iTerm2. Actually sending Meta is apparently a relic of the past, and ESC+ should be used now.
+bindkey -s '\ej' 'u\C-m'
