@@ -43,6 +43,7 @@ alias gobuddygo='hub push'
 alias gt='hub status'
 
 # Miscellaneous
+alias e='emacsclient --no-wait'
 alias fsb='stat -f %z'
 alias godmode='sudo -i'
 alias less='less -R'
