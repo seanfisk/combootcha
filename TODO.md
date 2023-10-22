@@ -2,7 +2,6 @@
 
 ## Must do
 
-- Workspace dependencies
 - Zsh basics including aliases
   - `alias e='/usr/local/bin/emacsclient --no-wait'`
   - Set `EDITOR` to emacsclient

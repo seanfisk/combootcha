@@ -14,10 +14,14 @@ repository = "https://github.com/seanfisk/combootcha"
 homepage = "https://github.com/seanfisk/combootcha"
 readme = "README.md"
 
+[workspace.dependencies]
+anyhow = "1"
+clap = "2.34"
+log = { version = "0.4", features = ["std"] }
+users = "0.11"
+
 [profile.release]
 opt-level = 'z' # Optimize for size
 lto = true # https://github.com/johnthagen/min-sized-rust#enable-link-time-optimization-lto
 codegen-units = 1 # https://github.com/johnthagen/min-sized-rust#reduce-parallel-code-generation-units-to-increase-optimization
 strip = "symbols"
-
-# TODO Add workspace dependencies
