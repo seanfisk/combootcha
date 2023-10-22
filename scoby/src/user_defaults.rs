@@ -17,11 +17,11 @@ mod sys {
 }
 
 #[derive(Debug)]
-pub enum DictValue {
+pub enum DictValue<'a> {
     Bool(bool),
     Int(i64),
     Float(f64),
-    // String(&str),
+    String(&'a str),
 }
 
 pub struct App {
@@ -107,6 +107,17 @@ impl App {
                 Float(f64_value) => unsafe {
                     sys::user_defaults_dict_set_f64_value(cf_dict, dict_c_key.as_ptr(), *f64_value)
                 },
+                String(string_value) => {
+                    let dict_c_value = to_cstring(string_value)?;
+                    unsafe {
+                        sys::user_defaults_dict_set_string_value(
+                            cf_dict,
+                            dict_c_key.as_ptr(),
+                            dict_c_value.as_ptr(),
+                        )
+                    }
+                    keep_alive_cstrings.push(dict_c_value);
+                }
             }
             keep_alive_cstrings.push(dict_c_key);
         }

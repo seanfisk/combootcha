@@ -129,6 +129,15 @@ void user_defaults_dict_set_f64_value(CFMutableDictionaryRef dict,
   CFRelease(cf_value);
 }
 
+void user_defaults_dict_set_string_value(CFMutableDictionaryRef dict,
+                                         const char *key, const char *value) {
+  CFStringRef cf_key = to_cfstring(key);
+  CFStringRef cf_value = to_cfstring(value);
+  CFDictionarySetValue(dict, cf_key, cf_value);
+  CFRelease(cf_key);
+  CFRelease(cf_value);
+}
+
 void user_defaults_dict_release(CFMutableDictionaryRef dict) {
   CFRelease(dict);
 }

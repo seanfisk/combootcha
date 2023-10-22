@@ -24,4 +24,6 @@ void user_defaults_dict_set_i64_value(CFMutableDictionaryRef dict,
                                       const char *key, SInt64 value);
 void user_defaults_dict_set_f64_value(CFMutableDictionaryRef dict,
                                       const char *key, Float64 value);
+void user_defaults_dict_set_string_value(CFMutableDictionaryRef dict,
+                                         const char *key, const char *value);
 void user_defaults_dict_release(CFMutableDictionaryRef dict);
