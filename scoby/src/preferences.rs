@@ -106,6 +106,7 @@ pub(crate) fn set(standard_user: User) -> Result<()> {
                 ("testBool", Bool(true)),
                 ("testInt", Int(42)),
                 ("testFloat", Float(1.234)),
+                ("testString", String("whatever ⌘")),
             ])
         };
         App::new("com.seanfisk.DictTest")?
