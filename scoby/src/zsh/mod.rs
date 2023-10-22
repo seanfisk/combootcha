@@ -13,6 +13,7 @@ pub(crate) fn configure(
     rc_extra_bytes: Option<&[u8]>,
 ) -> Result<()> {
     info!("Installing Zsh configuration files");
+    // Note: Don't use .zshenv because /etc/zprofile will clobber it
     let home_dir = standard_user.home_dir();
     standard_user.as_effective_user(|| {
         install_dotfile(
