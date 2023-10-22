@@ -1,6 +1,7 @@
 use anyhow::{anyhow, Context, Result};
 use log::{debug, info};
 
+use std::collections::HashMap;
 use std::ffi::CString;
 use std::fmt::Debug;
 
@@ -13,6 +14,14 @@ use std::fmt::Debug;
 mod sys {
     #![allow(unused)]
     include!(concat!(env!("OUT_DIR"), "/user_defaults.rs"));
+}
+
+#[derive(Debug)]
+pub enum DictValue {
+    Bool(bool),
+    Int(i64),
+    Float(f64),
+    // String(&str),
 }
 
 pub struct App {
@@ -68,6 +77,42 @@ impl App {
         let size = i64::try_from(value.len()).context("Could not convert data length into i64")?;
         unsafe {
             sys::user_defaults_set_data(self.c_id.as_ptr(), c_key.as_ptr(), value.as_ptr(), size)
+        }
+        Ok(self)
+    }
+
+    pub fn dict(&self, key: &str, value: &HashMap<&str, DictValue>) -> Result<&App> {
+        self.log_setting("dict", key, value); // TODO Audit this
+        let c_key = to_cstring(key)?;
+
+        // There are a number of strings we will be passing to C functions that we need to stay alive until the end of this function. This is SEPERATE from the CFStrings we will be allocating and releasing which are entirely confined to the C code.
+        let mut keep_alive_cstrings = Vec::new();
+
+        let cf_dict = unsafe { sys::user_defaults_dict_create() };
+        for (dict_key, dict_value) in value {
+            use DictValue::*;
+
+            let dict_c_key = to_cstring(dict_key)?;
+            match dict_value {
+                Bool(bool_value) => unsafe {
+                    sys::user_defaults_dict_set_bool_value(
+                        cf_dict,
+                        dict_c_key.as_ptr(),
+                        *bool_value,
+                    )
+                },
+                Int(i64_value) => unsafe {
+                    sys::user_defaults_dict_set_i64_value(cf_dict, dict_c_key.as_ptr(), *i64_value)
+                },
+                Float(f64_value) => unsafe {
+                    sys::user_defaults_dict_set_f64_value(cf_dict, dict_c_key.as_ptr(), *f64_value)
+                },
+            }
+            keep_alive_cstrings.push(dict_c_key);
+        }
+        unsafe {
+            sys::user_defaults_set_dict(self.c_id.as_ptr(), c_key.as_ptr(), cf_dict);
+            sys::user_defaults_dict_release(cf_dict);
         }
         Ok(self)
     }
