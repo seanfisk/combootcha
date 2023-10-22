@@ -1,8 +1,8 @@
 [workspace]
 resolver = "2" # See https://doc.rust-lang.org/cargo/reference/workspaces.html#virtual-workspace
 members = [
-  "scoby",
-  "combootcha",
+    "scoby",
+    "combootcha",
 ]
 
 [workspace.package]

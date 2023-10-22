@@ -2,8 +2,10 @@
 
 ## Must do
 
+- Workspace dependencies
+- Make modules where multiple files exist for a specific piece of software
 - Zsh basics including aliases
-  - Aliases: `c`, `u`, `less`, `godmode`, `mkdate`, `py`, `gr`, `mk`, `ccapture`, `fsb`, `lslisten`, `cpaste`, `ccopy`, `ccwd`
+  - Aliase `py`, `gr`, `mk`, `ccapture`, `fsb`, `lslisten`, `cpaste`, `ccopy`, `ccwd`
   - `alias e='/usr/local/bin/emacsclient --no-wait'`
   - Set `EDITOR` to emacsclient
   - Alias hub to git
@@ -11,7 +13,7 @@
     - `g`
     - `gt`
     - `gobuddygo`
-    - `gcm`: Modify this to work with master or main
+    - `gcm`
   - Exa (use eza now)
     - `ls`
     - `l`
@@ -66,3 +68,7 @@ Need to investigate how this is done now. My stuff in dotfiles was written a lon
 ### Old
 
 Instead of just `old` and `unold`, write a utility that does better handling and allows accepting the filename without the `.old` suffix
+
+### gcm
+
+Modify this to work with master or main
