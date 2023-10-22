@@ -23,6 +23,9 @@ brew 'gnu-tar'
 brew 'graphicsmagick'
 brew 'imagemagick' # Useful for HEIC and ICO
 brew 'hub'
+# bindgen needs libclang: https://rust-lang.github.io/rust-bindgen/requirements.html#clang
+# It's needed by Combootcha in order to find CFDictionary.h in user_defaults.h
+brew 'llvm'
 brew 'nmap' # Also includes ncat
 # I prefer ohcount to cloc and sloccount.
 brew 'ohcount'
