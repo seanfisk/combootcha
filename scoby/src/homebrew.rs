@@ -22,6 +22,7 @@ pub(crate) fn install_deps(standard_user: User, brewfile_extra_bytes: Option<&[u
             file.write_all(b"\n")?;
             file.write_all(bytes)?;
         }
+        file.sync_all()?;
         Ok(())
     })?;
 

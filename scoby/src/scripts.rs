@@ -34,13 +34,15 @@ fn install_script(install_dir: &Path, name: &str, contents: &[u8]) -> Result<()>
     let path = install_dir.join(name);
     info!("Writing script to {path:?}");
 
-    OpenOptions::new()
+    let mut file = OpenOptions::new()
         .write(true)
         .create(true)
         .truncate(true)
         .mode(0o755)
-        .open(path)?
-        .write_all(contents)?;
+        .open(path)?;
+
+    file.write_all(contents)?;
+    file.sync_all()?;
 
     Ok(())
 }

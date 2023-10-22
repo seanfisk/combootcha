@@ -2,7 +2,6 @@
 
 ## Must do
 
-- Add `sync_all` where appropriate
 - Port Emacs config
 - emacs-mac/cask conflict: https://github.com/d12frosted/homebrew-emacs-plus#known-issues
 - Audit chef-repo for stuff to transfer
@@ -53,3 +52,7 @@ Modify this to work with master or main
 ### Capture
 
 `capture` script and `ccapture` alias
+
+### Reduce duplication around writing files
+
+ Lots of `create_file`, `write_all`, then `sync_all`. Could have better context on the errors. Maybe make a helper for it.

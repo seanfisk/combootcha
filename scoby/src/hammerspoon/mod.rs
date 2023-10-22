@@ -12,6 +12,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
         crate::fs::ensure_dir(&hammerspoon_dir)?;
         let mut file = crate::fs::create_file(&path)?;
         file.write_all(bytes)?;
+        file.sync_all()?;
         Ok(())
     })
 }

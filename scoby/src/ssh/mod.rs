@@ -17,6 +17,7 @@ pub(crate) fn configure(standard_user: &User, config_extra_bytes: Option<&[u8]>)
             file.write_all(b"\n")?;
             file.write_all(bytes)?;
         }
+        file.sync_all()?;
         Ok(())
     })
 }
