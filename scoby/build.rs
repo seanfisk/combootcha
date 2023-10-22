@@ -34,6 +34,7 @@ fn main() -> std::result::Result<(), Error> {
     println!("cargo:rustc-link-lib=framework=CoreFoundation");
 
     cc::Build::new()
+        .flag("-v") // verbose
         .file(process_input_file("user_defaults.c")?)
         .flag(&macos_min_version_flag)
         .compile("user_defaults");
