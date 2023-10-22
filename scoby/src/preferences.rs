@@ -73,6 +73,18 @@ pub(crate) fn set(standard_user: User) -> Result<()> {
         //     .bool("shouldUseSmartMenuBarIcons", true)?
         //     .sync()?;
 
+        // Set "Eject disks and sleep" hotkey to ⌘⌥⌫
+        let sleep_hotkey_dict = {
+            use crate::user_defaults::DictValue;
+            let delete_key = "";
+            std::collections::HashMap::from([
+                ("characters", DictValue::String(delete_key)),
+                ("charactersIgnoringModifiers", DictValue::String(delete_key)),
+                ("keyCode", DictValue::Int(51)),
+                ("modifierFlags", DictValue::Int(1572864)),
+            ])
+        };
+
         App::new("com.stclairsoft.Jettison")?
             .bool("askedToLaunchAtLogin", true)? // We use launchd to start Jettison at login
             .bool("autoEjectAtLogout", false)?
@@ -88,30 +100,9 @@ pub(crate) fn set(standard_user: User) -> Result<()> {
             .bool("playSoundOnFailure", false)?
             .bool("playSoundOnSuccess", false)?
             .bool("showRemountProgress", false)?
-            // Set "Eject disks and sleep" hotkey to ⌘⌥⌫
-            // TODO Would need to implement putting dictionaries
-            // 'sleepHotkey' => {
-            //   'characters' => '',
-            //   'charactersIgnoringModifiers' => '',
-            //   .int("keyCode", 51)?
-            //   .int("modifierFlags", 1572864)?
-            // },
+            .dict("sleepHotkey", &sleep_hotkey_dict)?
             .bool("statusItemEnabled", true)?
             .bool("toggleMassStorageDriver", false)?
-            .sync()?;
-
-        let dict = {
-            use crate::user_defaults::DictValue::*;
-            std::collections::HashMap::from([
-                ("testBool", Bool(true)),
-                ("testInt", Int(42)),
-                ("testFloat", Float(1.234)),
-                ("testString", String("whatever ⌘")),
-            ])
-        };
-        App::new("com.seanfisk.DictTest")?
-            .bool("prefExists", true)?
-            .dict("testDict", &dict)?
             .sync()?;
 
         App::new("com.apple.screensaver")?
