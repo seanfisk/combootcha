@@ -25,32 +25,32 @@ mk() { mkdir -p "$1" && cd "$1"; }
 
 alias l='ls --long --git'
 alias la='l --all'
-alias ls='/usr/local/bin/eza --classify'
+alias ls='eza --classify'
 
 old() { mv "$1" "$1.old"; } # make a *.old file
 unold() { mv "$1" "${1%.old}"; }
 
 # Clipboard
-alias ccopy=/usr/bin/pbcopy
-alias cpaste=/usr/bin/pbpaste
+alias ccopy=pbcopy
+alias cpaste=pbpaste
 alias ccwd='echo -n "$(pwd)" | ccopy'
 
 # Git
-alias g=/usr/local/bin/hub
-alias gcm='/usr/local/bin/hub checkout master'
-alias git=/usr/local/bin/hub
-alias gobuddygo='/usr/local/bin/hub push'
-alias gt='/usr/local/bin/hub status'
+alias g=hub
+alias git=hub
+alias gcm='hub checkout master'
+alias gobuddygo='hub push'
+alias gt='hub status'
 
 # Miscellaneous
 alias fsb='stat -f %z'
 alias godmode='sudo -i'
 alias less='less -R'
-alias lslisten='/usr/sbin/lsof -nP -iTCP -sTCP:LISTEN'
+alias lslisten='lsof -nP -iTCP -sTCP:LISTEN'
 alias mkdate='date +%Y-%m-%d'
 alias py=python
-alias rp=/usr/local/bin/grealpath
-alias tcping='/usr/local/bin/ncat --verbose -z --wait 1'
+alias rp=grealpath
+alias tcping='ncat --verbose -z --wait 1'
 
 # Process-related utilities
 #
