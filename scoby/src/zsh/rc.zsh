@@ -17,17 +17,18 @@ unset MIN_ZSH_VERSION
 # Shell options
 setopt INTERACTIVE_COMMENTS
 
-# Aliases
+# Files & directories
 alias c='cd'
-alias fsb='stat -f %z'
-alias godmode='sudo -i'
-alias less='less -R'
-alias lslisten='/usr/sbin/lsof -nP -iTCP -sTCP:LISTEN'
-alias mkdate='date +%Y-%m-%d'
-alias py=python
-alias rp=/usr/local/bin/grealpath
-alias tcping='/usr/local/bin/ncat --verbose -z --wait 1'
 alias u='cd ..' # thanks Karlin
+cdl() { cd "$1" && ls; }
+mk() { mkdir -p "$1" && cd "$1"; }
+
+alias l='ls --long --git'
+alias la='l --all'
+alias ls='/usr/local/bin/eza --classify'
+
+old() { mv "$1" "$1.old"; } # make a *.old file
+unold() { mv "$1" "${1%.old}"; }
 
 # Clipboard
 alias ccopy=/usr/bin/pbcopy
@@ -41,10 +42,15 @@ alias git=/usr/local/bin/hub
 alias gobuddygo='/usr/local/bin/hub push'
 alias gt='/usr/local/bin/hub status'
 
-# Directory listing
-alias l='ls --long --git'
-alias la='l --all'
-alias ls='/usr/local/bin/eza --classify'
+# Miscellaneous
+alias fsb='stat -f %z'
+alias godmode='sudo -i'
+alias less='less -R'
+alias lslisten='/usr/sbin/lsof -nP -iTCP -sTCP:LISTEN'
+alias mkdate='date +%Y-%m-%d'
+alias py=python
+alias rp=/usr/local/bin/grealpath
+alias tcping='/usr/local/bin/ncat --verbose -z --wait 1'
 
 # Process-related utilities
 #

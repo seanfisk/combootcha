@@ -5,7 +5,7 @@
 - Workspace dependencies
 - Make modules where multiple files exist for a specific piece of software
 - Zsh basics including aliases
-  - Aliase `mk`, `ccapture`
+  - alias `ccapture`
   - `alias e='/usr/local/bin/emacsclient --no-wait'`
   - Set `EDITOR` to emacsclient
   - Alias hub to git
