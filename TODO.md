@@ -2,22 +2,11 @@
 
 ## Must do
 
-- Workspace dependencies
 - Make modules where multiple files exist for a specific piece of software
+- Workspace dependencies
 - Zsh basics including aliases
-  - alias `ccapture`
   - `alias e='/usr/local/bin/emacsclient --no-wait'`
   - Set `EDITOR` to emacsclient
-  - Alias hub to git
-  - Git aliases
-    - `g`
-    - `gt`
-    - `gobuddygo`
-    - `gcm`
-  - Exa (use eza now)
-    - `ls`
-    - `l`
-    - `ll`
   - `tcping` (make sure we install ncat)
   - Exit if non-interactive
   - umask: Include this but have it commented out. It's not necessary on a macOS personal system.
@@ -72,3 +61,7 @@ Instead of just `old` and `unold`, write a utility that does better handling and
 ### gcm
 
 Modify this to work with master or main
+
+### Capture
+
+`capture` script and `ccapture` alias
