@@ -2,10 +2,7 @@
 
 ## Must do
 
-- Zsh basics including aliases
-  - Set `EDITOR` to emacsclient
-  - umask: Include this but have it commented out. It's not necessary on a macOS personal system.
-  - PATH & friends
+- Add `sync_all` where appropriate
 - Port Emacs config
 - emacs-mac/cask conflict: https://github.com/d12frosted/homebrew-emacs-plus#known-issues
 - Audit chef-repo for stuff to transfer

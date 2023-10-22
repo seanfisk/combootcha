@@ -21,6 +21,7 @@ mod ssh;
 pub mod user;
 pub mod user_defaults;
 pub mod verbose_command;
+mod zsh;
 
 pub use path::Ext as PathExt;
 pub use user::Ext as UserExt;
@@ -139,6 +140,7 @@ impl SharedSetup {
         ssh::configure(&standard_user, ssh_config_extra_bytes)?;
         git::configure(git_email, standard_user.clone())?;
         scripts::install(&standard_user)?;
+        zsh::configure(&standard_user, None)?;
 
         // Graphical programs
         iterm2::configure(&standard_user)?;
