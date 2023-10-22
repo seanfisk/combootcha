@@ -73,37 +73,35 @@ pub(crate) fn set(standard_user: User) -> Result<()> {
         //     .bool("shouldUseSmartMenuBarIcons", true)?
         //     .sync()?;
 
-        // Set "Eject disks and sleep" hotkey to ⌘⌥⌫
-        let sleep_hotkey_dict = {
-            use crate::user_defaults::DictValue;
+        {
             let delete_key = "";
-            std::collections::HashMap::from([
-                ("characters", DictValue::String(delete_key)),
-                ("charactersIgnoringModifiers", DictValue::String(delete_key)),
-                ("keyCode", DictValue::Int(51)),
-                ("modifierFlags", DictValue::Int(1572864)),
-            ])
-        };
+            let key_code = 51;
+            let sleep_hotkey_dict = make_jettison_hotkey_dict(delete_key, key_code, 1_572_864);
+            let eject_hotkey_dict = make_jettison_hotkey_dict(delete_key, key_code, 1_703_936);
 
-        App::new("com.stclairsoft.Jettison")?
-            .bool("askedToLaunchAtLogin", true)? // We use launchd to start Jettison at login
-            .bool("autoEjectAtLogout", false)?
-            .bool("autoEjectEnabled", true)? // This really means autoEjectAtSleep
-            .bool("ejectDiskImages", true)?
-            .bool("ejectHardDisks", true)?
-            .bool("ejectNetworkDisks", true)?
-            .bool("ejectOpticalDisks", false)?
-            .bool("askedAboutSDCards", true)? // We are telling the app right below
-            .bool("ejectSDCards", false)?
-            .bool("hideMenuBarIcon", false)?
-            .bool("moveToApplicationsFolderAlertSuppress", true)?
-            .bool("playSoundOnFailure", false)?
-            .bool("playSoundOnSuccess", false)?
-            .bool("showRemountProgress", false)?
-            .dict("sleepHotkey", &sleep_hotkey_dict)?
-            .bool("statusItemEnabled", true)?
-            .bool("toggleMassStorageDriver", false)?
-            .sync()?;
+            App::new("com.stclairsoft.Jettison")?
+                .bool("askedToLaunchAtLogin", true)? // We use launchd to start Jettison at login
+                .bool("autoEjectAtLogout", false)?
+                .bool("autoEjectEnabled", true)? // This really means autoEjectAtSleep
+                .bool("ejectDiskImages", true)?
+                .bool("ejectHardDisks", true)?
+                // Set "Eject external disks" hotkey to ⌘⇧⌥⌫
+                .dict("ejectHotkey", &eject_hotkey_dict)?
+                .bool("ejectNetworkDisks", true)?
+                .bool("ejectOpticalDisks", false)?
+                .bool("askedAboutSDCards", true)? // We are telling the app right below
+                .bool("ejectSDCards", false)?
+                .bool("hideMenuBarIcon", false)?
+                .bool("moveToApplicationsFolderAlertSuppress", true)?
+                .bool("playSoundOnFailure", false)?
+                .bool("playSoundOnSuccess", false)?
+                .bool("showRemountProgress", false)?
+                // Set "Eject disks and sleep" hotkey to ⌘⌥⌫
+                .dict("sleepHotkey", &sleep_hotkey_dict)?
+                .bool("statusItemEnabled", true)?
+                .bool("toggleMassStorageDriver", false)?
+                .sync()?;
+        }
 
         App::new("com.apple.screensaver")?
             .bool("askForPassword", false)?
@@ -374,4 +372,18 @@ pub(crate) fn set(standard_user: User) -> Result<()> {
         .run()?;
 
     Ok(())
+}
+
+fn make_jettison_hotkey_dict(
+    characters: &str,
+    key_code: i64,
+    modifier_flags: i64,
+) -> std::collections::HashMap<&str, crate::user_defaults::DictValue> {
+    use crate::user_defaults::DictValue;
+    std::collections::HashMap::from([
+        ("characters", DictValue::String(characters)),
+        ("charactersIgnoringModifiers", DictValue::String(characters)),
+        ("keyCode", DictValue::Int(key_code)),
+        ("modifierFlags", DictValue::Int(modifier_flags)),
+    ])
 }
