@@ -18,6 +18,12 @@ Starship, recommended by Alex
 
 Should switch to zoxide or similar since fasd is dead. Whatever you do, rewrite the tool in Rust.
 
+### Screenclean
+
+Set macOS screenshots dir to `~/Pictures/Screenshots`. Sweep the directory daily and use `trash` to remove anything older than 7 days.
+
+Use `trash` for now but note that the way it trashes items is deprecated. Now we should use [`NSFileManager`](https://developer.apple.com/documentation/foundation/nsfilemanager/1414306-trashitematurl). Possibly write a Swift program to do this in the future.
+
 ### Zsh plugin manager options
 
 1. https://github.com/zdharma/zinit
