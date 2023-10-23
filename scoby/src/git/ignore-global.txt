@@ -1,0 +1,41 @@
+# -*- mode: gitignore; -*-
+
+# Emacs files
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+.elc
+auto-save-list
+tramp
+.\#*
+.projectile
+
+# Tag files
+TAGS
+
+# macOS junk
+.DS_Store
+Icon
+
+# Thumbnails
+._*
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+
+# pyenv version file
+#
+# Ignore python-version because this can be used to point to a
+# specific virtualenv, but don't ignore ruby-version because that
+# typically only contains the version of Ruby the project needs to
+# use.
+.python-version
+
+# jEnv is more of a personal tool than a standard
+.java-version
+
+# The Silver Searcher
+# Typically used to prevent ag from searching generated files.
+.agignore

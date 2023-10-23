@@ -17,5 +17,6 @@ cargo clippy -- \
       --allow clippy::enum_glob_use \
       --allow clippy::missing_errors_doc \
       --allow clippy::must_use_candidate \
+      --allow clippy::too-many-arguments \
       --allow clippy::too-many-lines \
       --allow clippy::semicolon-if-nothing-returned

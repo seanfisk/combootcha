@@ -1,16 +1,31 @@
 use crate::verbose_command::Command;
 use anyhow::Result;
 use log::info;
+use std::ffi::OsString;
+use std::io::Write;
 use users::{os::unix::UserExt, User};
+
+use crate::UserExt as OtherUserExt;
 
 pub(crate) fn configure(email: &str, standard_user: User) -> Result<()> {
     info!("Setting up personal Git preferences");
+
+    let gitignore_global_path = standard_user.home_dir().join(".gitignore-global");
+    info!("Writing {gitignore_global_path:?}");
+    standard_user.as_effective_user(|| {
+        let mut file = crate::fs::create_file(&gitignore_global_path)?;
+        let bytes = include_bytes!("ignore-global.txt");
+        file.write_all(bytes)?;
+        file.sync_all()?;
+        Ok(())
+    })?;
+
     let c = Gitconfig::new(standard_user.clone());
     c.section(&["user"])
         .string("name", "Sean Fisk")?
         .string("email", email)?;
     c.section(&["core"])
-        .string("excludesfile", "~/.gitignore-global")?;
+        .string("excludesfile", gitignore_global_path)?;
     c.section(&["alias"])
         // add all new and changed files in the repo, even if in a subdirectory
         // according to git-config(1), shell commands are executed from the top of the repository
@@ -77,15 +92,15 @@ impl<'a> Section<'a> {
         Section { path, user }
     }
 
-    fn string(&self, key: &str, value: &str) -> Result<&Section> {
+    fn string<V: Into<OsString>>(&self, key: &str, value: V) -> Result<&Section> {
         self.set(key, None, value)
     }
 
     fn bool(&self, key: &str, value: bool) -> Result<&Section> {
-        self.set(key, Some("bool"), &value.to_string())
+        self.set(key, Some("bool"), value.to_string())
     }
 
-    fn set(&self, key: &str, type_: Option<&str>, value: &str) -> Result<&Section> {
+    fn set<V: Into<OsString>>(&self, key: &str, type_: Option<&str>, value: V) -> Result<&Section> {
         let dotted_path = self
             .path
             .iter()
