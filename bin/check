@@ -13,10 +13,10 @@ cargo fmt --all -- --check
 # Another option is: https://github.com/EmbarkStudios/rust-ecosystem/issues/22#issuecomment-947011395
 cargo clippy -- \
       --deny clippy::pedantic \
-      --allow clippy::doc_markdown \
-      --allow clippy::enum_glob_use \
-      --allow clippy::missing_errors_doc \
-      --allow clippy::must_use_candidate \
+      --allow clippy::doc-markdown \
+      --allow clippy::enum-glob-use \
+      --allow clippy::missing-errors-doc \
+      --allow clippy::must-use-candidate \
       --allow clippy::too-many-arguments \
       --allow clippy::too-many-lines \
       --allow clippy::semicolon-if-nothing-returned
