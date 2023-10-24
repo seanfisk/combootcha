@@ -10,50 +10,11 @@
 
 Consider creating GitHub issues for these.
 
-### Prompts
-
-Starship, recommended by Alex
-
-### iTerm2 recent directories integration
-
-Should switch to zoxide or similar since fasd is dead. Whatever you do, rewrite the tool in Rust.
-
 ### Screenclean
 
 Set macOS screenshots dir to `~/Pictures/Screenshots`. Set screenshot file format to PNG. Sweep the directory daily and use `trash` to remove anything older than 7 days.
 
 Use `trash` for now but note that the way it trashes items is deprecated. Now we should use [`NSFileManager`](https://developer.apple.com/documentation/foundation/nsfilemanager/1414306-trashitematurl). Possibly write a Swift program to do this in the future.
-
-### Zsh plugin manager options
-
-1. https://github.com/zdharma/zinit
-1. https://github.com/zplug/zplug
-1. https://github.com/rossmacarthur/sheldon
-1. http://getantibody.github.io/
-
-https://github.com/vintersnow/zsh_plugin_manager_speed
-https://www.reddit.com/r/zsh/comments/ak0vgi/a_comparison_of_all_the_zsh_plugin_mangers_i_used/
-https://jdhao.github.io/2019/10/08/zsh_plugin_managers_compare/
-
-### Configuration for Bash as well
-
-I don't use Bash much so this seems unnecessary.
-
-### Homebrew API token
-
-Do we still need this?
-
-### iTerm2 shell integration
-
-Need to investigate how this is done now. My stuff in dotfiles was written a long time ago.
-
-### Old
-
-Instead of just `old` and `unold`, write a utility that does better handling and allows accepting the filename without the `.old` suffix
-
-### gcm
-
-Modify this to work with master or main
 
 ### Capture
 
