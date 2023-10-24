@@ -12,7 +12,7 @@ Consider creating GitHub issues for these.
 
 ### Screenclean
 
-Set macOS screenshots dir to `~/Pictures/Screenshots`. Set screenshot file format to PNG. Sweep the directory daily and use `trash` to remove anything older than 7 days.
+Set macOS screenshots dir to `~/Pictures/Screenshots`. Sweep the directory daily and use `trash` to remove anything older than 7 days.
 
 Use `trash` for now but note that the way it trashes items is deprecated. Now we should use [`NSFileManager`](https://developer.apple.com/documentation/foundation/nsfilemanager/1414306-trashitematurl). Possibly write a Swift program to do this in the future.
 

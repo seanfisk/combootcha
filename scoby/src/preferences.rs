@@ -108,6 +108,10 @@ pub(crate) fn set(standard_user: User) -> Result<()> {
             .int("askForPasswordDelay", 5)?
             .sync()?;
 
+        App::new("com.apple.screencapture")?
+            .string("type", "PNG")?
+            .sync()?;
+
         // App::new("com.skitch.skitch")?
         //     // Save New Skitch Notes to Evernote:
         //     //
@@ -364,10 +368,12 @@ pub(crate) fn set(standard_user: User) -> Result<()> {
         Ok(())
     })?;
 
-    // Needed for the Do Not Disturb changes to take effect. The process will automatically be restarted.
     Command::new("/usr/bin/killall")
         .arg("-v")
+        // Needed for the Do Not Disturb changes to take effect. The process will automatically be restarted.
         .arg("usernoted")
+        // Needed for the screen capture changes to take effect. The process will automatically be restarted.
+        .arg("SystemUIServer")
         .user(standard_user)
         .run()?;
 
