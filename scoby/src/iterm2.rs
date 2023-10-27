@@ -91,7 +91,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
             // General
             //   Closing
             .bool("QuitWhenAllWindowsClosed", false)?
-            .bool("PromptOnQuit", true)?
+            .bool("PromptOnQuit", false)? // Prompting on quit causes updates to fail, and this itself is annoying enough to disable it
             //   Services
             .bool("SUEnableAutomaticChecks", true)?
             .bool("CheckTestRelease", true)?
