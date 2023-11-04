@@ -13,7 +13,7 @@ I have learned several lessons from this:
 - Chef is a massive amount of complexity. It might be worthwhile for DevOps, but when you are only managing several personal machines, a scripted approach is sufficient.
 - Waf requires a Python development environment and doesn't work perfectly for something like configuring and installing a personal setup.
 
-At my core, I am a programmer, and I want everything the way I want it. Instead of using prescriptive tools like Chef and Waf, I think it will be simpler to have a program that does everything that is necessary *exactly* as I've prescribed, and nothing more.
+At my core, I am a programmer, and I want everything the way I want it. Instead of using prescriptive tools like Chef and Waf, I think it will be simpler to have a program that does everything that is necessary *exactly* as I've instructed, and nothing more.
 
 This also removes the decision of where to put customizations. The emacs repo was fairly obvious, but the distinction between personal-chef-repo and dotfiles grew increasingly unclear.
 
