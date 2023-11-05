@@ -3,6 +3,10 @@ use clap::Parser;
 use nix::unistd::{fork, ForkResult};
 use std::process::Command;
 
+// Going to try to do these things:
+// 1. Make due without this
+// 2. Rewrite in C based on caffeinate.c: https://github.com/seanfisk/aloof/issues/1
+
 // An interesting project would be to rewrite this in Swift without the calls to pmset or caffeinate.
 // pmset source: https://opensource.apple.com/source/PowerManagement/PowerManagement-703.1.5/pmset/pmset.c.auto.html
 // caffeinate source: https://opensource.apple.com/source/PowerManagement/PowerManagement-703.1.5/caffeinate/caffeinate.c.auto.html
