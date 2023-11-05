@@ -22,7 +22,7 @@ Use `trash` for now but note that the way it trashes items is deprecated. Now we
 
 ### Reduce duplication around writing files
 
- Lots of `create_file`, `write_all`, then `sync_all`. Could have better context on the errors. Maybe make a helper for it.
+Lots of `create_file`, `write_all`, then `sync_all`. Could have better context on the errors. Maybe make a helper for it.
 
 ### pyenv
 
