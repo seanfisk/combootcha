@@ -17,7 +17,15 @@
 #cask 'adobe-reader' # Failing right now
 #cask 'gfxcardstatus'
 #cask 'quicksilver'
-#cask 'retroarch-metal' # 'retroarch' cask is also available, but I think the Metal renderer is supposed to be better
 cask 'firefox'
 cask 'spotify'
 cask 'lastpass'
+
+# From https://www.reddit.com/r/emulation/comments/8w1lqd/comment/e1ryp97/
+#
+#     RetroArch has now gained a Metal renderer! Targeting modern macOS at first. XMB/MaterialUI works, menu shader pipelines work, Slang shaders work thanks to SPIRV-Cross, fonts work, etc!
+#
+#     Previously, RetroArch for OSX/macOS only had an OpenGL video driver. Since Apple will be deprecating OpenGL support in the near future, this Metal video driver essentially future proofs RetroArch for mac!﻿
+#
+# So, let's go with Metal instead of OpenGL.
+cask 'retroarch-metal'
