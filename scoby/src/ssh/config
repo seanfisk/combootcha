@@ -8,8 +8,27 @@
 # --------------------------------------------------------------------------------
 # General configurations.
 Host *
+
+# Note (2023-11-06):
+#
+# I've used connection sharing with ControlMaster for a loooong time now so I
+# have a lot of experience with it. When it works, it works great. Connections
+# are snappy. However, my big issue with it is that when macOS sleeps, the
+# socket is left open but the connection dies. When macOS wakes, SSH tries to
+# use the dead socket which results in this message:
+#
+#     muxclient: master hello exchange failed
+#
+# After seeing this, each connection will take forever to establish until the
+# socket is manually removed and then re-established.
+#
+# A possible way to solve this problem would be to clean up all sockets on sleep
+# or wake. However, this isn't built into OpenSSH so I'd have to implement it
+# myself. Until this is implemented, I'm going to disable this feature and see
+# how I like it.
+
 # Enable multiple connections for all hosts except the ones excluded above.
-ControlMaster auto
+#ControlMaster auto
 # Double-quote to handle possible spaces in the temporary directory path.
 #
 # We originally used to query for the system's temporary directory, but on macOS
@@ -21,10 +40,10 @@ ControlMaster auto
 #                          |Port
 #                          |  | Username
 #                          V  V  V
-ControlPath "/tmp/ssh_mux_%h_%p_%r"
+#ControlPath "/tmp/ssh_mux_%h_%p_%r"
 
 # Persist connections for 2 hours.
-ControlPersist 2h
+#ControlPersist 2h
 
 # On macOS, ensure that SSH keys are added to ssh-agent
 # https://apple.stackexchange.com/a/264974
