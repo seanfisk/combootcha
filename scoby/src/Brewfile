@@ -34,7 +34,7 @@ brew 'pyenv'
 brew 'pyenv-virtualenv'
 brew 'reattach-to-user-namespace'
 brew 'renameutils'
-brew 'ripgrep' # I use this, but it's also required by Spacemacs: https://github.com/syl20bnr/spacemacs#macos
+brew 'ripgrep' # I use this, but it's also an optional dependency of Spacemacs: https://github.com/syl20bnr/spacemacs#macos
 brew 'rustup-init'
 brew 'ssh-copy-id'
 brew 'trash'
