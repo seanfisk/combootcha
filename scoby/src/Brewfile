@@ -19,7 +19,7 @@ brew 'eza'
 brew 'fasd'
 brew 'git'
 brew 'git-lfs'
-brew 'gnu-tar'
+brew 'gnu-tar' # I use this and it's also required by Spacemacs: https://github.com/syl20bnr/spacemacs#macos
 brew 'graphicsmagick'
 brew 'imagemagick' # Useful for HEIC and ICO
 brew 'hub'
@@ -34,7 +34,7 @@ brew 'pyenv'
 brew 'pyenv-virtualenv'
 brew 'reattach-to-user-namespace'
 brew 'renameutils'
-brew 'ripgrep'
+brew 'ripgrep' # I use this, but it's also required by Spacemacs: https://github.com/syl20bnr/spacemacs#macos
 brew 'rustup-init'
 brew 'ssh-copy-id'
 brew 'trash'
