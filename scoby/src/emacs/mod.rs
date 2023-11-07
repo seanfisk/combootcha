@@ -13,6 +13,8 @@ pub(crate) fn configure(standard_user: User) -> Result<()> {
             .try_exists()
             .context("Checking whether Spacemacs is already cloned")?
         {
+            info!("Spacemacs is already cloned");
+        } else {
             Command::new(
                 "/usr/local/bin/git", // Always use the Homebrew version
             )
