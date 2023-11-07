@@ -6,8 +6,10 @@ use std::io::Write;
 use users::{os::unix::UserExt, User};
 
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
+    let home_dir = standard_user.home_dir();
+
     {
-        let install_dir = standard_user.home_dir().join(".emacs.d");
+        let install_dir = home_dir.join(".emacs.d");
         info!("Cloning Spacemacs into {:?}", install_dir);
         // Couldn't find a solid way to clone idempotently. So technically this is a race condition, but in practice… come on. Not gonna happen.
         if install_dir
@@ -21,13 +23,14 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
             )
             .args(["clone", "https://github.com/syl20bnr/spacemacs"])
             .arg(install_dir)
+            .current_dir(home_dir) // Probably best to avoid running this from any old directory
             .user(standard_user.clone())
             .run()?;
         }
     }
 
     {
-        let spacemacs_dir = standard_user.home_dir().join(".spacemacs.d");
+        let spacemacs_dir = home_dir.join(".spacemacs.d");
         info!("Installing Spacemacs customizations to {:?}", spacemacs_dir);
 
         let bytes = include_bytes!("spacemacs/init.el");

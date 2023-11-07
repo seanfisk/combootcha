@@ -12,7 +12,10 @@ pub(crate) fn configure(standard_user: User) -> Result<()> {
         "rust-analyzer",
     ];
 
-    info!("Installing the Rust toolchain using rustup with components {:?}", components);
+    info!(
+        "Installing the Rust toolchain using rustup with components {:?}",
+        components
+    );
 
     Command::new("rustup-init")
         .arg("--no-modify-path") // I'll add ~/.cargo/bin to my shell profiles myself
