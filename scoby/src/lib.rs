@@ -1,5 +1,6 @@
 mod cathode;
 mod default_browser;
+mod emacs;
 mod env;
 mod firefox;
 mod fs;
@@ -150,6 +151,7 @@ impl SharedSetup {
 
         // Graphical programs
         iterm2::configure(&standard_user)?;
+        emacs::configure(&standard_user)?;
         firefox::configure(&standard_user)?;
         cathode::install(standard_user.clone())?;
         hammerspoon::configure(&standard_user)?;
