@@ -3,7 +3,6 @@
 ## Must do
 
 - Port Emacs config
-- emacs-mac/cask conflict: https://github.com/d12frosted/homebrew-emacs-plus#known-issues
 
 ## Optional
 

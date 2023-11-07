@@ -6,7 +6,6 @@
 tap 'homebrew/command-not-found'
 
 brew 'bash'
-brew 'cask'
 brew 'coreutils'
 brew 'defaultbrowser'
 # Dos2Unix / Unix2Dos <http://waterlan.home.xs4all.nl/dos2unix.html> looks
@@ -43,6 +42,10 @@ brew 'wget'
 brew 'xz'
 brew 'zsh'
 
+# Don't use Cask for managing my Emacs packages. From https://github.com/cask/cask/blob/d30f30ae890356b90859a94687890f599b52002c/README.org?plain=1#L96
+#
+#     The docs were written at a time when Cask aspired to be both a developer tool and an end-user tool for managing emacs packages. The latter role is no longer advised (and the docs should be re-written).
+#
 tap 'railwaycat/emacsmacport'
 brew 'emacs-mac', args: ['with-spacemacs-icon']
 
