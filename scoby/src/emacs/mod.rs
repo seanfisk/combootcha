@@ -5,10 +5,11 @@ use log::info;
 use std::io::Write;
 use users::{os::unix::UserExt, User};
 
-pub(crate) fn configure(standard_user: User) -> Result<()> {
+pub(crate) fn configure(standard_user: &User) -> Result<()> {
     {
         let install_dir = standard_user.home_dir().join(".emacs.d");
         info!("Cloning Spacemacs into {:?}", install_dir);
+        // Couldn't find a solid way to clone idempotently. So technically this is a race condition, but in practice… come on. Not gonna happen.
         if install_dir
             .try_exists()
             .context("Checking whether Spacemacs is already cloned")?
