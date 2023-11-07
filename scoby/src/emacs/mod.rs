@@ -1,19 +1,42 @@
+use crate::verbose_command::Command;
 use crate::UserExt as OtherUserExt;
-use anyhow::Result;
+use anyhow::{Context, Result};
+use log::info;
 use std::io::Write;
 use users::{os::unix::UserExt, User};
 
-pub(crate) fn configure(standard_user: &User) -> Result<()> {
-    let bytes = include_bytes!("spacemacs/init.el");
-    // See https://develop.spacemacs.org/doc/DOCUMENTATION.html#alternative-dotdirectory
-    let spacemacs_dir = standard_user.home_dir().join(".spacemacs.d");
-    let path = spacemacs_dir.join("init.el");
+pub(crate) fn configure(standard_user: User) -> Result<()> {
+    {
+        let install_dir = standard_user.home_dir().join(".emacs.d");
+        info!("Cloning Spacemacs into {:?}", install_dir);
+        if install_dir
+            .try_exists()
+            .context("Checking whether Spacemacs is already cloned")?
+        {
+            Command::new(
+                "/usr/local/bin/git", // Always use the Homebrew version
+            )
+            .args(["clone", "https://github.com/syl20bnr/spacemacs"])
+            .arg(install_dir)
+            .user(standard_user.clone())
+            .run()?;
+        }
+    }
 
-    standard_user.as_effective_user(|| {
-        crate::fs::ensure_dir(&spacemacs_dir)?;
-        let mut file = crate::fs::create_file(&path)?;
-        file.write_all(bytes)?;
-        file.sync_all()?;
-        Ok(())
-    })
+    {
+        let spacemacs_dir = standard_user.home_dir().join(".spacemacs.d");
+        info!("Installing Spacemacs customizations to {:?}", spacemacs_dir);
+
+        let bytes = include_bytes!("spacemacs/init.el");
+        // See https://develop.spacemacs.org/doc/DOCUMENTATION.html#alternative-dotdirectory
+        let install_path = spacemacs_dir.join("init.el");
+
+        standard_user.as_effective_user(|| {
+            crate::fs::ensure_dir(&spacemacs_dir)?;
+            let mut file = crate::fs::create_file(&install_path)?;
+            file.write_all(bytes)?;
+            file.sync_all()?;
+            Ok(())
+        })
+    }
 }
