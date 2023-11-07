@@ -13,6 +13,6 @@ pub(crate) fn configure(standard_user: User) -> Result<()> {
         .user(standard_user)
         .run()?;
 
-    info!("Rust components added successfully");
+    info!("Rust components added successfully!");
     Ok(())
 }
