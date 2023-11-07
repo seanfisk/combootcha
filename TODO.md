@@ -2,7 +2,7 @@
 
 ## Must do
 
-- Port Emacs config
+- IntelliJ settings transfer / configuration
 
 ## Optional
 
