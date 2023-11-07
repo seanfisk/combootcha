@@ -16,6 +16,7 @@ pub mod path;
 mod power_management;
 mod preferences;
 mod quicksilver;
+mod rust;
 mod scripts;
 mod ssh;
 pub mod user;
@@ -143,6 +144,9 @@ impl SharedSetup {
         git::configure(git_email, standard_user.clone())?;
         scripts::install(&standard_user)?;
         zsh::configure(&standard_user, zprofile_extra_bytes, zshrc_extra_bytes)?;
+
+        // Languages
+        rust::configure(standard_user.clone())?;
 
         // Graphical programs
         iterm2::configure(&standard_user)?;
