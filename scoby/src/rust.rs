@@ -8,7 +8,9 @@ pub(crate) fn configure(standard_user: User) -> Result<()> {
         .args(["component", "add"])
         .args([
             "clippy", // Linter
-            "rls",    // Language Server Protocol implementation; used for Spacemacs
+            // Language Server Protocol implementation; used for Spacemacs
+            // rls is another component that serves the same purpose but is deprecated in favor of rust-analyzer: https://blog.rust-lang.org/2022/07/01/RLS-deprecation.html
+            "rust-analyzer",
         ])
         .user(standard_user)
         .run()?;
