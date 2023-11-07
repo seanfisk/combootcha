@@ -93,6 +93,7 @@ At minimum, this software needs to be granted permission:
 
 - Hammerspoon
 - Karabiner driver
+- Homebrew needs permission for App Management for Cask
 
 Add more software here as I am prompted.
 
@@ -115,4 +116,3 @@ Everything in this section is for my personal setup only.
 #### LastPass
 
   - The universal installer has installer and uninstaller app bundles that need to be run manually. Using the universal installer is preferable to individual browser add-ons due to the inclusion of all browser add-ons and the binary component, which allows sharing state between browsers. The universal installer is not present in Homebrew, Homebrew Cask, or the Mac App Store and must be downloaded manually from here: https://lastpass.com/misc_download2.php
-
