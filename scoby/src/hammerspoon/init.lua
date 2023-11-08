@@ -55,7 +55,7 @@ end)
 --     hs.layout.apply({
 --         {"IntelliJ IDEA", nil, dellHorizontal, hs.layout.maximized, nil, nil},
 --         {"Emacs", nil, dellHorizontal, hs.layout.maximized, nil, nil},
---         {"Firefox Developer Editiion", nil, dellVertical, top50, nil, nil},
+--         {"Firefox", nil, dellVertical, top50, nil, nil},
 --         {"iTerm2", nil, dellVertical, bottom50, nil, nil},
 --         {"Slack", nil, laptop, hs.layout.maximized, nil, nil},
 --         {"Cathode", nil, laptop, hs.layout.maximized, nil, nil},
