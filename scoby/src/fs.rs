@@ -3,7 +3,7 @@ use log::info;
 
 use std::path::Path;
 
-pub(crate) fn create_file<P: AsRef<Path>>(path: P) -> Result<std::fs::File> {
+pub fn create_file<P: AsRef<Path>>(path: P) -> Result<std::fs::File> {
     use std::os::unix::fs::OpenOptionsExt;
 
     info!("Creating file {:?}", path.as_ref().to_string_lossy());
@@ -15,7 +15,7 @@ pub(crate) fn create_file<P: AsRef<Path>>(path: P) -> Result<std::fs::File> {
         .open(path.as_ref())?)
 }
 
-pub(crate) fn ensure_dir<P: AsRef<Path>>(path: P) -> Result<()> {
+pub fn ensure_dir<P: AsRef<Path>>(path: P) -> Result<()> {
     let path = path.as_ref();
     info!("Ensuring directory {:?} exists", path.to_string_lossy());
     std::fs::create_dir_all(path)

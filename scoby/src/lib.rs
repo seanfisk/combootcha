@@ -3,7 +3,7 @@ mod default_browser;
 mod emacs;
 mod env;
 mod firefox;
-mod fs;
+pub mod fs;
 mod git;
 mod hammerspoon;
 mod hg;
