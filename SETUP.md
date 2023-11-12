@@ -34,12 +34,6 @@ I am having trouble automating Homebrew system install in this current setup and
 
 After this, run `brew doctor` and attempt to address any problems that are reported.
 
-#### SSH key generation
-
-Run `ssh-keygen` to generate a new key. Accept the defaults. Security of this will be improved in the future; see #3.
-
-Next, upload the public key to GitHub.
-
 #### Combootcha
 
 Transfer the compiled executable to the new system and execute it. The directory of execution does not matter, although the home directory is recommended.
@@ -49,6 +43,14 @@ Some of the options are disabled by default because they can take a while to run
 ```bash
 sudo ./combootcha --homebrew --set-default-browser
 ```
+
+#### SSH key generation
+
+Run `ssh-keygen` to generate a new key. Accept the defaults. Security of this will be improved in the future; see #3.
+
+<!-- Password for GitHub is only available after Combootcha is run -->
+
+Next, upload the public key to GitHub.
 
 #### Karabiner
 
