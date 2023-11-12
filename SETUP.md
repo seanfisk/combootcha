@@ -28,7 +28,9 @@ If using Command Line Tools, run `xcode-select --install`. If using Xcode, open 
 
 #### Homebrew
 
-Next, install Homebrew manually by [following the instructions](https://brew.sh/#install). I am having trouble automating Homebrew system install in this current setup and it doesn't seem worth fretting over automating it right now since it's a one-time install.
+Next, install Homebrew manually by [following the instructions](https://brew.sh/#install). I have always used the scripted install and not the package installer, but the package installer might be worth a try.
+
+I am having trouble automating Homebrew system install in this current setup and it doesn't seem worth fretting over automating it right now since it's a one-time install.
 
 After this, run `brew doctor` and attempt to address any problems that are reported.
 
