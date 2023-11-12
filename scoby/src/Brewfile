@@ -15,7 +15,6 @@ brew 'dos2unix'
 brew 'duti'
 brew 'editorconfig'
 brew 'eza'
-brew 'fasd'
 brew 'git'
 brew 'git-lfs'
 brew 'gnu-tar' # I use this and it's also required by Spacemacs: https://github.com/syl20bnr/spacemacs#macos
