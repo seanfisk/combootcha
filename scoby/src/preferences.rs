@@ -298,6 +298,8 @@ pub(crate) fn set(standard_user: User) -> Result<()> {
             .bool("advanced-image-options", true)?
             .sync()?;
 
+        // TODO Numerous settings within this block are causing defaults synchronization to fail for some reason. It seems to be somewhat non-deterministic but it is recurring.
+        /*
         App::new("com.apple.universalaccess")?
             // All closeView keys control the screen zoom.
             //   'Zoom style' choices:
@@ -311,7 +313,7 @@ pub(crate) fn set(standard_user: User) -> Result<()> {
             // .int("closeViewZoomMode", 0)?
             .bool("closeViewHotkeysEnabled", false)?
             //   Use scroll gesture with modifier keys to zoom.
-            // .bool("closeViewScrollWheelToggle", true)? // TODO This is causing the sync to fail for some reason
+            // .bool("closeViewScrollWheelToggle", true)?
             //   Use Ctrl as the modifier key (the number is a key code or something).
             //   This seems not to work correctly (?).
             // .int("closeViewScrollWheelModifiersInt", 262_144)?
@@ -324,10 +326,10 @@ pub(crate) fn set(standard_user: User) -> Result<()> {
             //         0. Continuously with pointer
             //         1. Only when the pointer reaches an edge
             //         2. So the pointer is at or near the center of the screen
-            // .int("closeViewPanningMode", 1)? // TODO This is causing the sync to fail for some reason, but seems to be non-deterministic
+            .int("closeViewPanningMode", 1)?
             //   Picture-in-picture settings
             //     Use system cursor in zoom.
-            // .int("closeViewCursorType", 0)? // TODO This is causing the sync to fail for some reason, but seems to be non-deterministic
+            .int("closeViewCursorType", 0)?
             //     Enable temporary zoom (with Ctrl-Cmd)
             .bool("closeViewPressOnReleaseOff", true)?
             //     Choices:
@@ -335,8 +337,9 @@ pub(crate) fn set(standard_user: User) -> Result<()> {
             //         1. Stationary
             //         2. Follow mouse cursor
             //         3. Tiled along edge
-            // .int("closeViewWindowMode", 1)? // TODO This is causing the sync to fail for some reason, but seems to be non-deterministic
+            // .int("closeViewWindowMode", 1)?
             .sync()?;
+        */
 
         {
             // These preferences are stored in an embedded binary plist data value at key dnd_prefs.
