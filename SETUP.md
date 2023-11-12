@@ -54,7 +54,7 @@ Next, upload the public key to GitHub.
 
 #### Karabiner
 
-This does not start up properly when using the launch agent approach, so we just use native startup support through the app itself. Looking on 2023-10-15, I can't find where to enable it, so it is possible this setting is automatic now.
+This does not start up properly when using the launch agent approach, so we just use native startup support through the app itself. As of 2023-11-12, Karabiner is automatically added to Login Items.
 
 #### Jettison
 
