@@ -64,7 +64,6 @@ pub(crate) fn set(standard_user: User) -> Result<()> {
             username, zsh_path_str
         );
     } else {
-        // Annoying that we have to clone this
         standard_user.with_shell(&zsh_path);
         info!(
             "Set login shell for user {:?} to {:?}",
