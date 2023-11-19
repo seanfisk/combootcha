@@ -119,3 +119,19 @@ Everything in this section is for my personal setup only.
 #### LastPass
 
   - The universal installer has installer and uninstaller app bundles that need to be run manually. Using the universal installer is preferable to individual browser add-ons due to the inclusion of all browser add-ons and the binary component, which allows sharing state between browsers. The universal installer is not present in Homebrew, Homebrew Cask, or the Mac App Store and must be downloaded manually from here: https://lastpass.com/misc_download2.php
+
+#### iCloud
+
+Open System Preferences and either follow the promt or simply find the place to sign in and set up iCloud. Choose to sync the following settings:
+
+- Photos
+- Keychain
+- iCloud Drive
+- Contacts
+- Calendars
+- Notes
+- Safari
+- Find My Mac
+- Siri
+
+All others should be unchecked.
