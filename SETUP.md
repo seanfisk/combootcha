@@ -44,6 +44,8 @@ Some of the options are disabled by default because they can take a while to run
 sudo ./combootcha --homebrew --set-default-browser
 ```
 
+The Homebrew installation process will also trigger the installation of some software from the Mac App Store which requires an Apple ID to be entered. The process is carefully designed such that a password manager will be installed *before* the Apple ID prompt. When prompted for the Apple ID, open the freshly-installed password manager, log in, retrieve the credentials, and enter them into the prompt. The program will then continue!
+
 #### SSH key generation
 
 Run `ssh-keygen` to generate a new key. Accept the defaults. Security of this will be improved in the future; see #3.

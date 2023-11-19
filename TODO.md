@@ -9,7 +9,6 @@
 - `with_shell` doesn't actually change the shell. We need to use `chsh`.
 - When transferring to a new computer, note that `combootcha` needs to be right-click Opened before it can be run through terminal
 - Add aText or remove from setup (for now)
-- Sign in to App Store (needed for Microsoft To Do, but also a thing we should just do)
 - Set up iCloud
 - Sign into Firefox sync
 - Sign into Microsoft To Do
