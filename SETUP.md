@@ -36,7 +36,11 @@ After this, run `brew doctor` and attempt to address any problems that are repor
 
 #### Combootcha
 
-Transfer the compiled executable to the new system and execute it. The directory of execution does not matter, although the home directory is recommended.
+Start by transferring the compiled executable from the old macOS computer to the new one. The program cannot be run immediately. Since the executable is unsigned, the new OS will reject the program as coming from an unidentified developer.
+
+To get the OS to trust the program, open Finder, right-click `combootcha`, and choose *Open*. The program will terminate immediately as it needs to be run as root, but this will allow the program to be run from Terminal.
+
+Next, open Terminal and execute the program as shown below. The directory of execution does not matter, although the home directory is recommended.
 
 Some of the options are disabled by default because they can take a while to run. However, this is the first run, so all options need to be enabled.
 
