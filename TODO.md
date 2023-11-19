@@ -8,5 +8,4 @@
 - "Firefox.app is damaged" and iTerm2 needs permission to modify apps
 - `with_shell` doesn't actually change the shell. We need to use `chsh`.
 - Add aText or remove from setup (for now)
-- Sign into Firefox sync
 - Sign into Microsoft To Do

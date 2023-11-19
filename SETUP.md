@@ -135,3 +135,15 @@ Open System Preferences and either follow the promt or simply find the place to 
 - Siri
 
 All others should be unchecked.
+
+#### Firefox
+
+Sign in to Firefox Sync. Choose to sync these items:
+
+- Bookmarks
+- History
+- Open tabs
+- Add-ons
+- Settings
+
+All others should be unchecked.
