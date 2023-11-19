@@ -67,5 +67,3 @@ tap 'homebrew/cask-fonts'
 cask 'font-source-code-pro' # the default for Spacemacs
 cask 'font-inconsolata'
 cask 'font-ubuntu'
-
-mas 'Microsoft To Do', id: 1274495053
