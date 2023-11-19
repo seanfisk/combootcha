@@ -112,6 +112,10 @@ TODO Update for new aText
 
 <!-- When using the launch agent approach to start up aText, it does not validate the license. So we're just going for the regular startup process. -->
 
+#### Microsoft To Do
+
+Sign in and ensure that all todos have synced properly.
+
 ### Personal
 
 Everything in this section is for my personal setup only.
