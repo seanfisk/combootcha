@@ -14,3 +14,4 @@
 - Sign in to App Store (needed for Microsoft To Do, but also a thing we should just do)
 - Set up iCloud
 - Sign into Firefox sync
+- Sign into Microsoft To Do
