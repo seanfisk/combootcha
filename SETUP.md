@@ -104,13 +104,18 @@ Add more software here as I am prompted.
 
 Add prints for right pointer, right middle, and left pointer fingers.
 
-#### aText
+<!--
 
 TODO Update for new aText
+https://github.com/seanfisk/combootcha/issues/15
 
-<!-- This is licensed software that is installed using Homebrew Cask. I purchased it from the Mac App Store (MAS). However, as stated in [aText Support](http://www.trankynam.com/atext/support.html), the non-MAS version generally works better. You'll have to follow the process to migrate your MAS license to get the non-MAS version working. -->
+#### aText
 
-<!-- When using the launch agent approach to start up aText, it does not validate the license. So we're just going for the regular startup process. -->
+This is licensed software that is installed using Homebrew Cask. I purchased it from the Mac App Store (MAS). However, as stated in [aText Support](http://www.trankynam.com/atext/support.html), the non-MAS version generally works better. You'll have to follow the process to migrate your MAS license to get the non-MAS version working.
+
+When using the launch agent approach to start up aText, it does not validate the license. So we're just going for the regular startup process.
+
+-->
 
 #### Microsoft To Do
 

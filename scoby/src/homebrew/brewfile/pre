@@ -48,7 +48,7 @@ brew 'zsh'
 tap 'railwaycat/emacsmacport'
 brew 'emacs-mac', args: ['with-spacemacs-icon']
 
-cask 'atext'
+#cask 'atext' # https://github.com/seanfisk/combootcha/issues/15
 cask 'caffeine'
 cask 'dash'
 cask 'deeper'
