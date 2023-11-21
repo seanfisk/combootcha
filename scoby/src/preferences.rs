@@ -19,16 +19,6 @@ pub(crate) fn set(standard_user: User) -> Result<()> {
             .bool("IsAnalog", false)?
             .sync()?;
 
-        // Show percentage on battery indicator.
-        //
-        // Note: For some reason, Apple chose the value of ShowPercent to be YES
-        // or NO as a string instead of using a Boolean.
-        //
-        // TODO: Doesn't work on later macOS. Can be done through the Battery pane in System Preferences but I haven't figured out where that is stored in defaults.
-        // App::new("com.apple.menuextra.battery")?
-        //     .string("ShowPercent", "YES")?
-        //     .sync()?;
-
         // Start the character viewer in docked mode. The large window mode doesn't
         // take focus automatically, and can't AFAIK be focused with any keyboard
         // shortcut, rendering it less useful for those who like to stay on the
