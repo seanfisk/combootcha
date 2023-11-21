@@ -30,7 +30,6 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
         "Flux",
         "Jettison",
         // "Quicksilver",
-        // "gfxCardStatus",
         "iTerm",
         "Hammerspoon",
         "Caffeine",

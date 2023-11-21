@@ -66,13 +66,6 @@ pub(crate) fn set(standard_user: User) -> Result<()> {
             .bool("ShowHelp", false)?
             .sync()?;
 
-        // Note: shouldStartAtLogin doesn't actually work, because gfxCardStatus uses
-        // login items like most other applications. So don't bother setting it.
-        // App::new("com.codykrieger.gfxCardStatus-Preferences")?
-        //     .bool("shouldCheckForUpdatesOnStartup", true)?
-        //     .bool("shouldUseSmartMenuBarIcons", true)?
-        //     .sync()?;
-
         {
             let delete_key = "";
             let key_code = 51;

@@ -15,7 +15,6 @@
 # brew 'toilet'
 
 #cask 'adobe-reader' # Failing right now
-#cask 'gfxcardstatus'
 #cask 'quicksilver'
 cask 'firefox'
 cask 'spotify'
