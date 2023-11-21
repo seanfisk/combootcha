@@ -20,6 +20,18 @@ Everything in this section should be done for all setups.
 
 Before doing anything, it is important to set up Time Machine. Select a free partition on an external hard drive and add it to Time Machine. I don't think the partition needs to be erased and reformatted — I think Time Machine will do this automatically. Add the disk and run a backup before going farther.
 
+#### Trackpad & keyboard
+
+Time Machine is the top priority, but basic input is the next task. Theoretically, these settings are stored in macOS user defaults and are easy to automate, but in practice I have had difficulty getting them applied through user defaults, even after a restart. Thus, for this section, simply open System Preferences and set as shown in these screenshots.
+
+![Keyboard settings](screenshots/keyboard-settings.png)
+
+![Trackpad Point & Click](screenshots/trackpad/point-and-click.png)
+
+![Trackpad Scroll & Zoom](screenshots/trackpad/scroll-and-zoom.png)
+
+![Trackpad More Gestures](screenshots/trackpad/more-gestures.png)
+
 #### Xcode / Command Line Tools
 
 Next, install either Xcode or Command Line Tools. For Homebrew, Python, Ruby, and normal C++ compiles, we can get along with just the Command Line Tools. However, to compile Mac applications using Qt, we need the full Xcode installation.

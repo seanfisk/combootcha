@@ -147,37 +147,13 @@ pub(crate) fn set(standard_user: User) -> Result<()> {
             .bool("PMPrintingExpandedStateForPrint2", true)?
             // Save to disk (not to iCloud) by default
             .bool("NSDocumentSaveNewDocumentsToCloud", false)?
-            // Disable natural scrolling
-            .bool("com.apple.swipescrolldirection", false)?
             // Display ASCII control characters using caret notation in standard text
             // views
             // Try e.g. `cd /tmp; echo -e '\x00' > cc.txt; open -e cc.txt`
             .bool("NSTextShowsControlCharacters", true)?
-            // Disable press-and-hold for keys in favor of key repeat
-            .bool("ApplePressAndHoldEnabled", false)?
-            // Key repeat
-            //   Set a keyboard repeat rate to fast
-            .int("KeyRepeat", 2)?
-            //   Set low initial delay
-            .int("InitialKeyRepeat", 15)?
-            // Trackpad (other trackpad settings are in com.apple.AppleMultitouchTrackpad)
-            // TODO Having trouble getting these settings to take effect, even after a restart
-            //   Speed
-            .string("com.apple.trackpad.scaling", "0.6875")?
-            //   Click
-            .bool("com.apple.trackpad.forceClick", true)?
             // Finder
             //   Show all filename extensions
             .bool("AppleShowAllExtensions", true)?
-            .sync()?;
-
-        // TODO Having trouble getting these settings to take effect, even after a restart
-        App::new("com.apple.AppleMultitouchTrackpad")?
-            // Disable "Tap to click"
-            .bool("Clicking", false)?
-            // TODO Consider audible clicking
-            // Silent clicking
-            .int("ActuationStrength", 0)?
             .sync()?;
 
         // Automatically quit printer app once the print jobs complete
