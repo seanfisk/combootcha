@@ -169,10 +169,6 @@ pub(crate) fn set(standard_user: User) -> Result<()> {
             // Finder
             //   Show all filename extensions
             .bool("AppleShowAllExtensions", true)?
-            //   Enable spring loading for directories
-            // .bool("com.apple.springing.enabled", true)?
-            // Remove the spring loading delay for directories
-            // .int("com.apple.springing.delay", 0)?
             .sync()?;
 
         // TODO Having trouble getting these settings to take effect, even after a restart
