@@ -105,17 +105,6 @@ pub(crate) fn set(standard_user: User) -> Result<()> {
             .string("type", "PNG")?
             .sync()?;
 
-        // App::new("com.skitch.skitch")?
-        //     // Save New Skitch Notes to Evernote:
-        //     //
-        //     // 1: Always
-        //     // 2: Ask
-        //     // 3: Manual
-        //     //
-        //     // The default is Always, which quickly burns up the Evernote upload quota.
-        //     .int("auto_save_selector", 3)?
-        //     .sync()?;
-
         App::new("org.macosforge.xquartz.X11")?
             // Input
             .bool("enable_fake_buttons", false)?
