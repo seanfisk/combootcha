@@ -26,11 +26,11 @@ Time Machine is the top priority, but basic input is the next task. Theoreticall
 
 ![Keyboard settings](screenshots/keyboard-settings.png)
 
-![Trackpad Point & Click](screenshots/trackpad/point-and-click.png)
+![Trackpad Point & Click](screenshots/trackpad-settings/point-and-click.png)
 
-![Trackpad Scroll & Zoom](screenshots/trackpad/scroll-and-zoom.png)
+![Trackpad Scroll & Zoom](screenshots/trackpad-settings/scroll-and-zoom.png)
 
-![Trackpad More Gestures](screenshots/trackpad/more-gestures.png)
+![Trackpad More Gestures](screenshots/trackpad-settings/more-gestures.png)
 
 #### Xcode / Command Line Tools
 
