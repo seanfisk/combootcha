@@ -24,7 +24,7 @@ Before doing anything, it is important to set up Time Machine. Select a free par
 
 Time Machine is the top priority, but basic input is the next task. Theoretically, these settings are stored in macOS user defaults and are easy to automate, but in practice I have had difficulty getting them applied through user defaults, even after a restart. Thus, for this section, simply open System Preferences and set as shown in these screenshots.
 
-![Keyboard settings](screenshots/keyboard-settings.png)
+<img alt="Keyboard settings" src="screenshots/keyboard-settings.png" width="400" />
 
 ![Trackpad Point & Click](screenshots/trackpad-settings/point-and-click.png)
 
