@@ -189,11 +189,6 @@ pub(crate) fn set(standard_user: User) -> Result<()> {
             .bool("Quit When Finished", true)?
             .sync()?;
 
-        // Set Help Viewer windows to non-floating mode
-        // App::new("com.apple.helpviewer")?
-        //     .bool("DevMode", true)?
-        //     .sync()?;
-
         // TODO
         // Reveal IP address, hostname, OS version, etc. when clicking the clock in the
         // login window
