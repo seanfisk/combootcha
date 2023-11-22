@@ -139,7 +139,7 @@ impl SharedSetup {
         }
 
         // Command line tools
-        login_shells::set(standard_user.clone())?;
+        login_shells::set(&standard_user)?;
         // Note: Zsh interaction with path_helper was fixed, at least since Ventura
         ssh::configure(&standard_user, ssh_config_extra_bytes)?;
         git::configure(git_email, standard_user.clone())?;

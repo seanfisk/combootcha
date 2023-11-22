@@ -10,7 +10,7 @@ use std::path::Path;
 use crate::verbose_command::Command;
 use crate::PathExt;
 
-pub(crate) fn set(standard_user: User) -> Result<()> {
+pub(crate) fn set(standard_user: &User) -> Result<()> {
     info!("Querying Homebrew bin directory");
     let brew_prefix_output = Command::new("brew")
         .arg("--prefix")
