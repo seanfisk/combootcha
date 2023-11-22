@@ -96,7 +96,7 @@ This is licensed software bundled with and installed by Combootcha. Copy the lic
 
 #### Seagate's Paragon NTFS driver
 
-TODO Reword this
+<!-- TODO Reword this -->
 
 Visit https://www.seagate.com/support/software/paragon/ and install *Paragon Driver for macOS (Big Sur and later)*.
 
