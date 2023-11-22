@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+cargo build
+exec sudo target/debug/combootcha "$@"

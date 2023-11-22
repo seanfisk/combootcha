@@ -1,0 +1,39 @@
+[package]
+name = "scoby"
+version.workspace = true
+authors.workspace = true
+description.workspace = true
+edition.workspace = true
+repository.workspace = true
+homepage.workspace = true
+readme.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+atty = "0.2"
+chrono = "0.4"
+clap-logging = { git = "https://github.com/seanfisk/clap-logging.git", tag = "v0.2.0" }
+clap.workspace = true
+log.workspace = true
+nix = { version = "0.27", default-features = false, features = ["user"] }
+plist = "1"
+serde_json = "1"
+subprocess = "0.2"
+users.workspace = true
+
+# The Colored crate is also a choice for colorization in Rust: https://github.com/mackwic/colored#features
+#
+# Colored implements the Standard for ANSI Colors in Terminals, which is something we want to implement. However, it
+# implements the auto-colorization behavior by checking whether *stdout is a TTY*. However, we print colors to both
+# stdout (via clap) and stderr (via our logging subsystem). The TTY check is really something that needs to be
+# implemented *per stream*. clap does this properly, and we want to do it properly for our logging subsystem, too.
+# Therefore, we've implemented the Standard for ANSI Colors in Terminals manually in our own code and configuration
+# auto-colorization per standard stream. Although it's possible to ignore this feature in Colored (but not disable it),
+# ansi_term does not even attempt to implement the Standard for ANSI Colors in Terminals, so there is no conflict in the
+# feature set it is providing.
+ansi_term = "0.11.0" # Synchronized with clap to prevent an extra dependency
+
+[build-dependencies]
+anyhow.workspace = true
+bindgen = "0.68"
+cc = "1"

@@ -1,0 +1,69 @@
+# -*- mode: ruby -*-
+
+# Bundler for Homebrew
+# https://github.com/Homebrew/homebrew-bundle
+
+tap 'homebrew/command-not-found'
+
+brew 'bash'
+brew 'coreutils'
+brew 'defaultbrowser'
+# Dos2Unix / Unix2Dos <http://waterlan.home.xs4all.nl/dos2unix.html> looks
+# superior to Tofrodos <http://www.thefreecountry.com/tofrodos/>. But that was
+# just from a quick look.
+brew 'dos2unix'
+brew 'duti'
+brew 'editorconfig'
+brew 'eza'
+brew 'git'
+brew 'git-lfs'
+brew 'gnu-tar' # I use this and it's also required by Spacemacs: https://github.com/syl20bnr/spacemacs#macos
+brew 'graphicsmagick'
+brew 'imagemagick' # Useful for HEIC and ICO
+brew 'hub'
+# bindgen needs libclang: https://rust-lang.github.io/rust-bindgen/requirements.html#clang
+# It's needed by Combootcha in order to find CFDictionary.h in user_defaults.h
+brew 'llvm'
+brew 'nmap' # Also includes ncat
+# I prefer ohcount to cloc and sloccount.
+brew 'ohcount'
+brew 'pandoc'
+brew 'pyenv'
+brew 'pyenv-virtualenv'
+brew 'reattach-to-user-namespace'
+brew 'renameutils'
+brew 'ripgrep' # I use this, but it's also an optional dependency of Spacemacs: https://github.com/syl20bnr/spacemacs#macos
+brew 'rustup-init'
+brew 'ssh-copy-id'
+brew 'trash'
+brew 'watch'
+brew 'wget'
+brew 'xz'
+brew 'zsh'
+
+# Don't use Cask for managing my Emacs packages. From https://github.com/cask/cask/blob/d30f30ae890356b90859a94687890f599b52002c/README.org?plain=1#L96
+#
+#     The docs were written at a time when Cask aspired to be both a developer tool and an end-user tool for managing emacs packages. The latter role is no longer advised (and the docs should be re-written).
+#
+tap 'railwaycat/emacsmacport'
+brew 'emacs-mac', args: ['with-spacemacs-icon']
+
+#cask 'atext' # https://github.com/seanfisk/combootcha/issues/15
+cask 'caffeine'
+cask 'dash'
+cask 'deeper'
+cask 'disk-inventory-x'
+cask 'flux'
+cask 'gimp'
+cask 'hammerspoon'
+cask 'iterm2'
+cask 'jettison'
+cask 'karabiner-elements'
+cask 'speedcrunch'
+cask 'wireshark'
+cask 'inkscape' # No longer needs XQuartz
+
+tap 'homebrew/cask-fonts'
+cask 'font-source-code-pro' # the default for Spacemacs
+cask 'font-inconsolata'
+cask 'font-ubuntu'

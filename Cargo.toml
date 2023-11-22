@@ -1,0 +1,27 @@
+[workspace]
+resolver = "2" # See https://doc.rust-lang.org/cargo/reference/workspaces.html#virtual-workspace
+members = [
+    "scoby",
+    "combootcha",
+]
+
+[workspace.package]
+version = "0.0.0" # This is a personal tool so it doesn't make sense to have a version
+authors = ["Sean Fisk <sean@seanfisk.com>"]
+description  = "A set of programs to bootstrap my personal computing setup"
+edition = "2021"
+repository = "https://github.com/seanfisk/combootcha"
+homepage = "https://github.com/seanfisk/combootcha"
+readme = "README.md"
+
+[workspace.dependencies]
+anyhow = "1"
+clap = "2.34"
+log = { version = "0.4", features = ["std"] }
+users = "0.11"
+
+[profile.release]
+opt-level = 'z' # Optimize for size
+lto = true # https://github.com/johnthagen/min-sized-rust#enable-link-time-optimization-lto
+codegen-units = 1 # https://github.com/johnthagen/min-sized-rust#reduce-parallel-code-generation-units-to-increase-optimization
+strip = "symbols"
