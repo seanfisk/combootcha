@@ -17,10 +17,10 @@ At my core, I am a programmer, and I want everything the way I want it. Instead 
 
 This also removes the decision of where to put customizations. The emacs repo was fairly obvious, but the distinction between personal-chef-repo and dotfiles grew increasingly unclear.
 
-A program will be built for each environment. Currently planned:
+A program has been built for each environment, currently:
 
-- Work laptop
-- Personal laptop
+- Personal laptop (this repository)
+- Work laptop (private repository stored at work)
 
 ## References on automating macOS
 
