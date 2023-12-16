@@ -78,6 +78,12 @@ This does not start up properly when using the launch agent approach, so we just
 
 This is licensed software that is installed using Homebrew. I purchased a license that has to be manually entered/activated. Don't get confused: I initially purchased Jettison from the Mac App Store, but bought a separate license when I found that the Mac App Store version isn't up-to-date. The license is stored in LastPass.
 
+#### Disk Utility
+
+Open Disk Utility and choose to *Show All Devices*:
+
+![Disk Utility Show All Devices](screenshots/disk-utility-show-all-devices.png)
+
 #### Desktop backgrounds
 
 No desktop background is set automatically, so go set one of my own preference. This might be nice to automate, but I change these from time to time manually, and that would be just one more thing to change every time.
