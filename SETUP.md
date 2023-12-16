@@ -180,3 +180,7 @@ Sign in to Firefox Sync. Choose to sync these items:
 - Settings
 
 All others should be unchecked.
+
+#### Slack
+
+Open the app and sign into both [Blue Medora Bros](https://bluemedorabros.slack.com/) and [Grand Rapids](https://grandrapids.slack.com/) workspaces.
