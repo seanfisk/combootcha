@@ -157,6 +157,12 @@ Open System Preferences and either follow the promt or simply find the place to 
 
 All others should be unchecked.
 
+#### Messages
+
+Set up the following preferences for Messages.app:
+
+![Messages.app settings](screenshots/messages-settings.png)
+
 #### Firefox
 
 Sign in to Firefox Sync. Choose to sync these items:
