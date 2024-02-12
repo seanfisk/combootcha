@@ -2,6 +2,7 @@ use anyhow::{anyhow, Context, Result};
 use log::info;
 use users::User;
 
+use std::collections::BTreeMap;
 use std::ffi::OsString;
 use std::iter;
 use std::path::PathBuf;
@@ -30,6 +31,8 @@ pub struct Command {
     args: Vec<OsString>,
     current_dir: Option<PathBuf>,
     user: Option<User>,
+    // Use a tree map for a consistent ordering. We shouldn't be relying on an explicit order or duplicates for environment variables (although both are technically possible).
+    env_overrides: BTreeMap<OsString, OsString>,
 }
 
 impl Command {
@@ -39,6 +42,7 @@ impl Command {
             args: Vec::new(),
             current_dir: None,
             user: None,
+            env_overrides: BTreeMap::new(),
         }
     }
 
@@ -66,6 +70,12 @@ impl Command {
     // I am interested in the possibility of accepting &User instead of User, but it's of low importance
     pub fn user(&mut self, user: User) -> &mut Command {
         self.user = Some(user);
+        self
+    }
+
+    /// Works like https://doc.rust-lang.org/std/process/struct.Command.html#method.env
+    pub fn env<N: Into<OsString>, V: Into<OsString>>(&mut self, name: N, value: V) -> &mut Command {
+        self.env_overrides.insert(name.into(), value.into());
         self
     }
 
@@ -98,6 +108,30 @@ impl Command {
             argv.push(arg);
         }
 
+        // From subprocess documentation:
+        //
+        //     Environment variables to pass to the subprocess.
+        //
+        //     If this is None, environment variables are inherited from the calling process. Otherwise, the specified variables are used instead.
+        //
+        //     Duplicates are eliminated, with the value taken from the variable appearing later in the vector.
+        //
+        // Source: https://docs.rs/subprocess/latest/subprocess/struct.PopenConfig.html#structfield.env
+        //
+        // However, our builder works by providing environment variable overrides, just like std::process::Command. Massage our overrides to the format expected by PopenConfig.
+        let env = if self.env_overrides.is_empty() {
+            None
+        } else {
+            let mut list = Vec::new();
+            for pair in std::env::vars_os() {
+                list.push(pair);
+            }
+            for (name, value) in &self.env_overrides {
+                list.push((name.clone(), value.clone()));
+            }
+            Some(list)
+        };
+
         // Note: Can't use Exec because it doesn't allow access to setuid, which we need
         Popen::create(
             &argv,
@@ -115,6 +149,7 @@ impl Command {
                 stderr: Redirection::None,
                 cwd: self.current_dir.as_ref().map(|p| p.as_os_str().to_owned()),
                 setuid: self.user.as_ref().map(User::uid),
+                env,
                 ..Default::default()
             },
         )
@@ -141,6 +176,9 @@ impl std::fmt::Display for Command {
         }
         if let Some(user) = &self.user {
             write!(f, " (user: {:?})", user.name())?;
+        }
+        if !self.env_overrides.is_empty() {
+            write!(f, " (env: {:?})", self.env_overrides)?;
         }
         Ok(())
     }
