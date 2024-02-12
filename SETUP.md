@@ -100,14 +100,6 @@ This is licensed software that is installed using Homebrew. Grab the license fro
 
 This is licensed software bundled with and installed by Combootcha. Copy the license file from LastPass directly to `~/Library/Application Support/Cathode/License.cathodelicense` to license the software.
 
-#### Seagate's Paragon NTFS driver
-
-<!-- TODO Reword this -->
-
-Visit https://www.seagate.com/support/software/paragon/ and install *Paragon Driver for macOS (Big Sur and later)*.
-
-This is difficult to automate because it's distributed as a DMG with an app bundle in there with a scripted install.
-
 #### Privacy & Security approvals
 
 At minimum, this software needs to be granted permission:
@@ -186,3 +178,11 @@ All others should be unchecked.
 #### Slack
 
 Open the app and sign into both [Blue Medora Bros](https://bluemedorabros.slack.com/) and [Grand Rapids](https://grandrapids.slack.com/) workspaces.
+
+#### Seagate's Paragon NTFS driver
+
+<!-- TODO Reword this -->
+
+Visit https://www.seagate.com/support/software/paragon/ and install *Paragon Driver for macOS (Big Sur and later)*.
+
+This is difficult to automate because it's distributed as a DMG with an app bundle in there with a scripted install.
