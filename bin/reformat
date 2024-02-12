@@ -4,4 +4,4 @@ set -o errexit
 
 cargo fmt --all
 
-clang-format -i scoby/src/ffi/*.{c,h}
+/usr/local/opt/llvm/bin/clang-format -i scoby/src/ffi/*.{c,h}
