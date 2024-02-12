@@ -35,3 +35,7 @@ cask 'google-chrome'
 #
 # So, let's go with Metal instead of OpenGL.
 cask 'retroarch-metal'
+
+# On initial computer setup, App Store will prompt for an Apple ID which is stored in my password manager. Therefore, to make this easier, all apps installed with mas should be listed in the Brewfile *after* the password manager.
+
+mas 'Microsoft To Do', id: 1274495053

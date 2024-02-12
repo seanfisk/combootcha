@@ -14,14 +14,11 @@ pub(crate) fn install_deps(standard_user: User, brewfile_extra_bytes: Option<&[u
 
     standard_user.as_effective_user(|| {
         let mut file = crate::fs::create_file(&path)?;
-        file.write_all(include_bytes!("brewfile/pre"))?;
+        file.write_all(include_bytes!("Brewfile"))?;
         if let Some(bytes) = brewfile_extra_bytes {
             file.write_all(b"\n")?;
             file.write_all(bytes)?;
         }
-        // On the initial setup, App Store will prompt for an Apple ID which is stored in my password manager. Therefore, to make this easier, all apps installed with mas should be listed in the Brewfile *after* the password manager.
-        file.write_all(b"\n")?;
-        file.write_all(include_bytes!("brewfile/post"))?;
         file.sync_all()?;
         Ok(())
     })?;

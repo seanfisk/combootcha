@@ -127,10 +127,6 @@ When using the launch agent approach to start up aText, it does not validate the
 
 -->
 
-#### Microsoft To Do
-
-Sign in and ensure that all todos have synced properly.
-
 ### Personal
 
 Everything in this section is for my personal setup only.
@@ -174,6 +170,10 @@ Sign in to Firefox Sync. Choose to sync these items:
 - Settings
 
 All others should be unchecked.
+
+#### Microsoft To Do
+
+Sign in and ensure that all todos have synced properly.
 
 #### Slack
 
