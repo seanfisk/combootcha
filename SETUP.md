@@ -169,6 +169,8 @@ Set up the following preferences for Messages.app:
 
 ![Messages.app settings](screenshots/messages-settings.png)
 
+Next, follow the steps outlined in [this article from Apple](https://support.apple.com/guide/messages/get-sms-texts-from-iphone-on-your-mac-icht8a28bb9a/14.0/mac/14.0) to get SMS working in the app.
+
 #### Firefox
 
 Sign in to Firefox Sync. Choose to sync these items:
