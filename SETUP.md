@@ -66,10 +66,6 @@ The Homebrew installation process will also trigger the installation of some sof
 
 Run `ssh-keygen` to generate a new key. Accept the defaults. Security of this will be improved in the future; see #3.
 
-<!-- Password for GitHub is only available after Combootcha is run -->
-
-Next, upload the public key to GitHub.
-
 #### Karabiner
 
 This does not start up properly when using the launch agent approach, so we just use native startup support through the app itself. As of 2023-11-12, Karabiner is automatically added to Login Items.
@@ -130,6 +126,10 @@ When using the launch agent approach to start up aText, it does not validate the
 ### Personal
 
 Everything in this section is for my personal setup only.
+
+#### GitHub
+
+Upload my SSH public key to my GitHub account so that I can commit code.
 
 #### LastPass
 
