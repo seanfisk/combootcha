@@ -46,6 +46,10 @@ I am having trouble automating Homebrew system install in this current setup and
 
 After this, run `brew doctor` and attempt to address any problems that are reported.
 
+#### SSH key generation
+
+Run `ssh-keygen` to generate a new key. Accept the defaults. Security of this will be improved in the future; see #3.
+
 #### Combootcha
 
 Start by transferring the compiled executable from the old macOS computer to the new one. The program cannot be run immediately. Since the executable is unsigned, the new OS will reject the program as coming from an unidentified developer.
@@ -61,10 +65,6 @@ sudo ./combootcha --homebrew --set-default-browser
 ```
 
 The Homebrew installation process will also trigger the installation of some software from the Mac App Store which requires an Apple ID to be entered. The process is carefully designed such that a password manager will be installed *before* the Apple ID prompt. When prompted for the Apple ID, open the freshly-installed password manager, log in, retrieve the credentials, and enter them into the prompt. The program will then continue!
-
-#### SSH key generation
-
-Run `ssh-keygen` to generate a new key. Accept the defaults. Security of this will be improved in the future; see #3.
 
 #### Karabiner
 
