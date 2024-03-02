@@ -92,3 +92,23 @@ bindkey -s '\C-xp' '\C-p\C-m'
 # which means `Meta' then `j'. I have both Option keys on my Mac configured to send `ESC+' in
 # iTerm2. Actually sending Meta is apparently a relic of the past, and ESC+ should be used now.
 bindkey -s '\ej' 'u\C-m'
+
+# Unrolled from `pyenv init - zsh'
+source /usr/local/opt/pyenv/completions/pyenv.zsh
+command pyenv rehash 2>/dev/null
+pyenv() {
+  local command
+  command="${1:-}"
+  if [ "$#" -gt 0 ]; then
+    shift
+  fi
+
+  case "$command" in
+    activate|deactivate|rehash|shell)
+      eval "$(pyenv "sh-$command" "$@")"
+      ;;
+    *)
+      command pyenv "$command" "$@"
+      ;;
+  esac
+}

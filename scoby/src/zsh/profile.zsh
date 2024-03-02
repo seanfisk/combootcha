@@ -9,6 +9,7 @@
 export PATH=\
 ~/bin:\
 ~/.cargo/bin:\
+~/.pyenv/shims:\
 /usr/local/bin:\
 /usr/local/sbin:\
 /usr/bin:\
@@ -43,3 +44,8 @@ export EDITOR=/usr/local/bin/emacsclient
 # leaving it in here for posterity.
 
 #umask u=rwx,g=,o=
+
+# Unrolled from `pyenv init - zsh'
+export PYENV_SHELL=zsh
+# The output also contains logic to add to the PATH and I've simply added the shims directory to the
+# PATH directly where that is set earlier in the file.
