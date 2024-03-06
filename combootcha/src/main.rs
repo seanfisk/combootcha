@@ -22,6 +22,7 @@ fn main() -> Result<()> {
         /*git_email=*/ "sean@seanfisk.com",
         /*zprofile_extra_bytes*/ None,
         /*zshrc_extra_bytes=*/ None,
+        /*hammerspoon_init_lua_extra_bytes=*/ None,
     )?;
 
     standard_user.as_effective_user(|| {

@@ -127,6 +127,7 @@ impl SharedSetup {
         git_email: &str,
         zprofile_extra_bytes: Option<&[u8]>,
         zshrc_extra_bytes: Option<&[u8]>,
+        hammerspoon_init_lua_extra_bytes: Option<&[u8]>,
     ) -> Result<()> {
         self.clap_logging_config
             .init_logger(matches, "COMBOOTCHA_LOG_LEVEL", LevelFilter::Info)?;
@@ -154,7 +155,7 @@ impl SharedSetup {
         emacs::configure(&standard_user)?;
         firefox::configure(&standard_user)?;
         cathode::install(standard_user.clone())?;
-        hammerspoon::configure(&standard_user)?;
+        hammerspoon::configure(&standard_user, hammerspoon_init_lua_extra_bytes)?;
         karabiner::configure(&standard_user)?;
         if matches.is_present(BROWSER_ARG_NAME) {
             default_browser::set(standard_user.clone())?;
