@@ -90,8 +90,10 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
             .string("Default Bookmark Guid", personal_profile_guid)?
             // General
             //   Closing
-            .bool("QuitWhenAllWindowsClosed", false)?
-            .bool("PromptOnQuit", false)? // Prompting on quit causes updates to fail, and this itself is annoying enough to disable it
+            .bool("QuitWhenAllWindowsClosed", false)? // Keep the app open even when no windows; this is standard macOS app behavior
+            .bool("PromptOnQuit", false)?
+            .bool("OnlyWhenMoreTabs", false)? // Disable "Confirm closing multiple sessions"
+            .bool("NeverBlockSystemShutdown", true)?
             //   Services
             .bool("SUEnableAutomaticChecks", true)?
             .bool("CheckTestRelease", true)?
