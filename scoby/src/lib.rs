@@ -134,7 +134,8 @@ impl SharedSetup {
         debug!("Logger was succesfully instantiated");
 
         // Run Homebrew first as it installs tools needed for later steps.
-        // Yes, this can be disabled but we trust that the user will only disable it on subsequent runs.
+        // Yes, dependency installation can be disabled but we trust that the user will only disable it on subsequent runs.
+        homebrew::configure()?;
         if matches.is_present(HOMEBREW_ARG_NAME) {
             homebrew::install_deps(standard_user.clone(), brewfile_extra_bytes)?;
         }
