@@ -1,13 +1,14 @@
 use anyhow::{Context, Result};
 use log::info;
 
+use std::fs::File;
 use std::path::Path;
 
 pub fn create_file<P: AsRef<Path>>(path: P) -> Result<std::fs::File> {
     use std::os::unix::fs::OpenOptionsExt;
 
     info!("Creating file {:?}", path.as_ref().to_string_lossy());
-    Ok(std::fs::OpenOptions::new()
+    Ok(File::options()
         .create(true)
         .write(true)
         .truncate(true)
