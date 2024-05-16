@@ -64,7 +64,6 @@ cask 'speedcrunch'
 cask 'wireshark'
 cask 'inkscape' # No longer needs XQuartz
 
-tap 'homebrew/cask-fonts'
 cask 'font-source-code-pro' # the default for Spacemacs
 cask 'font-inconsolata'
 cask 'font-ubuntu'
