@@ -10,9 +10,11 @@ use crate::UserExt as OtherUserExt;
 pub(crate) fn configure(email: &str, standard_user: User) -> Result<()> {
     info!("Setting up personal Git preferences");
 
-    let gitignore_global_path = standard_user.home_dir().join(".gitignore-global");
-    info!("Writing {gitignore_global_path:?}");
     standard_user.as_effective_user(|| {
+        let git_config_dir = standard_user.home_dir().join(".config/git");
+        crate::fs::ensure_dir(&git_config_dir)?;
+        let gitignore_global_path = git_config_dir.join("ignore");
+        info!("Writing {gitignore_global_path:?}");
         let mut file = crate::fs::create_file(&gitignore_global_path)?;
         let bytes = include_bytes!("ignore-global.txt");
         file.write_all(bytes)?;
@@ -24,8 +26,6 @@ pub(crate) fn configure(email: &str, standard_user: User) -> Result<()> {
     c.section(&["user"])
         .string("name", "Sean Fisk")?
         .string("email", email)?;
-    c.section(&["core"])
-        .string("excludesfile", gitignore_global_path)?;
     c.section(&["alias"])
         // add all new and changed files in the repo, even if in a subdirectory
         // according to git-config(1), shell commands are executed from the top of the repository
