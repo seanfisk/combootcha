@@ -49,3 +49,11 @@ export EDITOR=/usr/local/bin/emacsclient
 export PYENV_SHELL=zsh
 # The output also contains logic to add to the PATH and I've simply added the shims directory to the
 # PATH directly where that is set earlier in the file.
+
+# Disable Homebrew auto-update.
+#
+# The setting in /etc/homebrew/brew.env ought to be enough, but I'm have trouble with that taking
+# effect. Set the environment variable too. See #43.
+#
+# https://docs.brew.sh/Manpage#environment
+export HOMEBREW_NO_AUTO_UPDATE=1
