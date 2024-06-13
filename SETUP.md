@@ -171,6 +171,14 @@ Sign in to Firefox Sync. Choose to sync these items:
 
 All others should be unchecked.
 
+#### Set default email reader
+
+The Mail app will be the default email reader if none is set. I prefer to use native Gmail. As of 2024-06-13, setting a Safari web app for Gmail as the default email reader does not function properly. So I think it's best to set Firefox as the default email reader, which works fine in the uncommon case that I actually open a `mailto` link.
+
+To configure this, first open the Mail app. Awkwardly, an account must be configured in order to access the settings. Just configure iCloud mail. I don't use it anyway and it's fine to leave configured. Then go to *Mail* > *Settings* > *General* > *Default email reader* and choose Firefox. Now test it by clicking [this `mailto` link](mailto:sean@seanfisk.com?subject=Default%20email%20reader%20test&body=Do%20not%20send%20this%20email.). Choose Gmail and check the box to *Always use this application to open mailto links*.
+
+<!-- Source: https://support.apple.com/en-us/102362 -->
+
 #### Microsoft To Do
 
 Sign in and ensure that all todos have synced properly.
