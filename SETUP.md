@@ -194,3 +194,7 @@ Open the app and sign into both [Blue Medora Bros](https://bluemedorabros.slack.
 Visit https://www.seagate.com/support/software/paragon/ and install *Paragon Driver for macOS (Big Sur and later)*.
 
 This is difficult to automate because it's distributed as a DMG with an app bundle in there with a scripted install.
+
+#### Google Earth Pro
+
+On the old computer, select *My Places* > *Save Place As…* and choose the default file name `My Places.kmz`. AirDrop this file to the new computer and double-click it to import (*File* > *Import…* does not work). It will be imported under *Temporary Places* > *My Places.kmz* > *My Places*. Select all of the top-level places and drag then into *My Places* proper. Then delete the now-empty *My Places.kmz*. Done!
