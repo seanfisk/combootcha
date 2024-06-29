@@ -78,11 +78,15 @@ pub(crate) fn set(standard_user: User) -> Result<()> {
                 .bool("moveToApplicationsFolderAlertSuppress", true)?
                 .bool("playSoundOnFailure", false)?
                 .bool("playSoundOnSuccess", false)?
+                // Frequently I will run Time Machine, and then my computer will sleep. I'd rather not have the disk remounted when it wakes up. I can always manually remount it.
+                .bool("remountOnWake", false)?
                 .bool("showRemountProgress", false)?
                 // Set "Eject disks and sleep" hotkey to ⌘⌥⌫
                 .dict("sleepHotkey", &sleep_hotkey_dict)?
                 .bool("statusItemEnabled", true)?
                 .bool("toggleMassStorageDriver", false)?
+                // Ejection is preferable as it will turn off the light in my current Time Machine drive and the disk will stop spinning.
+                .bool("unmountNotEject", false)?
                 .sync()?;
         }
 
