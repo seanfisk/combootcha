@@ -110,6 +110,16 @@ Add more software here as I am prompted.
 
 Add prints for right pointer, right middle, and left pointer fingers.
 
+#### Startup sound
+
+<!--
+When the MacBook Pro boots, it plays the classic startup sound. At a normal volume, the sound is pleasant. However, the sound will be played at the volume level that was set when the MacBook Pro was shut down. While this makes some sense, I never have this in mind when I shut down, and why would I? So the startup sound can often play at a very high volume, which is jarring. Disable it for this reason.
+
+I wasn't able to find user defaults for this setting using the diff approach.
+-->
+
+Disable the startup sound by navigating to *System Settings* > *Sound* > *Play sound on startup*. The exact instructions vary by macOS version and are [documented by Apple](https://support.apple.com/en-us/102230).
+
 <!--
 
 TODO Update for new aText
