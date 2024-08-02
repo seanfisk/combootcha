@@ -181,6 +181,11 @@ Sign in to Firefox Sync. Choose to sync these items:
 
 All others should be unchecked.
 
+Install the following add-ons:
+
+- Bitwarden Password Manager
+- uBlock Origin
+
 #### Set default email reader
 
 The Mail app will be the default email reader if none is set. I prefer to use native Gmail. As of 2024-06-13, setting a Safari web app for Gmail as the default email reader does not function properly. So I think it's best to set Firefox as the default email reader, which works fine in the uncommon case that I actually open a `mailto` link.
