@@ -23,7 +23,7 @@ alias u='cd ..' # thanks Karlin
 cdl() { cd "$1" && ls; }
 mk() { mkdir -p "$1" && cd "$1"; }
 
-alias l='ls --long --git'
+alias l='ls --long'
 alias la='l --all'
 alias ls='eza --classify'
 
