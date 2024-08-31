@@ -131,7 +131,7 @@ impl SharedSetup {
     ) -> Result<()> {
         self.clap_logging_config
             .init_logger(matches, "COMBOOTCHA_LOG_LEVEL", LevelFilter::Info)?;
-        debug!("Logger was succesfully instantiated");
+        debug!("Logger was successfully instantiated");
 
         // Run Homebrew first as it installs tools needed for later steps.
         // Yes, dependency installation can be disabled but we trust that the user will only disable it on subsequent runs.

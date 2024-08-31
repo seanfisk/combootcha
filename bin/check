@@ -3,6 +3,9 @@
 set -o errexit
 set -o xtrace
 
+# Check spelling
+typos
+
 # Ensure tests pass
 cargo test
 

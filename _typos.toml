@@ -1,0 +1,7 @@
+[files]
+# Ignore generated lock files
+extend-exclude = ["Cargo.toml"]
+
+[default.extend-words]
+iterm = "iterm"
+Sur = "Sur" # macOS 11 Big Sur

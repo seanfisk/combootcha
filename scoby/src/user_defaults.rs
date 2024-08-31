@@ -85,7 +85,7 @@ impl App {
         self.log_setting("dict", key, value); // TODO Audit this
         let c_key = to_cstring(key)?;
 
-        // There are a number of strings we will be passing to C functions that we need to stay alive until the end of this function. This is SEPERATE from the CFStrings we will be allocating and releasing which are entirely confined to the C code.
+        // There are a number of strings we will be passing to C functions that we need to stay alive until the end of this function. This is SEPARATE from the CFStrings we will be allocating and releasing which are entirely confined to the C code.
         let mut keep_alive_cstrings = Vec::new();
 
         let cf_dict = unsafe { sys::user_defaults_dict_create() };

@@ -147,7 +147,7 @@ The universal installer has installer and uninstaller app bundles that need to b
 
 #### iCloud
 
-Open System Preferences and either follow the promt or simply find the place to sign in and set up iCloud. Choose to sync the following settings:
+Open System Preferences and either follow the prompt or simply find the place to sign in and set up iCloud. Choose to sync the following settings:
 
 - Photos
 - Keychain

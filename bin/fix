@@ -3,6 +3,9 @@
 set -o errexit
 set -o xtrace
 
+# Correct spelling first as it could change the line length, etc.
+typos --write-changes
+
 cargo fmt --all
 
 # Ignore version control state entirely

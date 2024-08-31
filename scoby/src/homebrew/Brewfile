@@ -36,6 +36,7 @@ brew 'ripgrep' # I use this, but it's also an optional dependency of Spacemacs: 
 brew 'rustup'
 brew 'ssh-copy-id'
 brew 'trash'
+brew 'typos-cli'
 brew 'watch'
 brew 'wget'
 brew 'xz'

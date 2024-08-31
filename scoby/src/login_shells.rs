@@ -60,7 +60,7 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
     );
     // Note that User#with_shell only sets the shell for that struct within Rust. It does NOT update the backend user database. For that we have to use chsh(1).
     //
-    // Runing chsh as the standard user will result in a password prompt. We don't want that so we will run as root.
+    // Running chsh as the standard user will result in a password prompt. We don't want that so we will run as root.
     //
     // chsh is already idempotent so just run it every time. No need to look before we leap.
     Command::new("/usr/bin/chsh")

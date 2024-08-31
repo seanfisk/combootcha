@@ -13,7 +13,7 @@ use crate::UserExt as OtherUserExt;
 // which is can be viewed in System Preferences > Users & Group > Current User >
 // Login Items. However, this plist is difficult to edit manually because each
 // item has an opaque key associated with it. Omitting the opaque key has
-// yielded unpredicatable results, and the plist gets rewritten every time it is
+// yielded unpredictable results, and the plist gets rewritten every time it is
 // modified through the UI.
 //
 // Another solution is to create launch agents for each program. This is not as
