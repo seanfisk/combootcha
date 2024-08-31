@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -o errexit
+set -o xtrace
+
+cargo fmt --all
+
+# Ignore version control state entirely
+cargo clippy --fix --allow-dirty --allow-staged
