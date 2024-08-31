@@ -9,14 +9,5 @@ cargo test
 # Ensure all code is correctly formatted
 cargo fmt --all -- --check
 
-# Run Clippy with lints configured
-# Another option is: https://github.com/EmbarkStudios/rust-ecosystem/issues/22#issuecomment-947011395
-cargo clippy -- \
-      --deny clippy::pedantic \
-      --allow clippy::doc-markdown \
-      --allow clippy::enum-glob-use \
-      --allow clippy::missing-errors-doc \
-      --allow clippy::must-use-candidate \
-      --allow clippy::too-many-arguments \
-      --allow clippy::too-many-lines \
-      --allow clippy::semicolon-if-nothing-returned
+# Run Clippy with lints as configured in Cargo.toml
+cargo clippy
