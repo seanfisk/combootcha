@@ -79,15 +79,16 @@ pub fn parse_standard_user(matches: &ArgMatches) -> Result<(String, User)> {
     Ok((username, user))
 }
 
-pub struct SharedSetup {
+pub struct Scoby {
     clap_logging_config: clap_logging::Config,
+    zsh: zsh::Config,
 }
 
-impl SharedSetup {
-    pub fn new() -> Result<SharedSetup> {
-        let clap_logging_config = clap_logging::Config::new()?;
-        Ok(SharedSetup {
-            clap_logging_config,
+impl Scoby {
+    pub fn new() -> Result<Self> {
+        Ok(Self {
+            clap_logging_config: clap_logging::Config::new()?,
+            zsh: zsh::Config::new(),
         })
     }
 
@@ -117,16 +118,18 @@ impl SharedSetup {
             .arg(browser_arg)
     }
 
+    pub fn zsh(&mut self) -> &mut zsh::Config {
+        &mut self.zsh
+    }
+
     // I do not love this mega-function with a bunch of options. Going with it for now but registering the desire to improve it in the future.
-    pub fn run(
-        &self,
+    pub fn converge(
+        self,
         matches: &ArgMatches,
         standard_user: User,
         brewfile_extra_bytes: Option<&[u8]>,
         ssh_config_extra_bytes: Option<&[u8]>,
         git_email: &str,
-        zprofile_extra_bytes: Option<&[u8]>,
-        zshrc_extra_bytes: Option<&[u8]>,
         hammerspoon_init_lua_extra_bytes: Option<&[u8]>,
     ) -> Result<()> {
         self.clap_logging_config
@@ -146,7 +149,7 @@ impl SharedSetup {
         ssh::configure(&standard_user, ssh_config_extra_bytes)?;
         git::configure(git_email, standard_user.clone())?;
         scripts::install(&standard_user)?;
-        zsh::configure(&standard_user, zprofile_extra_bytes, zshrc_extra_bytes)?;
+        self.zsh.converge(&standard_user)?;
 
         // Languages
         rust::configure(standard_user.clone())?;

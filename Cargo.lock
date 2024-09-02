@@ -536,6 +536,7 @@ dependencies = [
  "chrono",
  "clap",
  "clap-logging",
+ "indexmap",
  "log",
  "nix",
  "plist",
