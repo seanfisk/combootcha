@@ -22,7 +22,6 @@ fn main() -> Result<()> {
     scoby.converge(
         &matches,
         standard_user.clone(),
-        /*ssh_config_extra_bytes=*/ None,
         /*git_email=*/ "sean@seanfisk.com",
         /*hammerspoon_init_lua_extra_bytes=*/ None,
     )?;

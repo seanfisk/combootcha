@@ -84,6 +84,7 @@ pub struct Scoby {
     clap_logging_config: clap_logging::Config,
     pub zsh: zsh::Config,
     pub homebrew: homebrew::Config,
+    pub ssh: ssh::Config,
 }
 
 impl Scoby {
@@ -92,6 +93,7 @@ impl Scoby {
             clap_logging_config: clap_logging::Config::new()?,
             zsh: zsh::Config::new(),
             homebrew: homebrew::Config::new(),
+            ssh: ssh::Config::new(),
         })
     }
 
@@ -126,7 +128,6 @@ impl Scoby {
         self,
         matches: &ArgMatches,
         standard_user: User,
-        ssh_config_extra_bytes: Option<&[u8]>,
         git_email: &str,
         hammerspoon_init_lua_extra_bytes: Option<&[u8]>,
     ) -> Result<()> {
@@ -136,14 +137,15 @@ impl Scoby {
 
         // Run Homebrew first as it installs tools needed for later steps.
         // Yes, dependency installation can be disabled but we trust that the user will only disable it on subsequent runs.
-        let install_deps = matches.is_present(HOMEBREW_ARG_NAME);
-        self.homebrew
-            .converge(standard_user.clone(), install_deps)?;
-
+        {
+            let install_deps = matches.is_present(HOMEBREW_ARG_NAME);
+            self.homebrew
+                .converge(standard_user.clone(), install_deps)?;
+        }
         // Command line tools
         login_shells::set(&standard_user)?;
         // Note: Zsh interaction with path_helper was fixed, at least since Ventura
-        ssh::configure(&standard_user, ssh_config_extra_bytes)?;
+        self.ssh.converge(&standard_user)?;
         git::configure(git_email, standard_user.clone())?;
         scripts::install(&standard_user)?;
         self.zsh.converge(&standard_user)?;
