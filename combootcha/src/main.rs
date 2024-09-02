@@ -14,7 +14,7 @@ fn main() -> Result<()> {
     let matches = app.get_matches();
     let (_standard_username, standard_user) = scoby::parse_standard_user(&matches)?;
 
-    scoby.zsh().add_profile_content("# extra stuff");
+    scoby.zsh.add_profile_content("# extra stuff");
 
     scoby.converge(
         &matches,

@@ -81,7 +81,7 @@ pub fn parse_standard_user(matches: &ArgMatches) -> Result<(String, User)> {
 
 pub struct Scoby {
     clap_logging_config: clap_logging::Config,
-    zsh: zsh::Config,
+    pub zsh: zsh::Config,
 }
 
 impl Scoby {
@@ -116,10 +116,6 @@ impl Scoby {
             .arg(standard_user_arg)
             .arg(homebrew_arg)
             .arg(browser_arg)
-    }
-
-    pub fn zsh(&mut self) -> &mut zsh::Config {
-        &mut self.zsh
     }
 
     // I do not love this mega-function with a bunch of options. Going with it for now but registering the desire to improve it in the future.
