@@ -15,11 +15,13 @@ fn main() -> Result<()> {
     let (_standard_username, standard_user) = scoby::parse_standard_user(&matches)?;
 
     scoby.zsh.add_profile_content("# extra stuff\n");
+    scoby
+        .homebrew
+        .add_global_brewfile_content(include_str!("Brewfile"));
 
     scoby.converge(
         &matches,
         standard_user.clone(),
-        /*brewfile_extra_bytes=*/ Some(include_bytes!("Brewfile")),
         /*ssh_config_extra_bytes=*/ None,
         /*git_email=*/ "sean@seanfisk.com",
         /*hammerspoon_init_lua_extra_bytes=*/ None,

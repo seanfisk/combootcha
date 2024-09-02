@@ -83,6 +83,7 @@ pub fn parse_standard_user(matches: &ArgMatches) -> Result<(String, User)> {
 pub struct Scoby {
     clap_logging_config: clap_logging::Config,
     pub zsh: zsh::Config,
+    pub homebrew: homebrew::Config,
 }
 
 impl Scoby {
@@ -90,6 +91,7 @@ impl Scoby {
         Ok(Self {
             clap_logging_config: clap_logging::Config::new()?,
             zsh: zsh::Config::new(),
+            homebrew: homebrew::Config::new(),
         })
     }
 
@@ -124,7 +126,6 @@ impl Scoby {
         self,
         matches: &ArgMatches,
         standard_user: User,
-        brewfile_extra_bytes: Option<&[u8]>,
         ssh_config_extra_bytes: Option<&[u8]>,
         git_email: &str,
         hammerspoon_init_lua_extra_bytes: Option<&[u8]>,
@@ -135,10 +136,9 @@ impl Scoby {
 
         // Run Homebrew first as it installs tools needed for later steps.
         // Yes, dependency installation can be disabled but we trust that the user will only disable it on subsequent runs.
-        homebrew::configure()?;
-        if matches.is_present(HOMEBREW_ARG_NAME) {
-            homebrew::install_deps(standard_user.clone(), brewfile_extra_bytes)?;
-        }
+        let install_deps = matches.is_present(HOMEBREW_ARG_NAME);
+        self.homebrew
+            .converge(standard_user.clone(), install_deps)?;
 
         // Command line tools
         login_shells::set(&standard_user)?;
