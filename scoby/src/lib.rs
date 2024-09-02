@@ -24,6 +24,7 @@ pub mod user;
 pub mod user_defaults;
 pub mod verbose_command;
 mod zsh;
+mod text_buffer;
 
 pub use path::Ext as PathExt;
 pub use user::Ext as UserExt;
