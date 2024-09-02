@@ -25,7 +25,7 @@ impl<'a> TextBuffer {
     pub(crate) fn to_writer<W: Write>(&self, writer: W) -> std::io::Result<()> {
         let mut buf_writer = BufWriter::new(writer);
         for segment in &self.rope {
-            buf_writer.write(segment.as_bytes())?;
+            buf_writer.write_all(segment.as_bytes())?;
         }
         buf_writer.flush()
     }
