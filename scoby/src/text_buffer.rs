@@ -8,7 +8,7 @@ pub(crate) struct TextBuffer {
     rope: Vec<Cow<'static, str>>,
 }
 
-impl<'a> TextBuffer {
+impl TextBuffer {
     pub(crate) fn new() -> Self {
         Self { rope: Vec::new() }
     }
