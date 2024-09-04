@@ -1,5 +1,5 @@
 use anyhow::Result;
-use clap::{ArgMatches, Arg};
+use clap::{Arg, ArgMatches};
 use log::info;
 use std::borrow::Cow;
 use std::os::unix::fs::OpenOptionsExt;
@@ -24,7 +24,7 @@ pub(crate) fn arg<'a, 'b>() -> Arg<'a, 'b> {
 
 pub struct Config {
     global_brewfile: TextBuffer,
-    install_deps: bool
+    install_deps: bool,
 }
 
 impl Config {
@@ -32,7 +32,10 @@ impl Config {
         let install_deps = matches.is_present(ARG_NAME);
         let mut global_brewfile = TextBuffer::new();
         global_brewfile.add_content(include_str!("Brewfile"));
-        Self { global_brewfile, install_deps }
+        Self {
+            global_brewfile,
+            install_deps,
+        }
     }
 
     pub fn add_global_brewfile_content<T: Into<Cow<'static, str>>>(&mut self, text: T) {

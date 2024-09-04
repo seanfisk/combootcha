@@ -1,6 +1,6 @@
 use anyhow::Result;
+use clap::{Arg, ArgMatches};
 use users::User;
-use clap::{ArgMatches, Arg};
 
 use crate::verbose_command::Command;
 
@@ -15,7 +15,7 @@ pub(crate) fn arg<'a, 'b>() -> Arg<'a, 'b> {
 
 pub(crate) fn converge(
     matches: &ArgMatches,
-    user: &User // We'll clone on use
+    user: &User, // We'll clone on use
 ) -> Result<()> {
     if matches.is_present(ARG_NAME) {
         // What defaultbrowser does is pretty simple, but there really isn't a good reason to rewrite it into this program: https://github.com/kerma/defaultbrowser/blob/master/src/main.m

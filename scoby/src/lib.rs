@@ -1,4 +1,3 @@
-mod standard_user;
 mod cathode;
 mod default_browser;
 mod emacs;
@@ -21,6 +20,7 @@ mod quicksilver;
 mod rust;
 mod scripts;
 mod ssh;
+mod standard_user;
 mod text_buffer;
 pub mod user;
 pub mod user_defaults;
@@ -31,7 +31,7 @@ pub use path::Ext as PathExt;
 pub use user::Ext as UserExt;
 
 use anyhow::{anyhow, Result};
-use clap::{AppSettings::StrictUtf8, ArgMatches, crate_authors, crate_description};
+use clap::{crate_authors, crate_description, AppSettings::StrictUtf8, ArgMatches};
 use clap_logging::AppExt;
 use log::{debug, LevelFilter};
 use users::User;
@@ -68,7 +68,12 @@ impl Cli {
             .arg(homebrew::arg())
             .arg(default_browser::arg());
 
-        Ok((Self { clap_logging_config }, app))
+        Ok((
+            Self {
+                clap_logging_config,
+            },
+            app,
+        ))
     }
 
     pub fn parse_config(&self, matches: &ArgMatches) -> Result<GlobalConfig> {
@@ -108,10 +113,7 @@ pub struct GlobalConfig {
 
 impl GlobalConfig {
     // Some TextBuffers have additional data written to them and I don't want to have to copy-on-write. Is consuming self the best practice here? Not sure, but it solves the issue neatly. I don't see a need to converge multiple times per Combootcha invocation.
-    pub fn converge(
-        self,
-        matches: &ArgMatches,
-    ) -> Result<()> {
+    pub fn converge(self, matches: &ArgMatches) -> Result<()> {
         debug!("Logger was successfully instantiated");
 
         // Run Homebrew first as it installs tools needed for later steps.
@@ -135,7 +137,7 @@ impl GlobalConfig {
         cathode::install(self.standard_user.clone())?;
         self.hammerspoon.converge(&self.standard_user)?;
         karabiner::configure(&self.standard_user)?;
-        default_browser::converge(&matches, &self.standard_user)?;
+        default_browser::converge(matches, &self.standard_user)?;
 
         // General preferences
         power_management::configure()?;

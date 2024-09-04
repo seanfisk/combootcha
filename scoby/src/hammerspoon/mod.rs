@@ -1,7 +1,7 @@
 use crate::{text_buffer::TextBuffer, UserExt as OtherUserExt};
 use anyhow::Result;
-use users::{os::unix::UserExt, User};
 use std::borrow::Cow;
+use users::{os::unix::UserExt, User};
 
 pub struct Config {
     init_lua: TextBuffer,
