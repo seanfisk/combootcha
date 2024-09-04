@@ -13,13 +13,13 @@ anyhow.workspace = true
 atty = "0.2"
 chrono = "0.4"
 clap-logging = { git = "https://github.com/seanfisk/clap-logging.git", tag = "v0.2.0" }
-clap.workspace = true
+clap = "2.34"
 log.workspace = true
 nix = { version = "0.27", default-features = false, features = ["user"] }
 plist = "1"
 serde_json = "1"
 subprocess = "0.2"
-users.workspace = true
+users = "0.11"
 
 # The Colored crate is also a choice for colorization in Rust: https://github.com/mackwic/colored#features
 #

@@ -1,47 +1,46 @@
 use anyhow::Result;
 use log::info;
+use std::borrow::Cow;
 use users::{os::unix::UserExt, User};
 
-use std::io::Write;
-use std::path::Path;
+use crate::{text_buffer::TextBuffer, UserExt as OtherUserExt};
 
-use crate::UserExt as OtherUserExt;
-
-pub(crate) fn configure(
-    standard_user: &User,
-    profile_extra_bytes: Option<&[u8]>,
-    rc_extra_bytes: Option<&[u8]>,
-) -> Result<()> {
-    info!("Installing Zsh configuration files");
-    // Note: Don't use .zshenv because /etc/zprofile will clobber it
-    let home_dir = standard_user.home_dir();
-    standard_user.as_effective_user(|| {
-        install_dotfile(
-            home_dir.join(".zprofile"),
-            include_bytes!("profile.zsh"),
-            profile_extra_bytes,
-        )?;
-        install_dotfile(
-            home_dir.join(".zshrc"),
-            include_bytes!("rc.zsh"),
-            rc_extra_bytes,
-        )
-    })
+pub struct Config {
+    profile: TextBuffer,
+    rc: TextBuffer,
 }
 
-fn install_dotfile<P: AsRef<Path>>(
-    install_path: P,
-    base_bytes: &[u8],
-    extra_bytes: Option<&[u8]>,
-) -> Result<()> {
-    let install_path = install_path.as_ref();
-    info!("Writing {install_path:?}");
-    let mut file = crate::fs::create_file(install_path)?;
-    file.write_all(base_bytes)?;
-    if let Some(bytes) = extra_bytes {
-        file.write_all(b"\n")?;
-        file.write_all(bytes)?;
+impl Config {
+    pub(crate) fn new() -> Config {
+        let mut profile = TextBuffer::new();
+        profile.add_content(include_str!("profile.zsh"));
+        let mut rc = TextBuffer::new();
+        rc.add_content(include_str!("rc.zsh"));
+        Self { profile, rc }
     }
-    file.sync_all()?;
-    Ok(())
+
+    pub fn add_profile_content<T: Into<Cow<'static, str>>>(&mut self, text: T) -> &mut Self {
+        self.profile.add_section(text);
+        self
+    }
+
+    pub fn add_rc_content<T: Into<Cow<'static, str>>>(&mut self, text: T) -> &mut Self {
+        self.rc.add_section(text);
+        self
+    }
+
+    pub(crate) fn configure(&self, standard_user: &User) -> Result<()> {
+        info!("Installing Zsh configuration files");
+        let home_dir = standard_user.home_dir();
+        standard_user.as_effective_user(|| {
+            // Note: Don't use .zshenv because /etc/zprofile will clobber it
+            for (file_name, buffer) in [(".zprofile", &self.profile), (".zshrc", &self.rc)] {
+                let mut file = crate::fs::create_file(home_dir.join(file_name))?;
+                buffer.to_writer(&mut file)?;
+                file.sync_all()?;
+            }
+
+            Ok(())
+        })
+    }
 }

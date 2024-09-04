@@ -193,10 +193,8 @@ name = "combootcha"
 version = "0.0.0"
 dependencies = [
  "anyhow",
- "clap",
  "log",
  "scoby",
- "users",
 ]
 
 [[package]]
