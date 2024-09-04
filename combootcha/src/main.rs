@@ -1,7 +1,7 @@
 use anyhow::Result;
 use clap::{crate_authors, crate_description, crate_name};
 use log::info;
-use scoby::{Scoby, UserExt};
+use scoby::UserExt;
 
 fn main() -> Result<()> {
     scoby::check_root()?;
@@ -9,17 +9,17 @@ fn main() -> Result<()> {
     let app = clap::App::new(crate_name!())
         .about(crate_description!())
         .author(crate_authors!());
-    let mut scoby = Scoby::new()?;
-    let app = scoby.configure_cli(app);
+    let mut global_config = scoby::GlobalConfig::new()?;
+    let app = global_config.configure_cli(app);
     let matches = app.get_matches();
     let (_standard_username, standard_user) = scoby::parse_standard_user(&matches)?;
 
-    scoby.zsh.add_profile_content("# extra stuff\n");
-    scoby
+    global_config.zsh.add_profile_content("# extra stuff\n");
+    global_config
         .homebrew
         .add_global_brewfile_content(include_str!("Brewfile"));
 
-    scoby.converge(
+    global_config.converge(
         &matches,
         standard_user.clone(),
         /*git_email=*/ "sean@seanfisk.com",

@@ -80,14 +80,15 @@ pub fn parse_standard_user(matches: &ArgMatches) -> Result<(String, User)> {
     Ok((username, user))
 }
 
-pub struct Scoby {
+/// Configuration of the operating system and everything on it.
+pub struct GlobalConfig {
     clap_logging_config: clap_logging::Config,
     pub zsh: zsh::Config,
     pub homebrew: homebrew::Config,
     pub ssh: ssh::Config,
 }
 
-impl Scoby {
+impl GlobalConfig {
     pub fn new() -> Result<Self> {
         Ok(Self {
             clap_logging_config: clap_logging::Config::new()?,
