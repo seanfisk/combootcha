@@ -17,8 +17,9 @@ impl Config {
         Self { email: None }
     }
 
-    pub fn set_email<E: Into<Cow<'static, str>>>(&mut self, email: E) {
+    pub fn set_email<E: Into<Cow<'static, str>>>(&mut self, email: E) -> &mut Self {
         self.email = Some(email.into());
+        self
     }
 
     pub(crate) fn converge(&self, standard_user: User) -> Result<()> {

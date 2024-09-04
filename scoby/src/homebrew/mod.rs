@@ -38,8 +38,12 @@ impl Config {
         }
     }
 
-    pub fn add_global_brewfile_content<T: Into<Cow<'static, str>>>(&mut self, text: T) {
-        self.global_brewfile.add_section(text)
+    pub fn add_global_brewfile_content<T: Into<Cow<'static, str>>>(
+        &mut self,
+        text: T,
+    ) -> &mut Self {
+        self.global_brewfile.add_section(text);
+        self
     }
 
     pub(crate) fn converge(&self, standard_user: User) -> Result<()> {

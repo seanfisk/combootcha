@@ -19,12 +19,14 @@ impl Config {
         Self { profile, rc }
     }
 
-    pub fn add_profile_content<T: Into<Cow<'static, str>>>(&mut self, text: T) {
+    pub fn add_profile_content<T: Into<Cow<'static, str>>>(&mut self, text: T) -> &mut Self {
         self.profile.add_section(text);
+        self
     }
 
-    pub fn add_rc_content<T: Into<Cow<'static, str>>>(&mut self, text: T) {
+    pub fn add_rc_content<T: Into<Cow<'static, str>>>(&mut self, text: T) -> &mut Self {
         self.rc.add_section(text);
+        self
     }
 
     pub(crate) fn converge(&self, standard_user: &User) -> Result<()> {

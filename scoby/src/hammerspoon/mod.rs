@@ -14,8 +14,9 @@ impl Config {
         Self { init_lua }
     }
 
-    pub fn add_init_lua_content<T: Into<Cow<'static, str>>>(&mut self, text: T) {
-        self.init_lua.add_section(text)
+    pub fn add_init_lua_content<T: Into<Cow<'static, str>>>(&mut self, text: T) -> &mut Self {
+        self.init_lua.add_section(text);
+        self
     }
 
     pub(crate) fn converge(&self, standard_user: &User) -> Result<()> {

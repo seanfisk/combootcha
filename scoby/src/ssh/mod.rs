@@ -1,4 +1,5 @@
 use anyhow::Result;
+use std::borrow::Cow;
 use users::{os::unix::UserExt, User};
 
 use crate::{text_buffer::TextBuffer, UserExt as OtherUserExt};
@@ -12,6 +13,11 @@ impl Config {
         let mut config = TextBuffer::new();
         config.add_content(include_str!("config/pre"));
         Self { config }
+    }
+
+    pub fn add_config_content<T: Into<Cow<'static, str>>>(&mut self, text: T) -> &mut Self {
+        self.config.add_section(text);
+        self
     }
 
     pub(crate) fn converge(self, standard_user: &User) -> Result<()> {

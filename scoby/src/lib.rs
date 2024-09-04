@@ -101,17 +101,45 @@ impl Cli {
 
 /// Configuration of the operating system and everything on it.
 pub struct GlobalConfig {
-    // TODO Consider getters for these. We don't want consumers to be able to create a GlobalConfig and having these all pub allows that.
-    pub standard_username: String,
-    pub standard_user: User,
-    pub zsh: zsh::Config,
-    pub homebrew: homebrew::Config,
-    pub ssh: ssh::Config,
-    pub git: git::Config,
-    pub hammerspoon: hammerspoon::Config,
+    // Making these fields public allows a user to instantiate this struct, which is not desirable. I want it to be an opaque type. So generate getters.
+    pub(crate) standard_username: String,
+    pub(crate) standard_user: User,
+    pub(crate) zsh: zsh::Config,
+    pub(crate) homebrew: homebrew::Config,
+    pub(crate) ssh: ssh::Config,
+    pub(crate) git: git::Config,
+    pub(crate) hammerspoon: hammerspoon::Config,
 }
 
 impl GlobalConfig {
+    pub fn standard_username(&self) -> &str {
+        &self.standard_username
+    }
+
+    pub fn standard_user(&self) -> &User {
+        &self.standard_user
+    }
+
+    pub fn zsh(&mut self) -> &mut zsh::Config {
+        &mut self.zsh
+    }
+
+    pub fn homebrew(&mut self) -> &mut homebrew::Config {
+        &mut self.homebrew
+    }
+
+    pub fn ssh(&mut self) -> &mut ssh::Config {
+        &mut self.ssh
+    }
+
+    pub fn git(&mut self) -> &mut git::Config {
+        &mut self.git
+    }
+
+    pub fn hammerspoon(&mut self) -> &mut hammerspoon::Config {
+        &mut self.hammerspoon
+    }
+
     // Some TextBuffers have additional data written to them and I don't want to have to copy-on-write. Is consuming self the best practice here? Not sure, but it solves the issue neatly. I don't see a need to converge multiple times per Combootcha invocation.
     pub fn converge(self, matches: &ArgMatches) -> Result<()> {
         debug!("Logger was successfully instantiated");
