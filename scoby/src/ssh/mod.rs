@@ -22,7 +22,7 @@ impl Config {
 
     pub(crate) fn configure(self, standard_user: &User) -> Result<()> {
         let mut config = self.config;
-        config.add_content(include_str!("config/post"));
+        config.add_section(include_str!("config/post"));
 
         let ssh_dir = standard_user.home_dir().join(".ssh");
         let path = ssh_dir.join("config");
