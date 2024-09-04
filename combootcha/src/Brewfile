@@ -18,7 +18,6 @@
 #cask 'quicksilver'
 cask 'firefox'
 cask 'spotify'
-cask 'lastpass'
 cask 'google-earth-pro'
 cask 'slack' # Blue Medora Bros, Grand Rapids
 
