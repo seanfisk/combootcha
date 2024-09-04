@@ -72,7 +72,7 @@ This does not start up properly when using the launch agent approach, so we just
 
 #### Jettison
 
-This is licensed software that is installed using Homebrew. I purchased a license that has to be manually entered/activated. Don't get confused: I initially purchased Jettison from the Mac App Store, but bought a separate license when I found that the Mac App Store version isn't up-to-date. The license is stored in LastPass.
+This is licensed software that is installed using Homebrew. I purchased a license that has to be manually entered/activated. Don't get confused: I initially purchased Jettison from the Mac App Store, but bought a separate license when I found that the Mac App Store version isn't up-to-date. The license is stored on my external hard drive.
 
 #### Disk Utility
 
@@ -90,11 +90,11 @@ Disable the auto-redirection of domains. Specifically this is annoying for `loca
 
 #### Dash
 
-This is licensed software that is installed using Homebrew. Grab the license from LastPass and run `open license.dash-license`.
+This is software that is installed using Homebrew, but it requires a subscription to activate the full version. The original email with the activation link is saved on my external hard drive with my other licenses.
 
 #### Cathode
 
-This is licensed software bundled with and installed by Combootcha. Copy the license file from LastPass directly to `~/Library/Application Support/Cathode/License.cathodelicense` to license the software.
+This is licensed software bundled with and installed by Combootcha. Copy the license file from my external hard drive directly to `~/Library/Application Support/Cathode/License.cathodelicense` to license the software.
 
 #### Privacy & Security approvals
 
@@ -140,10 +140,6 @@ Everything in this section is for my personal setup only.
 #### GitHub
 
 Upload my SSH public key to my GitHub account so that I can commit code.
-
-#### LastPass
-
-The universal installer has installer and uninstaller app bundles that need to be run manually. Using the universal installer is preferable to individual browser add-ons due to the inclusion of all browser add-ons and the binary component, which allows sharing state between browsers. The universal installer is not present in Homebrew, Homebrew Cask, or the Mac App Store and must be downloaded manually from here: https://lastpass.com/misc_download2.php
 
 #### iCloud
 
