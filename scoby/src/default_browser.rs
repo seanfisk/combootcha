@@ -4,12 +4,12 @@ use users::User;
 
 use crate::verbose_command::Command;
 
-const ARG_NAME: &str = "set-default-browser";
+const CLI_OPTION_NAME: &str = "set-default-browser";
 
-pub(crate) fn arg<'a, 'b>() -> Arg<'a, 'b> {
-    Arg::with_name(ARG_NAME)
+pub(crate) fn cli_option<'a, 'b>() -> Arg<'a, 'b> {
+    Arg::with_name(CLI_OPTION_NAME)
         .short("-B")
-        .long(ARG_NAME)
+        .long(CLI_OPTION_NAME)
         .help("Set the default browser (shows a prompt every time)")
 }
 
@@ -17,7 +17,7 @@ pub(crate) fn configure(
     matches: &ArgMatches,
     user: &User, // We'll clone on use
 ) -> Result<()> {
-    if matches.is_present(ARG_NAME) {
+    if matches.is_present(CLI_OPTION_NAME) {
         // What defaultbrowser does is pretty simple, but there really isn't a good reason to rewrite it into this program: https://github.com/kerma/defaultbrowser/blob/master/src/main.m
         Command::new("defaultbrowser")
             .arg("firefox")

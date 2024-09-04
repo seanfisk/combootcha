@@ -13,12 +13,12 @@ use crate::text_buffer::TextBuffer;
 use crate::verbose_command::Command;
 use crate::UserExt as OtherUserExt;
 
-const ARG_NAME: &str = "homebrew";
+const CLI_OPTION_NAME: &str = "homebrew";
 
-pub(crate) fn arg<'a, 'b>() -> Arg<'a, 'b> {
-    Arg::with_name(ARG_NAME)
+pub(crate) fn cli_option<'a, 'b>() -> Arg<'a, 'b> {
+    Arg::with_name(CLI_OPTION_NAME)
         .short("-H")
-        .long(ARG_NAME)
+        .long(CLI_OPTION_NAME)
         .help("Install Homebrew formulae and casks (takes a long time)")
 }
 
@@ -29,7 +29,7 @@ pub struct Config {
 
 impl Config {
     pub(crate) fn new(matches: &ArgMatches) -> Self {
-        let install_deps = matches.is_present(ARG_NAME);
+        let install_deps = matches.is_present(CLI_OPTION_NAME);
         let mut global_brewfile = TextBuffer::new();
         global_brewfile.add_content(include_str!("Brewfile"));
         Self {

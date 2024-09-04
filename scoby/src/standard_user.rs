@@ -3,9 +3,10 @@ use clap::{Arg, ArgMatches};
 use log::debug;
 use users::{get_user_by_name, User};
 
-const ARG_NAME: &str = "username";
-pub(crate) fn arg<'a, 'b>() -> Arg<'a, 'b> {
-    Arg::with_name(ARG_NAME)
+const CLI_OPTION_NAME: &str = "username";
+
+pub(crate) fn cli_option<'a, 'b>() -> Arg<'a, 'b> {
+    Arg::with_name(CLI_OPTION_NAME)
         .short("u")
         .long("standard-user")
         .help("Standard user to run as; defaults to value of SUDO_USER environment variable")
@@ -32,7 +33,7 @@ fn parse_name(cli_value: Option<&str>) -> Result<String> {
 
 // Return the username separately as we've already converted it to UTF-8
 pub(crate) fn parse(matches: &ArgMatches) -> Result<(String, User)> {
-    let name = parse_name(matches.value_of(ARG_NAME))?;
+    let name = parse_name(matches.value_of(CLI_OPTION_NAME))?;
     let user = get_user_by_name(&name)
         .ok_or_else(|| anyhow!("User with name {:?} does not exist on this system!", name))?;
     Ok((name, user))

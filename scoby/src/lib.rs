@@ -64,9 +64,9 @@ impl Cli {
             .global_settings(&clap_logging_config.clap_settings())
             .global_setting(StrictUtf8)
             .log_level_arg()
-            .arg(standard_user::arg())
-            .arg(homebrew::arg())
-            .arg(default_browser::arg());
+            .arg(standard_user::cli_option())
+            .arg(homebrew::cli_option())
+            .arg(default_browser::cli_option());
 
         Ok((
             Self {
