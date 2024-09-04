@@ -22,7 +22,7 @@ impl Config {
         self
     }
 
-    pub(crate) fn converge(&self, standard_user: User) -> Result<()> {
+    pub(crate) fn configure(&self, standard_user: User) -> Result<()> {
         info!("Setting up personal Git preferences");
 
         standard_user.as_effective_user(|| {

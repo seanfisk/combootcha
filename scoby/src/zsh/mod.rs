@@ -29,7 +29,7 @@ impl Config {
         self
     }
 
-    pub(crate) fn converge(&self, standard_user: &User) -> Result<()> {
+    pub(crate) fn configure(&self, standard_user: &User) -> Result<()> {
         info!("Installing Zsh configuration files");
         let home_dir = standard_user.home_dir();
         standard_user.as_effective_user(|| {

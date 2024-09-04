@@ -13,7 +13,7 @@ pub(crate) fn arg<'a, 'b>() -> Arg<'a, 'b> {
         .help("Set the default browser (shows a prompt every time)")
 }
 
-pub(crate) fn converge(
+pub(crate) fn configure(
     matches: &ArgMatches,
     user: &User, // We'll clone on use
 ) -> Result<()> {

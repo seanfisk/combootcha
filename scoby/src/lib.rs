@@ -150,10 +150,10 @@ impl GlobalConfig {
         // Command line tools
         login_shells::set(&self.standard_user)?;
         // Note: Zsh interaction with path_helper was fixed, at least since Ventura
-        self.ssh.converge(&self.standard_user)?;
-        self.git.converge(self.standard_user.clone())?;
+        self.ssh.configure(&self.standard_user)?;
+        self.git.configure(self.standard_user.clone())?;
         scripts::install(&self.standard_user)?;
-        self.zsh.converge(&self.standard_user)?;
+        self.zsh.configure(&self.standard_user)?;
 
         // Languages
         rust::configure(self.standard_user.clone())?;
@@ -163,9 +163,9 @@ impl GlobalConfig {
         emacs::configure(&self.standard_user)?;
         firefox::configure(&self.standard_user)?;
         cathode::install(self.standard_user.clone())?;
-        self.hammerspoon.converge(&self.standard_user)?;
+        self.hammerspoon.configure(&self.standard_user)?;
         karabiner::configure(&self.standard_user)?;
-        default_browser::converge(matches, &self.standard_user)?;
+        default_browser::configure(matches, &self.standard_user)?;
 
         // General preferences
         power_management::configure()?;
