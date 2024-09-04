@@ -1,3 +1,4 @@
+mod standard_user;
 mod cathode;
 mod default_browser;
 mod emacs;
@@ -30,16 +31,16 @@ pub use path::Ext as PathExt;
 pub use user::Ext as UserExt;
 
 use anyhow::{anyhow, Result};
-use clap::{AppSettings::StrictUtf8, Arg, ArgMatches};
+use clap::{AppSettings::StrictUtf8, ArgMatches, crate_authors, crate_description};
 use clap_logging::AppExt;
 use log::{debug, LevelFilter};
-use users::{get_user_by_name, User};
+use users::User;
 
 fn is_root() -> bool {
     nix::unistd::Uid::current().is_root()
 }
 
-pub fn check_root() -> Result<()> {
+fn check_root() -> Result<()> {
     if is_root() {
         Ok(())
     } else {
@@ -47,128 +48,99 @@ pub fn check_root() -> Result<()> {
     }
 }
 
-const STANDARD_USER_ARG_NAME: &str = "username";
-const HOMEBREW_ARG_NAME: &str = "homebrew";
-const BROWSER_ARG_NAME: &str = "set-default-browser";
-
-fn get_standard_username(cli_value: Option<&str>) -> Result<String> {
-    debug!("Looking for standard user from CLI");
-    if let Some(v) = cli_value {
-        debug!("Standard user set to {:?} from command line", v);
-        Ok(v.to_owned())
-    } else {
-        debug!("Looking for standard user from SUDO_USER environment variable");
-        match env::get("SUDO_USER")? {
-            Some(v) => {
-                debug!("Standard user set to {:?} from SUDO_USER environment variable", v);
-                Ok(v)
-            }
-            None => Err(anyhow!("Standard user not given by --standard-user command-line option nor SUDO_USER environment variable")),
-        }
-    }
+pub struct Cli {
+    clap_logging_config: clap_logging::Config,
 }
 
-// Return the username separately as we've already converted it to UTF-8
-pub fn parse_standard_user(matches: &ArgMatches) -> Result<(String, User)> {
-    let username = get_standard_username(matches.value_of(STANDARD_USER_ARG_NAME))?;
-    let user = get_user_by_name(&username).ok_or_else(|| {
-        anyhow!(
-            "User with name {:?} does not exist on this system!",
-            username
-        )
-    })?;
-    Ok((username, user))
+impl Cli {
+    pub fn init<'a, 'b>() -> Result<(Self, clap::App<'a, 'b>)> {
+        check_root()?;
+
+        let clap_logging_config = clap_logging::Config::new()?;
+
+        let app = clap::App::new("combootcha")
+            .about(crate_description!())
+            .author(crate_authors!())
+            .global_settings(&clap_logging_config.clap_settings())
+            .global_setting(StrictUtf8)
+            .log_level_arg()
+            .arg(standard_user::arg())
+            .arg(homebrew::arg())
+            .arg(default_browser::arg());
+
+        Ok((Self { clap_logging_config }, app))
+    }
+
+    pub fn parse_config(&self, matches: &ArgMatches) -> Result<GlobalConfig> {
+        self.clap_logging_config
+            .init_logger(matches, "COMBOOTCHA_LOG_LEVEL", LevelFilter::Info)?;
+
+        let (standard_username, standard_user) = standard_user::parse(matches)?;
+        let zsh = zsh::Config::new();
+        let homebrew = homebrew::Config::new(matches);
+        let ssh = ssh::Config::new();
+        let git = git::Config::new();
+        let hammerspoon = hammerspoon::Config::new();
+
+        Ok(GlobalConfig {
+            standard_username,
+            standard_user,
+            zsh,
+            homebrew,
+            ssh,
+            git,
+            hammerspoon,
+        })
+    }
 }
 
 /// Configuration of the operating system and everything on it.
 pub struct GlobalConfig {
-    clap_logging_config: clap_logging::Config,
+    // TODO Consider getters for these. We don't want consumers to be able to create a GlobalConfig and having these all pub allows that.
+    pub standard_username: String,
+    pub standard_user: User,
     pub zsh: zsh::Config,
     pub homebrew: homebrew::Config,
     pub ssh: ssh::Config,
+    pub git: git::Config,
+    pub hammerspoon: hammerspoon::Config,
 }
 
 impl GlobalConfig {
-    pub fn new() -> Result<Self> {
-        Ok(Self {
-            clap_logging_config: clap_logging::Config::new()?,
-            zsh: zsh::Config::new(),
-            homebrew: homebrew::Config::new(),
-            ssh: ssh::Config::new(),
-        })
-    }
-
-    pub fn configure_cli<'a, 'b>(&self, app: clap::App<'a, 'b>) -> clap::App<'a, 'b> {
-        let standard_user_arg = Arg::with_name(STANDARD_USER_ARG_NAME)
-            .short("u")
-            .long("standard-user")
-            .help("Standard user to run as; defaults to value of SUDO_USER environment variable")
-            .takes_value(true)
-            .value_name("USERNAME");
-
-        let homebrew_arg = Arg::with_name(HOMEBREW_ARG_NAME)
-            .short("-H")
-            .long(HOMEBREW_ARG_NAME)
-            .help("Install Homebrew formulae and casks (takes a long time)");
-
-        let browser_arg = Arg::with_name(BROWSER_ARG_NAME)
-            .short("-B")
-            .long(BROWSER_ARG_NAME)
-            .help("Set the default browser (shows a prompt every time)");
-
-        app.global_settings(&self.clap_logging_config.clap_settings())
-            .global_setting(StrictUtf8)
-            .log_level_arg()
-            .arg(standard_user_arg)
-            .arg(homebrew_arg)
-            .arg(browser_arg)
-    }
-
-    // I do not love this mega-function with a bunch of options. Going with it for now but registering the desire to improve it in the future.
+    // Some TextBuffers have additional data written to them and I don't want to have to copy-on-write. Is consuming self the best practice here? Not sure, but it solves the issue neatly. I don't see a need to converge multiple times per Combootcha invocation.
     pub fn converge(
         self,
         matches: &ArgMatches,
-        standard_user: User,
-        git_email: &str,
-        hammerspoon_init_lua_extra_bytes: Option<&[u8]>,
     ) -> Result<()> {
-        self.clap_logging_config
-            .init_logger(matches, "COMBOOTCHA_LOG_LEVEL", LevelFilter::Info)?;
         debug!("Logger was successfully instantiated");
 
         // Run Homebrew first as it installs tools needed for later steps.
         // Yes, dependency installation can be disabled but we trust that the user will only disable it on subsequent runs.
-        {
-            let install_deps = matches.is_present(HOMEBREW_ARG_NAME);
-            self.homebrew
-                .converge(standard_user.clone(), install_deps)?;
-        }
+        self.homebrew.converge(self.standard_user.clone())?;
         // Command line tools
-        login_shells::set(&standard_user)?;
+        login_shells::set(&self.standard_user)?;
         // Note: Zsh interaction with path_helper was fixed, at least since Ventura
-        self.ssh.converge(&standard_user)?;
-        git::configure(git_email, standard_user.clone())?;
-        scripts::install(&standard_user)?;
-        self.zsh.converge(&standard_user)?;
+        self.ssh.converge(&self.standard_user)?;
+        self.git.converge(self.standard_user.clone())?;
+        scripts::install(&self.standard_user)?;
+        self.zsh.converge(&self.standard_user)?;
 
         // Languages
-        rust::configure(standard_user.clone())?;
+        rust::configure(self.standard_user.clone())?;
 
         // Graphical programs
-        iterm2::configure(&standard_user)?;
-        emacs::configure(&standard_user)?;
-        firefox::configure(&standard_user)?;
-        cathode::install(standard_user.clone())?;
-        hammerspoon::configure(&standard_user, hammerspoon_init_lua_extra_bytes)?;
-        karabiner::configure(&standard_user)?;
-        if matches.is_present(BROWSER_ARG_NAME) {
-            default_browser::set(standard_user.clone())?;
-        }
+        iterm2::configure(&self.standard_user)?;
+        emacs::configure(&self.standard_user)?;
+        firefox::configure(&self.standard_user)?;
+        cathode::install(self.standard_user.clone())?;
+        self.hammerspoon.converge(&self.standard_user)?;
+        karabiner::configure(&self.standard_user)?;
+        default_browser::converge(&matches, &self.standard_user)?;
 
         // General preferences
         power_management::configure()?;
-        login_items::configure(&standard_user)?;
-        preferences::set(standard_user)?;
+        login_items::configure(&self.standard_user)?;
+        preferences::set(self.standard_user)?;
 
         Ok(())
     }

@@ -1,22 +1,33 @@
-use crate::UserExt as OtherUserExt;
+use crate::{text_buffer::TextBuffer, UserExt as OtherUserExt};
 use anyhow::Result;
-use std::io::Write;
 use users::{os::unix::UserExt, User};
+use std::borrow::Cow;
 
-pub(crate) fn configure(standard_user: &User, init_lua_extra_bytes: Option<&[u8]>) -> Result<()> {
-    let bytes = include_bytes!("init.lua");
-    let hammerspoon_dir = standard_user.home_dir().join(".hammerspoon");
-    let path = hammerspoon_dir.join("init.lua");
+pub struct Config {
+    init_lua: TextBuffer,
+}
 
-    standard_user.as_effective_user(|| {
-        crate::fs::ensure_dir(&hammerspoon_dir)?;
-        let mut file = crate::fs::create_file(&path)?;
-        file.write_all(bytes)?;
-        if let Some(bytes) = init_lua_extra_bytes {
-            file.write_all(b"\n")?;
-            file.write_all(bytes)?;
-        }
-        file.sync_all()?;
-        Ok(())
-    })
+impl Config {
+    pub(crate) fn new() -> Self {
+        let mut init_lua = TextBuffer::new();
+        init_lua.add_content(include_str!("init.lua"));
+        Self { init_lua }
+    }
+
+    pub fn add_init_lua_content<T: Into<Cow<'static, str>>>(&mut self, text: T) {
+        self.init_lua.add_section(text)
+    }
+
+    pub(crate) fn converge(&self, standard_user: &User) -> Result<()> {
+        let hammerspoon_dir = standard_user.home_dir().join(".hammerspoon");
+        let path = hammerspoon_dir.join("init.lua");
+
+        standard_user.as_effective_user(|| {
+            crate::fs::ensure_dir(&hammerspoon_dir)?;
+            let mut file = crate::fs::create_file(&path)?;
+            self.init_lua.to_writer(&mut file)?;
+            file.sync_all()?;
+            Ok(())
+        })
+    }
 }

@@ -4,10 +4,24 @@ use log::info;
 use std::ffi::OsString;
 use std::io::Write;
 use users::{os::unix::UserExt, User};
+use std::borrow::Cow;
 
 use crate::UserExt as OtherUserExt;
 
-pub(crate) fn configure(email: &str, standard_user: User) -> Result<()> {
+pub struct Config {
+    email: Option<Cow<'static, str>>,
+}
+
+impl Config {
+    pub(crate) fn new() -> Self {
+        Self { email: None}
+    }
+
+    pub fn set_email<E: Into<Cow<'static, str>>>(&mut self, email: E) {
+        self.email = Some(email.into());
+    }
+
+    pub(crate) fn converge(&self, standard_user: User) -> Result<()> {
     info!("Setting up personal Git preferences");
 
     standard_user.as_effective_user(|| {
@@ -23,9 +37,13 @@ pub(crate) fn configure(email: &str, standard_user: User) -> Result<()> {
     })?;
 
     let c = Gitconfig::new(standard_user.clone());
-    c.section(&["user"])
-        .string("name", "Sean Fisk")?
-        .string("email", email)?;
+        {
+            let s = c.section(&["user"]);
+            s.string("name", "Sean Fisk")?;
+            if let Some(ref email) = self.email {
+                s.string("email", email.as_ref())?;
+            }
+        }
     c.section(&["alias"])
         // add all new and changed files in the repo, even if in a subdirectory
         // according to git-config(1), shell commands are executed from the top of the repository
@@ -66,6 +84,7 @@ pub(crate) fn configure(email: &str, standard_user: User) -> Result<()> {
         // We shouldn't be in a repo when we run this, but be explicit that we don't want any repo setup
         .arg("--skip-repo")
         .run()
+}
 }
 
 struct Gitconfig {

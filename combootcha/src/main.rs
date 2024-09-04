@@ -1,30 +1,21 @@
 use anyhow::Result;
-use clap::{crate_authors, crate_description, crate_name};
 use log::info;
 use scoby::UserExt;
 
 fn main() -> Result<()> {
-    scoby::check_root()?;
 
-    let app = clap::App::new(crate_name!())
-        .about(crate_description!())
-        .author(crate_authors!());
-    let mut global_config = scoby::GlobalConfig::new()?;
-    let app = global_config.configure_cli(app);
+    let (scoby_cli, app) = scoby::Cli::init()?;
     let matches = app.get_matches();
-    let (_standard_username, standard_user) = scoby::parse_standard_user(&matches)?;
+    let mut global_config = scoby_cli.parse_config(&matches)?;
+    let standard_user = global_config.standard_user.clone();
 
     global_config.zsh.add_profile_content("# extra stuff\n");
     global_config
         .homebrew
         .add_global_brewfile_content(include_str!("Brewfile"));
+    global_config.git.set_email("sean@seanfisk.com");
 
-    global_config.converge(
-        &matches,
-        standard_user.clone(),
-        /*git_email=*/ "sean@seanfisk.com",
-        /*hammerspoon_init_lua_extra_bytes=*/ None,
-    )?;
+    global_config.converge(&matches)?;
 
     standard_user.as_effective_user(|| {
         let lastpass_cmd_shift_key = "1179914";

@@ -27,12 +27,12 @@ impl Config {
         self.rc.add_section(text);
     }
 
-    pub(crate) fn converge(self, standard_user: &User) -> Result<()> {
+    pub(crate) fn converge(&self, standard_user: &User) -> Result<()> {
         info!("Installing Zsh configuration files");
         let home_dir = standard_user.home_dir();
         standard_user.as_effective_user(|| {
             // Note: Don't use .zshenv because /etc/zprofile will clobber it
-            for (file_name, buffer) in [(".zprofile", self.profile), (".zshrc", self.rc)] {
+            for (file_name, buffer) in [(".zprofile", &self.profile), (".zshrc", &self.rc)] {
                 let mut file = crate::fs::create_file(home_dir.join(file_name))?;
                 buffer.to_writer(&mut file)?;
                 file.sync_all()?;

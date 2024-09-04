@@ -1,4 +1,5 @@
 use anyhow::Result;
+use clap::{ArgMatches, Arg};
 use log::info;
 use std::borrow::Cow;
 use std::os::unix::fs::OpenOptionsExt;
@@ -12,22 +13,33 @@ use crate::text_buffer::TextBuffer;
 use crate::verbose_command::Command;
 use crate::UserExt as OtherUserExt;
 
+const ARG_NAME: &str = "homebrew";
+
+pub(crate) fn arg<'a, 'b>() -> Arg<'a, 'b> {
+    Arg::with_name(ARG_NAME)
+        .short("-H")
+        .long(ARG_NAME)
+        .help("Install Homebrew formulae and casks (takes a long time)")
+}
+
 pub struct Config {
     global_brewfile: TextBuffer,
+    install_deps: bool
 }
 
 impl Config {
-    pub(crate) fn new() -> Self {
+    pub(crate) fn new(matches: &ArgMatches) -> Self {
+        let install_deps = matches.is_present(ARG_NAME);
         let mut global_brewfile = TextBuffer::new();
         global_brewfile.add_content(include_str!("Brewfile"));
-        Self { global_brewfile }
+        Self { global_brewfile, install_deps }
     }
 
     pub fn add_global_brewfile_content<T: Into<Cow<'static, str>>>(&mut self, text: T) {
         self.global_brewfile.add_section(text)
     }
 
-    pub(crate) fn converge(&self, standard_user: User, install_deps: bool) -> Result<()> {
+    pub(crate) fn converge(&self, standard_user: User) -> Result<()> {
         // Disable auto-update. I have a Microsoft To Do task to periodically update Homebrew and installed formulae and casks.
         // Can be configured at the system, prefix, user, or shell level. Arbitrary for me since all are identical. Chose system as the most general.
         // https://docs.brew.sh/Manpage#environment
@@ -54,7 +66,7 @@ impl Config {
             Ok(())
         })?;
 
-        if install_deps {
+        if self.install_deps {
             info!("Installing Homebrew dependencies via Brewfile");
 
             Command::new("brew")
