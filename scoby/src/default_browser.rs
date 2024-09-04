@@ -15,13 +15,13 @@ pub(crate) fn cli_option<'a, 'b>() -> Arg<'a, 'b> {
 
 pub(crate) fn configure(
     matches: &ArgMatches,
-    user: &User, // We'll clone on use
+    standard_user: &User, // We'll clone on use
 ) -> Result<()> {
     if matches.is_present(CLI_OPTION_NAME) {
         // What defaultbrowser does is pretty simple, but there really isn't a good reason to rewrite it into this program: https://github.com/kerma/defaultbrowser/blob/master/src/main.m
         Command::new("defaultbrowser")
             .arg("firefox")
-            .user(user.clone())
+            .user(standard_user.clone())
             .run()?;
     }
     Ok(())
