@@ -112,3 +112,9 @@ pyenv() {
       ;;
   esac
 }
+
+# Load completions from $fpath
+# -U: Suppress alias expansion
+# -z: marked the function to be autoloaded using Zsh style (as opposed to -k for Ksh style)
+autoload -Uz compinit
+compinit
