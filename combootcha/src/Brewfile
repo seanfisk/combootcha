@@ -19,6 +19,7 @@
 cask 'firefox'
 cask 'spotify'
 cask 'google-earth-pro'
+cask 'bitwarden'
 cask 'slack' # Blue Medora Bros, Grand Rapids
 
 # Useful for sites that don't work well in Firefox or Safari, like midnrreservations.com and many others
