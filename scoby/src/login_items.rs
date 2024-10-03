@@ -23,17 +23,15 @@ use crate::UserExt as OtherUserExt;
 // See this StackOverflow question for more information:
 // http://stackoverflow.com/q/12086638
 
-pub(crate) fn configure(standard_user: &User) -> Result<()> {
+pub(crate) fn configure<I>(standard_user: &User, app_names: I) -> Result<()>
+where
+    I: IntoIterator,
+    I::Item: AsRef<str>,
+{
     let install_dir = standard_user.home_dir().join("Library/LaunchAgents");
     standard_user.as_effective_user(|| crate::fs::ensure_dir(&install_dir))?;
-    for app in [
-        "Flux",
-        "Jettison",
-        // "Quicksilver",
-        "iTerm",
-        "Hammerspoon",
-        "Caffeine",
-    ] {
+    for app in app_names {
+        let app = app.as_ref();
         info!("Setting app {} to launch upon login", app);
         let label = format!("com.seanfisk.login.{}", app.to_lowercase());
         let agent_path = install_dir.join(format!("{label}.plist"));

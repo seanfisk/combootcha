@@ -70,10 +70,6 @@ The Homebrew installation process will also trigger the installation of some sof
 
 This does not start up properly when using the launch agent approach, so we just use native startup support through the app itself. As of 2023-11-12, Karabiner is automatically added to Login Items.
 
-#### Jettison
-
-This is licensed software that is installed using Homebrew. I purchased a license that has to be manually entered/activated. Don't get confused: I initially purchased Jettison from the Mac App Store, but bought a separate license when I found that the Mac App Store version isn't up-to-date. The license is stored on my external hard drive.
-
 #### Disk Utility
 
 Open Disk Utility and choose to *Show All Devices*:
@@ -136,6 +132,10 @@ When using the launch agent approach to start up aText, it does not validate the
 ### Personal
 
 Everything in this section is for my personal setup only.
+
+#### Jettison
+
+This is licensed software that is installed using Homebrew. I purchased a license that has to be manually entered/activated. Don't get confused: I initially purchased Jettison from the Mac App Store, but bought a separate license when I found that the Mac App Store version isn't up-to-date. The license is stored on my external hard drive.
 
 #### GitHub
 

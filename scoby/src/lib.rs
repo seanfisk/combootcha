@@ -27,6 +27,7 @@ pub mod user_defaults;
 pub mod verbose_command;
 mod zsh;
 
+use indexmap::IndexSet;
 pub use path::Ext as PathExt;
 pub use user::Ext as UserExt;
 
@@ -34,6 +35,7 @@ use anyhow::{anyhow, Result};
 use clap::{crate_authors, crate_description, AppSettings::StrictUtf8, ArgMatches};
 use clap_logging::AppExt;
 use log::{debug, LevelFilter};
+use std::borrow::Cow;
 use users::User;
 
 fn is_root() -> bool {
@@ -87,6 +89,11 @@ impl Cli {
         let git = git::Config::new();
         let hammerspoon = hammerspoon::Config::new();
 
+        let mut login_app_names = IndexSet::new();
+        for name in ["Flux", "iTerm", "Hammerspoon", "Caffeine"] {
+            login_app_names.insert(Cow::Borrowed(name));
+        }
+
         Ok(SystemConfig {
             standard_username,
             standard_user,
@@ -95,6 +102,7 @@ impl Cli {
             ssh,
             git,
             hammerspoon,
+            login_app_names,
         })
     }
 }
@@ -109,6 +117,7 @@ pub struct SystemConfig {
     pub(crate) ssh: ssh::Config,
     pub(crate) git: git::Config,
     pub(crate) hammerspoon: hammerspoon::Config,
+    pub(crate) login_app_names: IndexSet<Cow<'static, str>>,
 }
 
 impl SystemConfig {
@@ -140,6 +149,13 @@ impl SystemConfig {
         &mut self.hammerspoon
     }
 
+    pub fn add_login_app<A>(&mut self, name: A)
+    where
+        A: Into<Cow<'static, str>>,
+    {
+        self.login_app_names.insert(name.into());
+    }
+
     // Some TextBuffers have additional data written to them and I don't want to have to copy-on-write. Is consuming self the best practice here? Not sure, but it solves the issue neatly. I don't see a need to converge multiple times per Combootcha invocation.
     pub fn converge(self, matches: &ArgMatches) -> Result<()> {
         debug!("Logger was successfully instantiated");
@@ -169,7 +185,7 @@ impl SystemConfig {
 
         // General preferences
         power_management::configure()?;
-        login_items::configure(&self.standard_user)?;
+        login_items::configure(&self.standard_user, self.login_app_names)?;
         preferences::set(self.standard_user)?;
 
         Ok(())

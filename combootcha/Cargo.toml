@@ -11,4 +11,5 @@ readme.workspace = true
 [dependencies]
 anyhow.workspace = true
 log.workspace = true
+users.workspace = true
 scoby = { path = "../scoby" }

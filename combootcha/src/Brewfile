@@ -17,6 +17,7 @@
 #cask 'adobe-reader' # Failing right now
 #cask 'quicksilver'
 cask 'firefox'
+cask 'jettison'
 cask 'spotify'
 cask 'google-earth-pro'
 cask 'bitwarden'
