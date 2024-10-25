@@ -28,6 +28,29 @@ for i, key in pairs({[0]="Up", [1]="Down"}) do
   end)
 end
 
+hs.hotkey.bind("⌘⌥", "return", function()
+    hs.window.focusedWindow():maximize()
+end)
+
+noResize = false
+ensureInScreenBounds = true
+
+hs.hotkey.bind("⌘⌥", "pageup", function()
+    hs.window.focusedWindow():moveOneScreenNorth(noResize, ensureInScreenBounds)
+end)
+
+hs.hotkey.bind("⌘⌥", "pagedown", function()
+    hs.window.focusedWindow():moveOneScreenSouth(noResize, ensureInScreenBounds)
+end)
+
+hs.hotkey.bind("⌘⌥", "home", function()
+    hs.window.focusedWindow():moveOneScreenWest(noResize, ensureInScreenBounds)
+end)
+
+hs.hotkey.bind("⌘⌥", "end", function()
+    hs.window.focusedWindow():moveOneScreenEast(noResize, ensureInScreenBounds)
+end)
+
 hs.hotkey.bind("⌘", "'", function()
     hs.application.launchOrFocus("Emacs")
 end)
