@@ -1,5 +1,5 @@
 for i, key in pairs({[0]="Left", [1]="Right"}) do
-  hs.hotkey.bind({"cmd", "alt"}, key, function()
+  hs.hotkey.bind("⌘⌥", key, function()
       local win = hs.window.focusedWindow()
       local f = win:frame()
       local screen = win:screen()
@@ -14,7 +14,7 @@ for i, key in pairs({[0]="Left", [1]="Right"}) do
 end
 
 for i, key in pairs({[0]="Up", [1]="Down"}) do
-  hs.hotkey.bind({"cmd", "alt"}, key, function()
+  hs.hotkey.bind("⌘⌥", key, function()
       local win = hs.window.focusedWindow()
       local f = win:frame()
       local screen = win:screen()
@@ -28,24 +28,24 @@ for i, key in pairs({[0]="Up", [1]="Down"}) do
   end)
 end
 
-hs.hotkey.bind({"cmd"}, "'", function()
+hs.hotkey.bind("⌘", "'", function()
     hs.application.launchOrFocus("Emacs")
 end)
 
-hs.hotkey.bind({"cmd", "alt"}, "'", function()
+hs.hotkey.bind("⌘⌥", "'", function()
     hs.application.launchOrFocus("Dash")
 end)
 
-hs.hotkey.bind({"cmd", "alt"}, ";", function()
+hs.hotkey.bind("⌘⌥", ";", function()
     hs.application.launchOrFocus("Firefox")
 end)
 
-hs.hotkey.bind({"cmd"}, ";", function()
+hs.hotkey.bind("⌘", ";", function()
     hs.application.launchOrFocus("iTerm")
 end)
 
 
--- hs.hotkey.bind({"cmd", "alt"}, "w", function()
+-- hs.hotkey.bind("⌘⌥", "w", function()
 --     local laptop = "Color LCD"
 --     -- These have the same name, so we can't identify them only by name. See here: https://github.com/Hammerspoon/hammerspoon/issues/195
 --     local dellVertical = hs.screen.allScreens()[3]
