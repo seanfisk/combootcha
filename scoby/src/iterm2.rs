@@ -89,6 +89,8 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
         crate::user_defaults::App::new("com.googlecode.iterm2")?
             .string("Default Bookmark Guid", personal_profile_guid)?
             // General
+            //   Startup
+            .bool("OpenNoWindowsAtStartup", false)? // Sets Window Restoration Policy to Use System Window Restoration Setting; see setup guide for more information
             //   Closing
             .bool("QuitWhenAllWindowsClosed", false)? // Keep the app open even when no windows; this is standard macOS app behavior
             .bool("PromptOnQuit", false)?

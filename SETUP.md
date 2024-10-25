@@ -32,6 +32,17 @@ Time Machine is the top priority, but basic input is the next task. Theoreticall
 
 <img src="screenshots/trackpad-settings/more-gestures.png" alt="Trackpad More Gestures" width="400" />
 
+#### Restore sessions within apps
+
+It is possible for macOS apps to restore their previous sessions on startup. This has long been possible for apps like Firefox regardless of macOS settings. However, macOS now has a global setting for this behavior, and some apps respect it, including iTerm2.
+
+iTerm2 session restoration has these requirements:
+
+- In System Settings, *Desktop & Dock* > *Close windows when quitting an application* must be disabled. Do this manually.
+- In iTerm2 settings, *Startup* > *Window restoration policy* must be set to *Use System Window Restoration Setting*. Combootcha will set this automatically via macOS user defaults.
+
+See [this AskDifferent answer](https://apple.stackexchange.com/a/349603) for more information.
+
 #### Xcode / Command Line Tools
 
 Next, install either Xcode or Command Line Tools. For Homebrew, Python, Ruby, and normal C++ compiles, we can get along with just the Command Line Tools. However, to compile Mac applications using Qt, we need the full Xcode installation.
