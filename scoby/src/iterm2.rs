@@ -91,6 +91,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
             // General
             //   Startup
             .bool("OpenNoWindowsAtStartup", false)? // Sets Window Restoration Policy to Use System Window Restoration Setting; see setup guide for more information
+            .bool("OpenArrangementAtStartup", false)? // If enabled, will override previous setting, so explicitly disable
             //   Closing
             .bool("QuitWhenAllWindowsClosed", false)? // Keep the app open even when no windows; this is standard macOS app behavior
             .bool("PromptOnQuit", false)?
