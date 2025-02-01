@@ -40,7 +40,10 @@ fn main() -> std::result::Result<(), Error> {
         if !output.status.success() {
             return Err(anyhow!(context));
         }
-        std::str::from_utf8(&output.stdout).context("Could not parse macOS SDK path as UTF-8")?.trim_end().to_owned()
+        std::str::from_utf8(&output.stdout)
+            .context("Could not parse macOS SDK path as UTF-8")?
+            .trim_end()
+            .to_owned()
     };
 
     bindgen::Builder::default()
