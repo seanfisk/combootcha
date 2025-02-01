@@ -24,9 +24,30 @@ fn main() -> std::result::Result<(), Error> {
         Ok(path_str.to_owned())
     };
 
+    // Since macOS 10.14, headers are no longer included in
+    // /System/Library/Frameworks, which is where libclang (and therefore
+    // bindgen) will look for headers. Determine the correct SDK path and pass
+    // it to bindgen.
+    // Credit: https://zameermanji.com/blog/2021/7/13/using-bindgen-with-system-frameworks-on-macos/
+    // My investigation: https://github.com/seanfisk/combootcha/issues/55
+    // Also see: https://github.com/rust-lang/rust-bindgen/issues/1226
+    let macos_sdk_path = {
+        let context = "Failed to determine macOS SDK path";
+        let output = Command::new("/usr/bin/xcrun")
+            .args(["--sdk", "macosx", "--show-sdk-path"])
+            .output()
+            .context(context)?;
+        if !output.status.success() {
+            return Err(anyhow!(context));
+        }
+        std::str::from_utf8(&output.stdout).context("Could not parse macOS SDK path as UTF-8")?.trim_end().to_owned()
+    };
+
     bindgen::Builder::default()
         .header(process_input_file("user_defaults.h")?)
         .allowlist_function("user_defaults_.+")
+        .clang_arg("-isysroot")
+        .clang_arg(macos_sdk_path)
         .generate()
         .map_err(|_| anyhow!("Could not generate bindings"))?
         .write_to_file(out_path.join("user_defaults.rs"))?;
