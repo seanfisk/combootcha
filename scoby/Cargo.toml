@@ -36,5 +36,5 @@ ansi_term = "0.11.0" # Synchronized with clap to prevent an extra dependency
 
 [build-dependencies]
 anyhow.workspace = true
-bindgen = "0.68"
+bindgen = "0.71"
 cc = "1"
