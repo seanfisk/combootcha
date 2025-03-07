@@ -17,7 +17,9 @@ pub(crate) fn configure(standard_user: User) -> Result<()> {
         components
     );
 
-    Command::new("rustup-init")
+    // Rustup is keg-only, but the Homebrew formula still installs a symlink to rustup-init as of 2025-03-07.
+    // Use an absolute path anyway to ensure we're using Rustup from Homebrew.
+    Command::new("/usr/local/opt/rustup/bin/rustup-init")
         .arg("--no-modify-path") // I'll add ~/.cargo/bin to my shell profiles myself
         .arg("-y") // No prompts
         .arg("--component")
