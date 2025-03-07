@@ -21,7 +21,7 @@ pub(crate) fn configure(standard_user: User) -> Result<()> {
         .arg("--no-modify-path") // I'll add ~/.cargo/bin to my shell profiles myself
         .arg("-y") // No prompts
         .arg("--component")
-        .args(components)
+        .arg(components.join(","))
         .user(standard_user)
         .run()?;
 
