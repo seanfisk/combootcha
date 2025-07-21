@@ -3,10 +3,9 @@
 set -o errexit
 set -o xtrace
 
-# Correct spelling first as it could change the line length, etc.
+# Apply spelling and lint suggestions before auto-formatting as these could change the line length, etc.
 typos --write-changes
+cargo clippy --fix \
+      --allow-dirty --allow-staged # Ignore version control state entirely
 
 cargo fmt --all
-
-# Ignore version control state entirely
-cargo clippy --fix --allow-dirty --allow-staged
