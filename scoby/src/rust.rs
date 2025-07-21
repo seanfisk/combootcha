@@ -12,10 +12,7 @@ pub(crate) fn configure(standard_user: User) -> Result<()> {
         "rust-analyzer",
     ];
 
-    info!(
-        "Installing the Rust toolchain using rustup with components {:?}",
-        components
-    );
+    info!("Installing the Rust toolchain using rustup with components {components:?}");
 
     // Rustup is keg-only, but the Homebrew formula still installs a symlink to rustup-init as of 2025-03-07.
     // Use an absolute path anyway to ensure we're using Rustup from Homebrew.

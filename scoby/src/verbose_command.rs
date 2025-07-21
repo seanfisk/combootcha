@@ -100,7 +100,7 @@ impl Command {
     fn popen(&self, pipe_stdin: bool, pipe_stdout: bool) -> Result<subprocess::Popen> {
         use subprocess::{Popen, PopenConfig, Redirection};
 
-        info!("=> {}", self);
+        info!("=> {self}");
 
         let mut argv = Vec::new();
         argv.push(&self.program);

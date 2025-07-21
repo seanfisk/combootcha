@@ -32,7 +32,7 @@ where
     standard_user.as_effective_user(|| crate::fs::ensure_dir(&install_dir))?;
     for app in app_names {
         let app = app.as_ref();
-        info!("Setting app {} to launch upon login", app);
+        info!("Setting app {app} to launch upon login");
         let label = format!("com.seanfisk.login.{}", app.to_lowercase());
         let agent_path = install_dir.join(format!("{label}.plist"));
         // TODO: Don't write the file if it's already in place with the correct content. It creates an annoying set of notifications every time.

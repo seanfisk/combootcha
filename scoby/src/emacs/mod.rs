@@ -10,7 +10,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
 
     {
         let install_dir = home_dir.join(".emacs.d");
-        info!("Cloning Spacemacs into {:?}", install_dir);
+        info!("Cloning Spacemacs into {install_dir:?}");
         // Couldn't find a solid way to clone idempotently. So technically this is a race condition, but in practice… come on. Not gonna happen.
         if install_dir
             .try_exists()
@@ -31,7 +31,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
 
     {
         let spacemacs_dir = home_dir.join(".spacemacs.d");
-        info!("Installing Spacemacs customizations to {:?}", spacemacs_dir);
+        info!("Installing Spacemacs customizations to {spacemacs_dir:?}");
 
         let bytes = include_bytes!("spacemacs/init.el");
         // See https://develop.spacemacs.org/doc/DOCUMENTATION.html#alternative-dotdirectory

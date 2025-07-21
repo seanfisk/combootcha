@@ -54,10 +54,7 @@ pub(crate) fn set(standard_user: &User) -> Result<()> {
     let zsh_path = brew_bin.join("zsh");
     let username = standard_user.name();
     let zsh_path_str = zsh_path.to_string_lossy();
-    info!(
-        "Setting login shell for user {:?} to {:?}",
-        username, zsh_path_str
-    );
+    info!("Setting login shell for user {username:?} to {zsh_path_str:?}");
     // Note that User#with_shell only sets the shell for that struct within Rust. It does NOT update the backend user database. For that we have to use chsh(1).
     //
     // Running chsh as the standard user will result in a password prompt. We don't want that so we will run as root.

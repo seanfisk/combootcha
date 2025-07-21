@@ -17,13 +17,13 @@ pub(crate) fn cli_option<'a, 'b>() -> Arg<'a, 'b> {
 fn parse_name(cli_value: Option<&str>) -> Result<String> {
     debug!("Looking for standard user from CLI");
     if let Some(v) = cli_value {
-        debug!("Standard user set to {:?} from command line", v);
+        debug!("Standard user set to {v:?} from command line");
         Ok(v.to_owned())
     } else {
         debug!("Looking for standard user from SUDO_USER environment variable");
         match crate::env::get("SUDO_USER")? {
             Some(v) => {
-                debug!("Standard user set to {:?} from SUDO_USER environment variable", v);
+                debug!("Standard user set to {v:?} from SUDO_USER environment variable");
                 Ok(v)
             }
             None => Err(anyhow!("Standard user not given by --standard-user command-line option nor SUDO_USER environment variable")),

@@ -53,7 +53,7 @@ impl Config {
         let dir = Path::new("/etc/homebrew");
         crate::fs::ensure_dir(dir)?;
         let path = dir.join("brew.env");
-        info!("Writing Homebrew configuration to {:?}", path);
+        info!("Writing Homebrew configuration to {path:?}");
         let mut file = File::options()
             .create(true)
             .write(true)
