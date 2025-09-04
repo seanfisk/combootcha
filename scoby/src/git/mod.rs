@@ -112,15 +112,20 @@ impl<'a> Section<'a> {
         Section { path, user }
     }
 
-    fn string<V: Into<OsString>>(&self, key: &str, value: V) -> Result<&Section> {
+    fn string<V: Into<OsString>>(&self, key: &str, value: V) -> Result<&Section<'_>> {
         self.set(key, None, value)
     }
 
-    fn bool(&self, key: &str, value: bool) -> Result<&Section> {
+    fn bool(&self, key: &str, value: bool) -> Result<&Section<'_>> {
         self.set(key, Some("bool"), value.to_string())
     }
 
-    fn set<V: Into<OsString>>(&self, key: &str, type_: Option<&str>, value: V) -> Result<&Section> {
+    fn set<V: Into<OsString>>(
+        &self,
+        key: &str,
+        type_: Option<&str>,
+        value: V,
+    ) -> Result<&Section<'_>> {
         let dotted_path = self
             .path
             .iter()

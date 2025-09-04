@@ -43,7 +43,7 @@ fn make_hotkey_dict(
     characters: &str,
     key_code: i64,
     modifier_flags: i64,
-) -> std::collections::HashMap<&str, scoby::user_defaults::DictValue> {
+) -> std::collections::HashMap<&str, scoby::user_defaults::DictValue<'_>> {
     use scoby::user_defaults::DictValue;
     std::collections::HashMap::from([
         ("characters", DictValue::String(characters)),
