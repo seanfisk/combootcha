@@ -81,6 +81,7 @@ impl Config {
                 .arg("install")
                 .arg("--verbose")
                 .arg("--global")
+                .arg("--no-upgrade") // Helpful for now while I am on an older OS
                 .user(standard_user)
                 .run()?;
         }
