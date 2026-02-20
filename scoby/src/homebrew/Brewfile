@@ -55,13 +55,13 @@ cask 'caffeine'
 cask 'dash'
 cask 'deeper'
 cask 'disk-inventory-x'
-cask 'flux'
+cask 'flux-app'
 cask 'gimp'
 cask 'hammerspoon'
 cask 'iterm2'
 cask 'karabiner-elements'
 cask 'speedcrunch'
-cask 'wireshark'
+cask 'wireshark-app'
 cask 'inkscape' # No longer needs XQuartz
 
 cask 'font-source-code-pro' # the default for Spacemacs
