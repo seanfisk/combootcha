@@ -24,6 +24,7 @@ cask 'bitwarden'
 cask 'slack' # Blue Medora Bros, Grand Rapids
 cask 'discord' # Jim
 cask 'zoom'
+cask 'claude'
 
 # Useful for sites that don't work well in Firefox or Safari, like midnrreservations.com and many others
 #
