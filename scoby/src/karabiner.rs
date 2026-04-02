@@ -8,18 +8,19 @@ use crate::UserExt as OtherUserExt;
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
     let config_dir = standard_user.home_dir().join(".config/karabiner");
     let mut devices = Vec::new();
-    // These keyboards have the same vendor ID for some reason
-    let product_ids: [u32; 2] = [
-        0x4545, // Filco Majestouch 2
-        0x0356, // Ducky One 2
+    let keyboard_ids: [(u32, u32); 3] = [
+        (0x30fa, 0x2350), // CyberPowerPC Nohi 02 RGB USB Keyboard (KB-1616-104)
+        // This is not a mistake: these keyboards have the same vendor ID for some reason
+        (0x04d9, 0x4545), // Filco Majestouch 2
+        (0x04d9, 0x0356), // Ducky One 2
     ];
-    for product_id in product_ids {
+    for (vendor_id, product_id) in keyboard_ids {
         devices.push(json!({
             "identifiers": {
                 "is_keyboard": true,
                 "is_pointing_device": false,
                 "product_id": product_id,
-                "vendor_id": 0x04d9,
+                "vendor_id": vendor_id,
             },
             // Swap Option and Command
             "simple_modifications": [
