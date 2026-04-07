@@ -36,11 +36,15 @@ brew 'ripgrep' # I use this, but it's also an optional dependency of Spacemacs: 
 brew 'rustup'
 brew 'ssh-copy-id'
 brew 'trash'
-brew 'typos-cli'
 brew 'watch'
 brew 'wget'
 brew 'xz'
 brew 'zsh'
+
+brew 'typos-cli'
+# A build dependency of typos-cli. I might not need this when I can start using bottles of typos-cli again.
+# However, for now, I want to explicitly install it to guarantee that registering Homebrew's Rust with Rustup is successful.
+brew 'rust'
 
 # Don't use Cask for managing my Emacs packages. From https://github.com/cask/cask/blob/d30f30ae890356b90859a94687890f599b52002c/README.org?plain=1#L96
 #

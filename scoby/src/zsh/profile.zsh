@@ -6,6 +6,7 @@
 #
 #     env -i /bin/bash --norc --noprofile -c 'source /etc/profile; echo $PATH'
 #
+# Rustup populates both ~/.cargo/bin and /usr/local/opt/rustup/bin with the same contents. /usr/local/opt/rustup/bin seems to be the more authoritative directory (see output of `brew info rustup'), but `cargo install' only places binaries in ~/.cargo/bin. Adding both to the PATH is redundant. For this reason, we prefer ~/.cargo/bin.
 export PATH=\
 ~/bin:\
 ~/.cargo/bin:\
