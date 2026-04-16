@@ -3,6 +3,7 @@ mod default_browser;
 mod emacs;
 mod env;
 mod firefox;
+mod firewall;
 pub mod fs;
 mod git;
 mod hammerspoon;
@@ -184,6 +185,7 @@ impl SystemConfig {
         default_browser::configure(matches, &self.standard_user)?;
 
         // General preferences
+        firewall::configure()?;
         power_management::configure()?;
         login_items::configure(&self.standard_user, self.login_app_names)?;
         preferences::set(self.standard_user)?;
