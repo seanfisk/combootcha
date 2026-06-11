@@ -50,8 +50,8 @@ brew 'rust'
 #
 #     The docs were written at a time when Cask aspired to be both a developer tool and an end-user tool for managing emacs packages. The latter role is no longer advised (and the docs should be re-written).
 #
-tap 'railwaycat/emacsmacport'
-cask 'emacs-mac-spacemacs-icon'
+tap 'railwaycat/emacsmacport', trusted: true
+cask 'emacs-mac-spacemacs-icon', trusted: true
 
 #cask 'atext' # https://github.com/seanfisk/combootcha/issues/15
 cask 'ball'
