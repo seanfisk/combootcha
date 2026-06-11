@@ -26,6 +26,7 @@ cask 'discord' # Jim
 cask 'zoom'
 cask 'mactex' # Résumé
 cask 'claude'
+cask 'syncthing-app' # Sharing w/ Jim
 
 # Useful for sites that don't work well in Firefox or Safari, like midnrreservations.com and many others
 cask 'google-chrome'
