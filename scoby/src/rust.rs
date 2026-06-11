@@ -18,12 +18,11 @@ pub(crate) fn configure(standard_user: User) -> Result<()> {
 
     info!("Installing the Rust toolchain using rustup with components {components:?}");
 
-    Command::new(rustup_bin.join("rustup-init"))
-        .arg("--no-modify-path") // I'll add ~/.cargo/bin to my shell profiles myself
-        .arg("-y") // No prompts
+    Command::new(rustup_bin.join("rustup"))
+        .args(["toolchain", "install"])
         .arg("--component")
         .arg(components.join(","))
-        .env("RUSTUP_INIT_SKIP_PATH_CHECK", "yes") // Ignore Homebrew's Rust
+        .arg("stable")
         .user(standard_user.clone())
         .run()?;
 
