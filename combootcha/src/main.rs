@@ -1,4 +1,5 @@
 mod jettison;
+mod retroarch;
 
 use anyhow::Result;
 use log::info;
@@ -20,6 +21,8 @@ fn main() -> Result<()> {
     system_config.converge(&matches)?;
 
     jettison::configure(&standard_user)?;
+
+    retroarch::configure(&standard_user)?;
 
     info!("Setup complete!");
 
