@@ -202,6 +202,7 @@ dependencies = [
  "anyhow",
  "log",
  "scoby",
+ "serde",
  "users",
 ]
 
