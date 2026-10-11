@@ -1,3 +1,5 @@
+mod config_file;
+
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use std::{cmp::Ordering, collections::BTreeMap};
