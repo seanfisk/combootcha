@@ -78,7 +78,7 @@ fn is_space(c: char) -> bool {
 
 /// Port of `config_file_extract_value`.
 fn extract_value(s: &str) -> String {
-    let s = s.trim_start_matches(is_c_space);
+    let s = s.trim_start_matches(is_space);
     if let Some(rest) = s.strip_prefix('"') {
         // Up to the next quote, or to the end of the line if unterminated.
         rest.split('"').next().unwrap_or("").to_string()
@@ -128,9 +128,9 @@ fn parse_line(raw: &str) -> Line {
             Line::Reference(path)
         };
     }
-    let line = strip_comment(raw).trim_start_matches(is_c_space);
+    let line = strip_comment(raw).trim_start_matches(is_space);
     let key: String = line.chars().take_while(char::is_ascii_graphic).collect();
-    let rest = line[key.len()..].trim_start_matches(is_c_space);
+    let rest = line[key.len()..].trim_start_matches(is_space);
     let Some(value) = rest.strip_prefix('=') else {
         return Line::Ignored; // no '=' after the key
     };

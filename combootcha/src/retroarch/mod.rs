@@ -1,11 +1,7 @@
 mod config_file;
 
 use anyhow::Result;
-use serde::{Deserialize, Serialize};
-use std::{cmp::Ordering, collections::BTreeMap};
 use users::User;
-use anyhow::{bail, Result};
-use indexmap::IndexMap;
 
 use scoby::UserExt;
 

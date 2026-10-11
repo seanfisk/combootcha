@@ -203,6 +203,7 @@ dependencies = [
  "log",
  "scoby",
  "serde",
+ "serde_json",
  "tempfile",
  "users",
 ]
