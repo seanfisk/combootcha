@@ -7,6 +7,8 @@ use indexmap::IndexMap;
 
 use scoby::UserExt;
 
+// TODO Check consistency of strcasecmp
+
 const _SETTINGS: &[(&str, &str)] = &[("video_fullscreen", "true"), ("menu_driver", "ozone")];
 
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
