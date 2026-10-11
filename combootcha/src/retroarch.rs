@@ -1,14 +1,11 @@
-use std::{cmp::Ordering, collections::BTreeMap};
 use anyhow::Result;
-use users::User;
 use serde::{Deserialize, Serialize};
+use std::{cmp::Ordering, collections::BTreeMap};
+use users::User;
 
 use scoby::UserExt;
 
-const _SETTINGS: &[(&str, &str)] = &[
-    ("video_fullscreen", "true"),
-    ("menu_driver", "ozone"),
-];
+const _SETTINGS: &[(&str, &str)] = &[("video_fullscreen", "true"), ("menu_driver", "ozone")];
 
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
     // RetroArch uses a bespoke configuration format. Wonderful. Find the details here:
@@ -36,7 +33,9 @@ impl Ord for Key {
     }
 }
 impl PartialOrd for Key {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> { Some(self.cmp(other)) }
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
 }
 
 #[derive(Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
