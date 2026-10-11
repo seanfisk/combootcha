@@ -143,10 +143,7 @@ fn parse_line(raw: &str) -> Line {
 /// Keys are ASCII graphic runs. `#` would start a comment, and `"` could make
 /// a later `#` in the value look like it's outside the quoted literal.
 fn check_key(key: &str) -> Result<()> {
-    if key.is_empty()
-        || !key.bytes().all(|b| b.is_ascii_graphic())
-        || key.contains(['#', '"'])
-    {
+    if key.is_empty() || !key.bytes().all(|b| b.is_ascii_graphic()) || key.contains(['#', '"']) {
         bail!("invalid RetroArch config key: {key:?}");
     }
     Ok(())
@@ -242,7 +239,9 @@ pub fn apply_settings(path: &Path, desired: &[(&str, &str)]) -> Result<()> {
     let mut tmp = NamedTempFile::new_in(dir).context("Could not create temporary file")?;
     tmp.write_all(new_text.as_bytes())
         .context("Could not write temporary file")?;
-    tmp.as_file().sync_all().context("Could not sync temporary file")?;
+    tmp.as_file()
+        .sync_all()
+        .context("Could not sync temporary file")?;
 
     // NamedTempFile creates 0600; keep the original mode, or default to 0644.
     let perms = match fs::metadata(path) {
@@ -305,7 +304,10 @@ mod tests {
         }
         let keys: Vec<_> = c.config.keys().map(Key::as_str).collect();
         // '_' (0x5F) sorts before lowercase letters; case is ignored.
-        assert_eq!(keys, ["a_key", "audio_driver", "audiofilter", "B_key", "Zeta"]);
+        assert_eq!(
+            keys,
+            ["a_key", "audio_driver", "audiofilter", "B_key", "Zeta"]
+        );
     }
 
     #[test]
@@ -321,7 +323,10 @@ mod tests {
     #[test]
     fn unsorted_input_is_normalized() {
         let c = RetroArchConfig::parse("b = \"2\"\na = \"1\"\n#include \"x\"\nc = \"3\"\n");
-        assert_eq!(c.serialize().unwrap(), "a = \"1\"\nb = \"2\"\nc = \"3\"\n#include \"x\"\n");
+        assert_eq!(
+            c.serialize().unwrap(),
+            "a = \"1\"\nb = \"2\"\nc = \"3\"\n#include \"x\"\n"
+        );
     }
 
     #[test]
@@ -352,7 +357,11 @@ mod tests {
             let mut c = RetroArchConfig::default();
             c.set("k", &v).unwrap();
             let text = c.serialize().unwrap();
-            assert_eq!(RetroArchConfig::parse(&text).get("k"), Some(v.as_str()), "{v:?}");
+            assert_eq!(
+                RetroArchConfig::parse(&text).get("k"),
+                Some(v.as_str()),
+                "{v:?}"
+            );
         }
     }
 
@@ -380,7 +389,10 @@ mod tests {
 
         apply_settings(&path, &[("a", "1")]).unwrap();
         assert_eq!(fs::read_to_string(&path).unwrap(), "a = \"1\"\n");
-        assert_eq!(fs::metadata(&path).unwrap().permissions().mode() & 0o777, 0o644);
+        assert_eq!(
+            fs::metadata(&path).unwrap().permissions().mode() & 0o777,
+            0o644
+        );
 
         fs::write(&path, "other = \"x\"\na = \"1\"\n").unwrap();
         fs::set_permissions(&path, fs::Permissions::from_mode(0o600)).unwrap();
@@ -389,7 +401,10 @@ mod tests {
             fs::read_to_string(&path).unwrap(),
             "a = \"2\"\nb = \"3\"\nother = \"x\"\n"
         );
-        assert_eq!(fs::metadata(&path).unwrap().permissions().mode() & 0o777, 0o600);
+        assert_eq!(
+            fs::metadata(&path).unwrap().permissions().mode() & 0o777,
+            0o600
+        );
 
         let before = fs::metadata(&path).unwrap().modified().unwrap();
         apply_settings(&path, &[("a", "2"), ("b", "3")]).unwrap();
