@@ -2,6 +2,8 @@ use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use std::{cmp::Ordering, collections::BTreeMap};
 use users::User;
+use anyhow::{bail, Result};
+use indexmap::IndexMap;
 
 use scoby::UserExt;
 
@@ -40,7 +42,104 @@ impl PartialOrd for Key {
 
 #[derive(Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Config {
-    pub config: BTreeMap<Key, String>,
-    pub includes: Vec<String>,
+    /// Ordered key/value entries (first occurrence wins, like RetroArch).
+    pub entries: BTreeMap<Key, String>,
+    /// `#reference "..."` lines. Written first.
     pub references: Vec<String>,
+    /// `#include "..."` lines. Written last, like libretro does, so the
+    /// file's own entries take precedence over included ones.
+    pub includes: Vec<String>,
+}
+
+/// Extract a value the way `config_file_extract_value` does.
+fn extract_value(s: &str) -> String {
+    let s = s.trim_start_matches([' ', '\t', '\r', '\n']);
+    if let Some(rest) = s.strip_prefix('"') {
+        // Unterminated literal: everything to end of line is the value.
+        rest.split('"').next().unwrap_or("").to_string()
+    } else {
+        s.split(char::is_whitespace).next().unwrap_or("").to_string()
+    }
+}
+
+/// Strip a trailing comment, ignoring `#` inside a quoted literal.
+fn strip_comment(line: &str) -> &str {
+    if let Some(hash) = line.find('#') {
+        if let Some(open) = line.find('"') {
+            if open < hash {
+                if let Some(close_rel) = line[open + 1..].find('"') {
+                    if open + 1 + close_rel > hash {
+                        return line; // '#' is inside the literal
+                    }
+                }
+            }
+        }
+        return &line[..hash];
+    }
+    line
+}
+
+impl RetroArchConfig {
+    pub fn parse(text: &str) -> Self {
+        let mut cfg = Self::default();
+        for raw in text.lines() {
+            let line = raw.trim_start_matches([' ', '\t']);
+            if let Some(comment) = line.strip_prefix('#') {
+                if let Some(p) = comment.strip_prefix("include ") {
+                    let p = extract_value(p);
+                    if !p.is_empty() {
+                        cfg.includes.push(p);
+                    }
+                } else if let Some(p) = comment.strip_prefix("reference ") {
+                    let p = extract_value(p);
+                    if !p.is_empty() {
+                        cfg.references.push(p);
+                    }
+                }
+                continue; // all other comments are dropped
+            }
+            let line = strip_comment(line);
+            let key_len = line.find(char::is_whitespace).unwrap_or(line.len());
+            let (key, rest) = line.split_at(key_len);
+            if key.is_empty() {
+                continue;
+            }
+            let rest = rest.trim_start_matches([' ', '\t', '\r', '\n']);
+            let Some(value) = rest.strip_prefix('=') else {
+                continue; // no '=' after the key: invalid line, ignored
+            };
+            // Topmost entry wins, matching RetroArch's lookup.
+            cfg.entries
+                .entry(key.to_string())
+                .or_insert_with(|| extract_value(value));
+        }
+        cfg
+    }
+
+    /// Update in place or append. The format has no escaping, so values can't
+    /// contain `"` or newlines.
+    pub fn set(&mut self, key: &str, value: &str) -> Result<()> {
+        if key.is_empty() || key.contains(char::is_whitespace) || key.contains('#') {
+            bail!("invalid RetroArch config key: {key:?}");
+        }
+        if value.contains(['"', '\n', '\r']) {
+            bail!("value for {key:?} can't be represented in retroarch.cfg: {value:?}");
+        }
+        self.entries.insert(key.to_string(), value.to_string());
+        Ok(())
+    }
+
+    pub fn serialize(&self) -> String {
+        let mut out = String::new();
+        for r in &self.references {
+            out.push_str(&format!("#reference \"{r}\"\n"));
+        }
+        for (k, v) in &self.entries {
+            out.push_str(&format!("{k} = \"{v}\"\n"));
+        }
+        for i in &self.includes {
+            out.push_str(&format!("#include \"{i}\"\n"));
+        }
+        out
+    }
 }
