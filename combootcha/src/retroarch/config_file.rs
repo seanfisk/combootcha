@@ -57,7 +57,7 @@ impl PartialOrd for Key {
 
 #[derive(Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Config {
-    pub config: BTreeMap<Key, String>,
+    pub entries: BTreeMap<Key, String>,
     pub includes: Vec<String>,
     pub references: Vec<String>,
 }
@@ -168,7 +168,7 @@ impl Config {
                 Line::Reference(path) => cfg.references.push(path),
                 // Topmost entry wins (don't `collect()`: that keeps the last).
                 Line::Entry(key, value) => {
-                    cfg.config.entry(Key(key)).or_insert(value);
+                    cfg.entries.entry(Key(key)).or_insert(value);
                 }
             }
         }
@@ -176,13 +176,13 @@ impl Config {
     }
 
     pub fn get(&self, key: &str) -> Option<&str> {
-        self.config.get(&Key(key.to_string())).map(String::as_str)
+        self.entries.get(&Key(key.to_string())).map(String::as_str)
     }
 
     pub fn set(&mut self, key: &str, value: &str) -> Result<()> {
         check_key(key)?;
         check_text(&format!("value for {key:?}"), value)?;
-        self.config.insert(Key(key.to_string()), value.to_string());
+        self.entries.insert(Key(key.to_string()), value.to_string());
         Ok(())
     }
 
@@ -194,7 +194,7 @@ impl Config {
             check_text("reference path", r)?;
             out.push_str(&format!("#reference \"{r}\"\n"));
         }
-        for (k, v) in &self.config {
+        for (k, v) in &self.entries {
             check_key(k.as_str())?;
             check_text(&format!("value for {:?}", k.as_str()), v)?;
             out.push_str(&format!("{} = \"{v}\"\n", k.as_str()));
@@ -299,7 +299,7 @@ mod tests {
         for k in ["Zeta", "audiofilter", "audio_driver", "B_key", "a_key"] {
             c.set(k, "1").unwrap();
         }
-        let keys: Vec<_> = c.config.keys().map(Key::as_str).collect();
+        let keys: Vec<_> = c.entries.keys().map(Key::as_str).collect();
         // '_' (0x5F) sorts before lowercase letters; case is ignored.
         assert_eq!(
             keys,
@@ -364,13 +364,13 @@ mod tests {
         let json = serde_json::to_string(&c).unwrap();
         assert_eq!(
             json,
-            r#"{"config":{"a":"1","b":"2"},"includes":["x"],"references":[]}"#
+            r#"{"entries":{"a":"1","b":"2"},"includes":["x"],"references":[]}"#
         );
         assert_eq!(serde_json::from_str::<Config>(&json).unwrap(), c);
 
         // Deserialization bypasses `set`, so serialize() must catch bad data.
         let bad: Config =
-            serde_json::from_str(r#"{"config":{"k":"a\"b"},"includes":[],"references":[]}"#)
+            serde_json::from_str(r#"{"entries":{"k":"a\"b"},"includes":[],"references":[]}"#)
                 .unwrap();
         assert!(bad.serialize().is_err());
     }
