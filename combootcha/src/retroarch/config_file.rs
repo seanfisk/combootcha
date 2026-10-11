@@ -56,7 +56,7 @@ impl PartialOrd for Key {
 }
 
 #[derive(Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
-pub struct RetroArchConfig {
+pub struct Config {
     pub config: BTreeMap<Key, String>,
     pub includes: Vec<String>,
     pub references: Vec<String>,
@@ -158,7 +158,7 @@ fn check_text(what: &str, text: &str) -> Result<()> {
     Ok(())
 }
 
-impl RetroArchConfig {
+impl Config {
     pub fn parse(text: &str) -> Self {
         let mut cfg = Self::default();
         for line in text.split('\n').filter(|l| !l.is_empty()) {
@@ -217,10 +217,7 @@ pub fn apply_settings(path: &Path, desired: &[(&str, &str)]) -> Result<()> {
         Err(e) => return Err(e).with_context(|| format!("Could not read {}", path.display())),
     };
 
-    let mut cfg = existing
-        .as_deref()
-        .map(RetroArchConfig::parse)
-        .unwrap_or_default();
+    let mut cfg = existing.as_deref().map(Config::parse).unwrap_or_default();
     for (key, value) in desired {
         cfg.set(key, value)?;
     }
@@ -261,7 +258,7 @@ mod tests {
 
     #[test]
     fn parses_quoted_unquoted_comments_and_topmost_wins() {
-        let c = RetroArchConfig::parse(
+        let c = Config::parse(
             "# a comment\n\
              video_fullscreen = \"true\"\n\
              audio_latency = 64 # trailing\n\
@@ -281,14 +278,14 @@ mod tests {
 
     #[test]
     fn a_quote_ends_the_value_with_no_escaping() {
-        let c = RetroArchConfig::parse("a = \"x\\\"y\"\nb = \"C:\\dir\\\"\n");
+        let c = Config::parse("a = \"x\\\"y\"\nb = \"C:\\dir\\\"\n");
         assert_eq!(c.get("a"), Some("x\\")); // backslash is an ordinary byte
         assert_eq!(c.get("b"), Some("C:\\dir\\"));
     }
 
     #[test]
     fn directives_only_count_in_column_zero() {
-        let c = RetroArchConfig::parse(
+        let c = Config::parse(
             "#include \"base.cfg\"\n  #include \"indented.cfg\"\n#reference \"/ref\"\na = \"1\"\n",
         );
         assert_eq!(c.includes, ["base.cfg"]);
@@ -298,7 +295,7 @@ mod tests {
 
     #[test]
     fn output_is_sorted_like_strcasecmp() {
-        let mut c = RetroArchConfig::default();
+        let mut c = Config::default();
         for k in ["Zeta", "audiofilter", "audio_driver", "B_key", "a_key"] {
             c.set(k, "1").unwrap();
         }
@@ -317,12 +314,12 @@ mod tests {
                    audiofilter_dir = \"default\"\n\
                    video_fullscreen = \"true\"\n\
                    #include \"base.cfg\"\n";
-        assert_eq!(RetroArchConfig::parse(src).serialize().unwrap(), src);
+        assert_eq!(Config::parse(src).serialize().unwrap(), src);
     }
 
     #[test]
     fn unsorted_input_is_normalized() {
-        let c = RetroArchConfig::parse("b = \"2\"\na = \"1\"\n#include \"x\"\nc = \"3\"\n");
+        let c = Config::parse("b = \"2\"\na = \"1\"\n#include \"x\"\nc = \"3\"\n");
         assert_eq!(
             c.serialize().unwrap(),
             "a = \"1\"\nb = \"2\"\nc = \"3\"\n#include \"x\"\n"
@@ -331,7 +328,7 @@ mod tests {
 
     #[test]
     fn set_rejects_unrepresentable() {
-        let mut c = RetroArchConfig::default();
+        let mut c = Config::default();
         assert!(c.set("k", "has\"quote").is_err());
         assert!(c.set("k", "line\nbreak").is_err());
         assert!(c.set("bad key", "v").is_err());
@@ -354,29 +351,25 @@ mod tests {
             inputs.extend(layer.iter().cloned());
         }
         for v in inputs {
-            let mut c = RetroArchConfig::default();
+            let mut c = Config::default();
             c.set("k", &v).unwrap();
             let text = c.serialize().unwrap();
-            assert_eq!(
-                RetroArchConfig::parse(&text).get("k"),
-                Some(v.as_str()),
-                "{v:?}"
-            );
+            assert_eq!(Config::parse(&text).get("k"), Some(v.as_str()), "{v:?}");
         }
     }
 
     #[test]
     fn serde_derive_roundtrips_and_serialize_still_validates() {
-        let c = RetroArchConfig::parse("b = \"2\"\na = \"1\"\n#include \"x\"\n");
+        let c = Config::parse("b = \"2\"\na = \"1\"\n#include \"x\"\n");
         let json = serde_json::to_string(&c).unwrap();
         assert_eq!(
             json,
             r#"{"config":{"a":"1","b":"2"},"includes":["x"],"references":[]}"#
         );
-        assert_eq!(serde_json::from_str::<RetroArchConfig>(&json).unwrap(), c);
+        assert_eq!(serde_json::from_str::<Config>(&json).unwrap(), c);
 
         // Deserialization bypasses `set`, so serialize() must catch bad data.
-        let bad: RetroArchConfig =
+        let bad: Config =
             serde_json::from_str(r#"{"config":{"k":"a\"b"},"includes":[],"references":[]}"#)
                 .unwrap();
         assert!(bad.serialize().is_err());
@@ -415,7 +408,7 @@ mod tests {
     #[test]
     fn form_feed_and_vertical_tab_are_not_whitespace() {
         // libretro's ISSPACE excludes \f and \v, so neither can separate tokens.
-        let c = RetroArchConfig::parse("a\x0b= \"1\"\n\x0cb = \"2\"\nc\t=\t\"3\"\n");
+        let c = Config::parse("a\x0b= \"1\"\n\x0cb = \"2\"\nc\t=\t\"3\"\n");
         assert_eq!(c.get("a"), None);
         assert_eq!(c.get("b"), None);
         assert_eq!(c.get("c"), Some("3"));
