@@ -51,7 +51,7 @@ pub struct Config {
     pub includes: Vec<String>,
 }
 
-/// Extract a value the way `config_file_extract_value` does.
+/// A port of `config_file_extract_value`.
 fn extract_value(s: &str) -> String {
     let s = s.trim_start_matches([' ', '\t', '\r', '\n']);
     if let Some(rest) = s.strip_prefix('"') {
