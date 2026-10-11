@@ -14,3 +14,4 @@ log.workspace = true
 users.workspace = true
 scoby = { path = "../scoby" }
 serde = { version = "1", features = ["derive"] }
+tempfile = "3"
