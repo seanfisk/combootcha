@@ -61,7 +61,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
                 ],
                 "complex_modifications": {
                     "rules": [
-                        { "description": "Pressing spacebar inserts space. Holding spacebar holds control. Disabled in RetroArch.",
+                        { "description": "Pressing spaceebar inserts space. Holding spacebar holds control. Disabled in RetroArch.",
                            "manipulators": [
                                { "from": { "key_code": "spacebar", "modifiers": { "optional": ["any"] } },
                                   "to": [{ "key_code": "left_control" }],
@@ -72,7 +72,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
                                   "conditions": [
                                       {
                                           "type": "frontmost_application_unless",
-                                          "bundle_identifiers": ["^libretro\\.RetroArch$"]
+                                          "bundle_identifiers": ["^com\\.libretro\\.dist\\.RetroArch$"]
                                       }
                                   ]
                                },
