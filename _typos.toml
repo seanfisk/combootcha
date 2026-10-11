@@ -1,6 +1,9 @@
 [files]
 # Ignore generated lock files
-extend-exclude = ["/Cargo.lock"]
+extend-exclude = [
+    "/Cargo.lock",
+    "/libretro/config_file.*",
+]
 
 [default.extend-words]
 iterm = "iterm"
