@@ -1,6 +1,6 @@
 [files]
 # Ignore generated lock files
-extend-exclude = ["Cargo.toml"]
+extend-exclude = ["/Cargo.lock"]
 
 [default.extend-words]
 iterm = "iterm"
