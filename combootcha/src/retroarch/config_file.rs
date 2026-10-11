@@ -1,3 +1,6 @@
+// TODO Update with streaming changes from Claude
+// Also update to keep track of whether any values were incorrect in the file. Don't write the file if all my settings were correct.
+
 //! Reader/writer for RetroArch's `retroarch.cfg`, following the grammar of
 //! `libretro-common/file/config_file.c` at the RetroArch v1.22.2 tag.
 //!
