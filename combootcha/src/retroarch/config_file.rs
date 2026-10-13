@@ -25,8 +25,8 @@ use serde::{Deserialize, Serialize};
 use std::{
     cmp::Ordering,
     collections::BTreeMap,
-    fs,
-    io::{ErrorKind, Write},
+    fs::File,
+    io::{ErrorKind, Write, BufReader},
     os::unix::fs::PermissionsExt,
     path::Path,
 };
@@ -59,7 +59,7 @@ impl PartialOrd for Key {
 }
 
 #[derive(Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
-pub struct Config {
+pub(crate) struct Config {
     pub entries: BTreeMap<Key, String>,
     pub includes: Vec<String>,
     pub references: Vec<String>,
@@ -108,38 +108,36 @@ fn strip_comment(line: &str) -> &str {
     &line[..hash]
 }
 
-/// Port of `config_file_parse_line`.
+fn parse_directive_path(text: &str) -> Option<String> {
+    if text.is_empty() {
+        return None
+    }
+    let path = extract_value(rest);
+    if path.is_empty() {
+        None
+    } else {
+        Some(path)
+    }
+}
+
+/// A port of `config_file_parse_line`. While `config_file_parse_line` modifies the struct fields directly and returns a Boolean indicating whether the line was meaningful, this version returns
 fn parse_line(raw: &str) -> Line {
     if let Some(comment) = raw.strip_prefix('#') {
-        let (is_include, rest) = if let Some(r) = comment.strip_prefix("include ") {
-            (true, r)
-        } else if let Some(r) = comment.strip_prefix("reference ") {
-            (false, r)
-        } else {
-            return Line::Ignored;
-        };
-        if rest.is_empty() {
-            return Line::Ignored;
+        if let Some(path) = parse_directive_path("include ", comment) {
+            return parse_directive_path(path).map_or(Line::Ignored, Line::Include);
+        } else if let Some(path) = parse_directive_path("reference  ", comment) {
+            return parse_directive_path(path).map_or(Line::Ignored, Line::Reference);
         }
-        let path = extract_value(rest);
-        if path.is_empty() {
-            return Line::Ignored;
-        }
-        return if is_include {
-            Line::Include(path)
-        } else {
-            Line::Reference(path)
-        };
     }
     let line = strip_comment(raw).trim_start_matches(is_space);
     let key: String = line.chars().take_while(char::is_ascii_graphic).collect();
+    if key.is_empty() {
+        return Line::Ignored;
+    }
     let rest = line[key.len()..].trim_start_matches(is_space);
     let Some(value) = rest.strip_prefix('=') else {
         return Line::Ignored; // no '=' after the key
     };
-    if key.is_empty() {
-        return Line::Ignored;
-    }
     Line::Entry(key, extract_value(value))
 }
 
@@ -162,35 +160,103 @@ fn check_text(what: &str, text: &str) -> Result<()> {
 }
 
 impl Config {
-    pub fn parse(text: &str) -> Self {
-        let mut cfg = Self::default();
-        for line in text.split('\n').filter(|l| !l.is_empty()) {
-            match parse_line(line) {
-                Line::Ignored => {}
-                Line::Include(path) => cfg.includes.push(path),
-                Line::Reference(path) => cfg.references.push(path),
-                // Topmost entry wins (don't `collect()`: that keeps the last).
-                Line::Entry(key, value) => {
-                    cfg.entries.entry(Key(key)).or_insert(value);
+    /// Ensure `key` is set to `value`, returning whether the configuration was updated.
+    pub(crate) fn replace<'a>(&mut self, key: K, value: V) -> Result<bool>
+    where K: Into<Cow<'a, str>>, V: Into<Cow<'a, str>>
+    {
+        set(key.into(), value.into(), /*replace=*/ true)
+    }
+
+    /// Add a key-value pair if one was not already present.
+    pub(super) fn add<'a>(&mut self, key: K, value: V) -> Result<bool>
+    where K: Into<Cow<'a, str>>, V: Into<Cow<'a, str>>
+    {
+        set(key.into(), value.into(), /*replace=*/ false)
+    }
+
+    /// Attempt to associate a key with a new value, optional replacing it if already present.
+    /// Returns a `bool` indicating whether the configuration was updated.
+    fn set(&mut self, key: Cow<'_, str>, new_value: Cow<'_, str>, replace: bool) -> Result<bool> {
+        // Design decision: eagerly validate keys and values even if the value will be discarded
+        check_key(key)?;
+        check_text("value", new_value)?;
+
+        use std::collections::btree_map::Entry;
+        Ok(match self.entries.entry(Key(key)) {
+            Entry::Vacant(slot) => {
+                debug!("Adding new value {:?} for key {:?}", new_value, slot.key());
+                slot.insert(new_value);
+                true
+            }
+            Entry::Occupied(slot) => {
+                let old_value = slot.get();
+                if new_value == old_value {
+                    debug!("New value {:?} for key {:?} matches old value; no need to update");
+                    false
+                }
+                else if override {
+                    debug!(
+                        "Overriding existing value {:?} for key {:?} with value {:?}",
+                        slot.get(),
+                        slot.key(),
+                        value,
+                    );
+                    slot.insert(value);
+                    true
+                } else {
+                    debug!(
+                        "Discarding duplicate value {:?} for {:?}; keeping value {:?}",
+                        value,
+                        slot.key(),
+                        slot.get()
+                    );
+                    false
                 }
             }
         }
-        cfg
     }
 
-    pub fn get(&self, key: &str) -> Option<&str> {
-        self.entries.get(&Key(key.to_string())).map(String::as_str)
+    pub(crate) fn load_from_file<P: AsRef<Path>>(path: P) -> Result<Self> {
+        match File::open(path) {
+            Err(e) => if e.kind() == ErrorKind::NotFound {
+                debug!("Missing file {:?}; returning empty configuration");
+                Ok(Self::default())
+            } else {
+                Err(e) // TODO context
+            }
+            Ok(file) => load_from_reader(BufReader::new(file)),
+        }
     }
 
-    pub fn set(&mut self, key: &str, value: &str) -> Result<()> {
-        check_key(key)?;
-        check_text(&format!("value for {key:?}"), value)?;
-        self.entries.insert(Key(key.to_string()), value.to_string());
-        Ok(())
+    /// Streaming equivalent of `parse`. Splits on `\n` only, like libretro
+    /// (`BufRead::lines` would also strip a `\r` before the `\n`).
+    fn load_from_reader(mut reader: impl BufRead) -> Result<Config> {
+        let mut config = Self::default();
+        let mut line = String::new();
+        loop {
+            let chars_read = reader.read_line(&mut line)?;
+            if chars_read == 0 {
+                break;
+            }
+            if line.ends_with('\n') {
+                line.pop();
+            }
+            match parse_line(line) {
+                Line::Ignored => {}
+                Line::Include(path) => config.includes.push(path),
+                Line::Reference(path) => config.references.push(path),
+                Line::Entry(key, value) => {
+                    // Discard duplicate to match behavior of libretro
+                    config.add(key, value)?;
+                }
+            }
+        }
     }
 
-    /// Validates everything first, because deserialized data never went
-    /// through `set`.
+    pub(crate) save_to_file<P: AsRef<Path>>(path: P) -> Result<Self> {
+
+    }
+
     pub fn serialize(&self) -> Result<String> {
         let mut out = String::new();
         for r in &self.references {
@@ -213,47 +279,47 @@ impl Config {
 /// Merge `desired` into the RetroArch config at `path` and atomically replace
 /// the file. A missing file is treated as empty. Does nothing if the result
 /// is byte-identical to what's already there.
-pub fn apply_settings(path: &Path, desired: &[(&str, &str)]) -> Result<()> {
-    let existing = match fs::read_to_string(path) {
-        Ok(text) => Some(text),
-        Err(e) if e.kind() == ErrorKind::NotFound => None,
-        Err(e) => return Err(e).with_context(|| format!("Could not read {}", path.display())),
-    };
+// pub fn apply_settings(path: &Path, desired: &[(&str, &str)]) -> Result<()> {
+//     let existing = match fs::read_to_string(path) {
+//         Ok(text) => Some(text),
+//         Err(e) if e.kind() == ErrorKind::NotFound => None,
+//         Err(e) => return Err(e).with_context(|| format!("Could not read {}", path.display())),
+//     };
 
-    let mut cfg = existing.as_deref().map(Config::parse).unwrap_or_default();
-    for (key, value) in desired {
-        cfg.set(key, value)?;
-    }
-    let new_text = cfg.serialize()?;
+//     let mut cfg = existing.as_deref().map(Config::parse).unwrap_or_default();
+//     for (key, value) in desired {
+//         cfg.set(key, value)?;
+//     }
+//     let new_text = cfg.serialize()?;
 
-    if existing.as_deref() == Some(new_text.as_str()) {
-        return Ok(());
-    }
+//     if existing.as_deref() == Some(new_text.as_str()) {
+//         return Ok(());
+//     }
 
-    let dir = path
-        .parent()
-        .with_context(|| format!("{} has no parent directory", path.display()))?;
-    fs::create_dir_all(dir).with_context(|| format!("Could not create {}", dir.display()))?;
+//     let dir = path
+//         .parent()
+//         .with_context(|| format!("{} has no parent directory", path.display()))?;
+//     fs::create_dir_all(dir).with_context(|| format!("Could not create {}", dir.display()))?;
 
-    // Temp file in the same directory so the rename stays on one filesystem.
-    let mut tmp = NamedTempFile::new_in(dir).context("Could not create temporary file")?;
-    tmp.write_all(new_text.as_bytes())
-        .context("Could not write temporary file")?;
-    tmp.as_file()
-        .sync_all()
-        .context("Could not sync temporary file")?;
+//     // Temp file in the same directory so the rename stays on one filesystem.
+//     let mut tmp = NamedTempFile::new_in(dir).context("Could not create temporary file")?;
+//     tmp.write_all(new_text.as_bytes())
+//         .context("Could not write temporary file")?;
+//     tmp.as_file()
+//         .sync_all()
+//         .context("Could not sync temporary file")?;
 
-    // NamedTempFile creates 0600; keep the original mode, or default to 0644.
-    let perms = match fs::metadata(path) {
-        Ok(meta) => meta.permissions(),
-        Err(_) => fs::Permissions::from_mode(0o644),
-    };
-    fs::set_permissions(tmp.path(), perms).context("Could not set permissions")?;
+//     // NamedTempFile creates 0600; keep the original mode, or default to 0644.
+//     let perms = match fs::metadata(path) {
+//         Ok(meta) => meta.permissions(),
+//         Err(_) => fs::Permissions::from_mode(0o644),
+//     };
+//     fs::set_permissions(tmp.path(), perms).context("Could not set permissions")?;
 
-    tmp.persist(path)
-        .with_context(|| format!("Could not replace {}", path.display()))?;
-    Ok(())
-}
+//     tmp.persist(path)
+//         .with_context(|| format!("Could not replace {}", path.display()))?;
+//     Ok(())
+// }
 
 #[cfg(test)]
 mod tests {
@@ -378,35 +444,35 @@ mod tests {
         assert!(bad.serialize().is_err());
     }
 
-    #[test]
-    fn apply_creates_updates_and_is_idempotent() {
-        let dir = tempfile::tempdir().unwrap();
-        let path = dir.path().join("config/retroarch.cfg");
+    // #[test]
+    // fn apply_creates_updates_and_is_idempotent() {
+    //     let dir = tempfile::tempdir().unwrap();
+    //     let path = dir.path().join("config/retroarch.cfg");
 
-        apply_settings(&path, &[("a", "1")]).unwrap();
-        assert_eq!(fs::read_to_string(&path).unwrap(), "a = \"1\"\n");
-        assert_eq!(
-            fs::metadata(&path).unwrap().permissions().mode() & 0o777,
-            0o644
-        );
+    //     apply_settings(&path, &[("a", "1")]).unwrap();
+    //     assert_eq!(fs::read_to_string(&path).unwrap(), "a = \"1\"\n");
+    //     assert_eq!(
+    //         fs::metadata(&path).unwrap().permissions().mode() & 0o777,
+    //         0o644
+    //     );
 
-        fs::write(&path, "other = \"x\"\na = \"1\"\n").unwrap();
-        fs::set_permissions(&path, fs::Permissions::from_mode(0o600)).unwrap();
-        apply_settings(&path, &[("a", "2"), ("b", "3")]).unwrap();
-        assert_eq!(
-            fs::read_to_string(&path).unwrap(),
-            "a = \"2\"\nb = \"3\"\nother = \"x\"\n"
-        );
-        assert_eq!(
-            fs::metadata(&path).unwrap().permissions().mode() & 0o777,
-            0o600
-        );
+    //     fs::write(&path, "other = \"x\"\na = \"1\"\n").unwrap();
+    //     fs::set_permissions(&path, fs::Permissions::from_mode(0o600)).unwrap();
+    //     apply_settings(&path, &[("a", "2"), ("b", "3")]).unwrap();
+    //     assert_eq!(
+    //         fs::read_to_string(&path).unwrap(),
+    //         "a = \"2\"\nb = \"3\"\nother = \"x\"\n"
+    //     );
+    //     assert_eq!(
+    //         fs::metadata(&path).unwrap().permissions().mode() & 0o777,
+    //         0o600
+    //     );
 
-        let before = fs::metadata(&path).unwrap().modified().unwrap();
-        apply_settings(&path, &[("a", "2"), ("b", "3")]).unwrap();
-        assert_eq!(fs::metadata(&path).unwrap().modified().unwrap(), before);
-        assert_eq!(fs::read_dir(path.parent().unwrap()).unwrap().count(), 1);
-    }
+    //     let before = fs::metadata(&path).unwrap().modified().unwrap();
+    //     apply_settings(&path, &[("a", "2"), ("b", "3")]).unwrap();
+    //     assert_eq!(fs::metadata(&path).unwrap().modified().unwrap(), before);
+    //     assert_eq!(fs::read_dir(path.parent().unwrap()).unwrap().count(), 1);
+    // }
 
     #[test]
     fn form_feed_and_vertical_tab_are_not_whitespace() {
