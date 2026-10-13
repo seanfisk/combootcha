@@ -12,6 +12,7 @@ use config_file::Config;
 use scoby::UserExt as OtherUserExt;
 
 // TODO Check consistency of strcasecmp
+// TODO Make wrapping consistent with rest of codebase (no wrapping?)
 
 const ENTRIES: &[(&str, &str)] = &[
     ("input_audio_mute", "nul"),
@@ -64,18 +65,16 @@ const ENTRIES: &[(&str, &str)] = &[
 
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
     info!("Configuring RetroArch");
-    // RetroArch uses a bespoke configuration format. Wonderful. Find the details here:
+    // Upon start, RetroArch reads retroarch.cfg into memory. If retroarch.cfg is missing, empty, or missing some keys, the missing keys will get default values and immediately be written back.
     //
-    // https://github.com/libretro/libretro-common/blob/master/file/config_file.c
-    // https://github.com/libretro/libretro-common/blob/master/include/file/config_file.h
-    //
-    // Upon start, RetroArch reads retroarch.cfg into memory and immediately writes it back. If retroarch.cfg is missing, empty, or missing some keys, the missing keys will get default values and be written back.
     // Upon quit, RetroArch always writes retroarch.cfg from memory with no regard to any changes that were made to the file externally while RetroArch was running.
-    // When settings are changed, RetroArch stores them in memory but does not write them back to retroarch.cfg until quit. This means that the application must be quit cleanly for changes to be written.
+    //
+    // When settings are changed within RetroArch, the application stores them in memory but does not write them back to retroarch.cfg until quit. This means that the application must be quit cleanly for changes to be written.
     standard_user.as_effective_user(|| {
         let config_dir = standard_user
             .home_dir()
             .join("Library/Application Support/RetroArch/config");
+        scoby::fs::ensure_dir(&config_dir)?;
         let config_path = config_dir.join("retroarch.cfg");
         let (mut config, original_permissions) = match File::open(&config_path) {
             Err(e) => {
@@ -86,7 +85,9 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
                     );
                     Ok((Config::default(), std::fs::Permissions::from_mode(0o644)))
                 } else {
-                    Err(e).context("TODO")
+                    Err(e).with_context(|| {
+                        format!("Could not open RetroArch configuration file at {config_path:?}")
+                    })
                 }
             }
             Ok(file) => {

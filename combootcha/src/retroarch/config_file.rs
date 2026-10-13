@@ -3,10 +3,7 @@
 //! - https://github.com/libretro/RetroArch/blob/v1.22.2/libretro-common/include/file/config_file.h
 //! - https://github.com/libretro/RetroArch/blob/v1.22.2/libretro-common/file/config_file.c
 //!
-//! The grammar has been updated in [this pull
-//! request](https://github.com/libretro/RetroArch/pull/19218). This will very likely be included in
-//! a future release, but as of time of writing, 2026-10, we will target the grammar in version
-//! 1.22.2.
+//! The grammar has been updated in [this pull request](https://github.com/libretro/RetroArch/pull/19218). This will very likely be included in a future release, but as of time of writing, 2026-10, we will target the grammar in version 1.22.2.
 //!
 //! Behaviors:
 //!
