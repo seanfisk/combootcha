@@ -152,7 +152,7 @@ fn parse_line(raw: &str) -> Line {
     }
     let rest = line[key.len()..].trim_start_matches(is_space);
     let Some(value) = rest.strip_prefix('=') else {
-        return Line::Ignored; // no '=' after the key
+        return Line::Ignored; // No '=' after the key
     };
     Line::Entry(key, extract_value(value))
 }
@@ -164,7 +164,7 @@ fn check_key(key: &str) -> Result<()> {
         || !key.bytes().all(|b| b.is_ascii_graphic())
         || key.contains([terminals::COMMENT_START, terminals::QUOTE])
     {
-        bail!("invalid RetroArch config key: {key:?}");
+        bail!("invalid RetroArch config key: {key:?}"); // TODO improve
     }
     Ok(())
 }
@@ -173,7 +173,7 @@ fn check_key(key: &str) -> Result<()> {
 /// `#include` / `#reference` paths are written raw, like values.
 fn check_text(what: &str, text: &str) -> Result<()> {
     if text.contains([terminals::QUOTE, terminals::NEWLINE]) {
-        bail!("{what} can't be represented in retroarch.cfg: {text:?}");
+        bail!("{what} can't be represented in retroarch.cfg: {text:?}"); // TODO improve
     }
     Ok(())
 }
