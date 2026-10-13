@@ -26,7 +26,7 @@
 //! Deliberate deviations: repeated keys collapse to the topmost entry, and
 //! lines with an empty key or an empty `#reference` path are dropped.
 
-use anyhow::{bail, Result};
+use anyhow::{bail, Context, Result};
 use log::debug;
 use std::borrow::Cow;
 use std::cmp::Ordering;
@@ -259,8 +259,11 @@ impl Config {
         let mut reader = BufReader::new(reader);
         let mut config = Self::default();
         let mut line = String::new();
+        let mut line_number = 1;
         loop {
-            let chars_read = reader.read_line(&mut line)?;
+            let chars_read = reader
+                .read_line(&mut line)
+                .with_context(|| format!("Cannot read line {}", line_number))?;
             if chars_read == 0 {
                 break;
             }
@@ -272,17 +275,20 @@ impl Config {
                 Line::Include(path) => config.includes.push(path),
                 Line::Reference(path) => config.references.push(path),
                 Line::Entry(key, value) => {
-                    // Discard duplicate to match behavior of libretro
-                    config.add(key, value)?;
+                    config
+                        .add(key, value)
+                        .with_context(|| format!("Cannot parse line {}", line_number))?;
                 }
             }
             line.clear();
+            line_number += 1;
         }
         Ok(config)
     }
 
     pub(crate) fn write_to<W: Write>(&self, writer: W) -> Result<()> {
         let mut writer = BufWriter::new(writer);
+        // TODO Add line numbers to errors?
         write_directives(
             &mut writer,
             terminals::REFERENCE_DIRECTIVE,
@@ -296,211 +302,3 @@ impl Config {
         Ok(())
     }
 }
-
-// Merge `desired` into the RetroArch config at `path` and atomically replace
-// the file. A missing file is treated as empty. Does nothing if the result
-// is byte-identical to what's already there.
-// pub fn apply_settings(path: &Path, desired: &[(&str, &str)]) -> Result<()> {
-//     let existing = match fs::read_to_string(path) {
-//         Ok(text) => Some(text),
-//         Err(e) if e.kind() == ErrorKind::NotFound => None,
-//         Err(e) => return Err(e).with_context(|| format!("Could not read {}", path.display())),
-//     };
-
-//     let mut cfg = existing.as_deref().map(Config::parse).unwrap_or_default();
-//     for (key, value) in desired {
-//         cfg.set(key, value)?;
-//     }
-//     let new_text = cfg.serialize()?;
-
-//     if existing.as_deref() == Some(new_text.as_str()) {
-//         return Ok(());
-//     }
-
-//     let dir = path
-//         .parent()
-//         .with_context(|| format!("{} has no parent directory", path.display()))?;
-//     fs::create_dir_all(dir).with_context(|| format!("Could not create {}", dir.display()))?;
-
-//     // Temp file in the same directory so the rename stays on one filesystem.
-//     let mut tmp = NamedTempFile::new_in(dir).context("Could not create temporary file")?;
-//     tmp.write_all(new_text.as_bytes())
-//         .context("Could not write temporary file")?;
-//     tmp.as_file()
-//         .sync_all()
-//         .context("Could not sync temporary file")?;
-
-//     // NamedTempFile creates 0600; keep the original mode, or default to 0644.
-//     let perms = match fs::metadata(path) {
-//         Ok(meta) => meta.permissions(),
-//         Err(_) => fs::Permissions::from_mode(0o644),
-//     };
-//     fs::set_permissions(tmp.path(), perms).context("Could not set permissions")?;
-
-//     tmp.persist(path)
-//         .with_context(|| format!("Could not replace {}", path.display()))?;
-//     Ok(())
-// }
-
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-
-//     #[test]
-//     fn parses_quoted_unquoted_comments_and_topmost_wins() {
-//         let c = Config::parse(
-//             "# a comment\n\
-//              video_fullscreen = \"true\"\n\
-//              audio_latency = 64 # trailing\n\
-//              savefile_directory = \"/Users/x/a#b\"\n\
-//              empty = \"\"\n\
-//              bad=\"no space before equals\"\n\
-//              unterminated = \"to end of line\n\
-//              video_fullscreen = \"false\"\n",
-//         );
-//         assert_eq!(c.get("video_fullscreen"), Some("true"));
-//         assert_eq!(c.get("audio_latency"), Some("64"));
-//         assert_eq!(c.get("savefile_directory"), Some("/Users/x/a#b"));
-//         assert_eq!(c.get("empty"), Some(""));
-//         assert_eq!(c.get("bad"), None);
-//         assert_eq!(c.get("unterminated"), Some("to end of line"));
-//     }
-
-//     #[test]
-//     fn a_quote_ends_the_value_with_no_escaping() {
-//         let c = Config::parse("a = \"x\\\"y\"\nb = \"C:\\dir\\\"\n");
-//         assert_eq!(c.get("a"), Some("x\\")); // backslash is an ordinary byte
-//         assert_eq!(c.get("b"), Some("C:\\dir\\"));
-//     }
-
-//     #[test]
-//     fn directives_only_count_in_column_zero() {
-//         let c = Config::parse(
-//             "#include \"base.cfg\"\n  #include \"indented.cfg\"\n#reference \"/ref\"\na = \"1\"\n",
-//         );
-//         assert_eq!(c.includes, ["base.cfg"]);
-//         assert_eq!(c.references, ["/ref"]);
-//         assert_eq!(c.get("a"), Some("1"));
-//     }
-
-//     #[test]
-//     fn output_is_sorted_like_strcasecmp() {
-//         let mut c = Config::default();
-//         for k in ["Zeta", "audiofilter", "audio_driver", "B_key", "a_key"] {
-//             c.set(k, "1").unwrap();
-//         }
-//         let keys: Vec<_> = c.entries.keys().map(Key::as_str).collect();
-//         // '_' (0x5F) sorts before lowercase letters; case is ignored.
-//         assert_eq!(
-//             keys,
-//             ["a_key", "audio_driver", "audiofilter", "B_key", "Zeta"]
-//         );
-//     }
-
-//     #[test]
-//     fn canonical_file_roundtrips_byte_for_byte() {
-//         let src = "#reference \"/ref\"\n\
-//                    audio_driver = \"coreaudio\"\n\
-//                    audiofilter_dir = \"default\"\n\
-//                    video_fullscreen = \"true\"\n\
-//                    #include \"base.cfg\"\n";
-//         assert_eq!(Config::parse(src).serialize().unwrap(), src);
-//     }
-
-//     #[test]
-//     fn unsorted_input_is_normalized() {
-//         let c = Config::parse("b = \"2\"\na = \"1\"\n#include \"x\"\nc = \"3\"\n");
-//         assert_eq!(
-//             c.serialize().unwrap(),
-//             "a = \"1\"\nb = \"2\"\nc = \"3\"\n#include \"x\"\n"
-//         );
-//     }
-
-//     #[test]
-//     fn set_rejects_unrepresentable() {
-//         let mut c = Config::default();
-//         assert!(c.set("k", "has\"quote").is_err());
-//         assert!(c.set("k", "line\nbreak").is_err());
-//         assert!(c.set("bad key", "v").is_err());
-//         assert!(c.set("bad#key", "v").is_err());
-//         assert!(c.set("bad\"key", "v").is_err());
-//         assert!(c.set("", "v").is_err());
-//         assert!(c.set("a=b", "v").is_ok());
-//     }
-
-//     #[test]
-//     fn every_representable_value_roundtrips() {
-//         let alphabet = ['a', '\\', '#', ' ', '=', '\r'];
-//         let mut inputs = vec![String::new()];
-//         let mut layer = vec![String::new()];
-//         for _ in 0..6 {
-//             layer = layer
-//                 .iter()
-//                 .flat_map(|s| alphabet.iter().map(move |c| format!("{s}{c}")))
-//                 .collect();
-//             inputs.extend(layer.iter().cloned());
-//         }
-//         for v in inputs {
-//             let mut c = Config::default();
-//             c.set("k", &v).unwrap();
-//             let text = c.serialize().unwrap();
-//             assert_eq!(Config::parse(&text).get("k"), Some(v.as_str()), "{v:?}");
-//         }
-//     }
-
-//     #[test]
-//     fn serde_derive_roundtrips_and_serialize_still_validates() {
-//         let c = Config::parse("b = \"2\"\na = \"1\"\n#include \"x\"\n");
-//         let json = serde_json::to_string(&c).unwrap();
-//         assert_eq!(
-//             json,
-//             r#"{"entries":{"a":"1","b":"2"},"includes":["x"],"references":[]}"#
-//         );
-//         assert_eq!(serde_json::from_str::<Config>(&json).unwrap(), c);
-
-//         // Deserialization bypasses `set`, so serialize() must catch bad data.
-//         let bad: Config =
-//             serde_json::from_str(r#"{"entries":{"k":"a\"b"},"includes":[],"references":[]}"#)
-//                 .unwrap();
-//         assert!(bad.serialize().is_err());
-//     }
-
-//     // #[test]
-//     // fn apply_creates_updates_and_is_idempotent() {
-//     //     let dir = tempfile::tempdir().unwrap();
-//     //     let path = dir.path().join("config/retroarch.cfg");
-
-//     //     apply_settings(&path, &[("a", "1")]).unwrap();
-//     //     assert_eq!(fs::read_to_string(&path).unwrap(), "a = \"1\"\n");
-//     //     assert_eq!(
-//     //         fs::metadata(&path).unwrap().permissions().mode() & 0o777,
-//     //         0o644
-//     //     );
-
-//     //     fs::write(&path, "other = \"x\"\na = \"1\"\n").unwrap();
-//     //     fs::set_permissions(&path, fs::Permissions::from_mode(0o600)).unwrap();
-//     //     apply_settings(&path, &[("a", "2"), ("b", "3")]).unwrap();
-//     //     assert_eq!(
-//     //         fs::read_to_string(&path).unwrap(),
-//     //         "a = \"2\"\nb = \"3\"\nother = \"x\"\n"
-//     //     );
-//     //     assert_eq!(
-//     //         fs::metadata(&path).unwrap().permissions().mode() & 0o777,
-//     //         0o600
-//     //     );
-
-//     //     let before = fs::metadata(&path).unwrap().modified().unwrap();
-//     //     apply_settings(&path, &[("a", "2"), ("b", "3")]).unwrap();
-//     //     assert_eq!(fs::metadata(&path).unwrap().modified().unwrap(), before);
-//     //     assert_eq!(fs::read_dir(path.parent().unwrap()).unwrap().count(), 1);
-//     // }
-
-//     #[test]
-//     fn form_feed_and_vertical_tab_are_not_whitespace() {
-//         // libretro's ISSPACE excludes \f and \v, so neither can separate tokens.
-//         let c = Config::parse("a\x0b= \"1\"\n\x0cb = \"2\"\nc\t=\t\"3\"\n");
-//         assert_eq!(c.get("a"), None);
-//         assert_eq!(c.get("b"), None);
-//         assert_eq!(c.get("c"), Some("3"));
-//     }
-// }
