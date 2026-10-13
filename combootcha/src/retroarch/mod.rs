@@ -1,13 +1,17 @@
 mod config_file;
 
-use anyhow::Result;
-use users::User;
+use anyhow::{Result, Context};
+use users::{os::unix::UserExt, User};
+use std::fs::File;
+use log::debug;
 
-use scoby::UserExt;
+use config_file::Config;
+
+use scoby::UserExt as OtherUserExt;
 
 // TODO Check consistency of strcasecmp
 
-const _SETTINGS: &[(&str, &str)] = &[("video_fullscreen", "true"), ("menu_driver", "ozone")];
+const ENTRIES: &[(&str, &str)] = &[("video_fullscreen", "true"), ("menu_driver", "ozone")];
 
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
     // RetroArch uses a bespoke configuration format. Wonderful. Find the details here:
@@ -18,26 +22,22 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
     // Upon start, RetroArch reads retroarch.cfg into memory and immediately writes it back. If retroarch.cfg is missing, empty, or missing some keys, the missing keys will get default values and be written back.
     // Upon quit, RetroArch always writes retroarch.cfg from memory with no regard to any changes that were made to the file externally while RetroArch was running.
     // When settings are changed, RetroArch stores them in memory but does not write them back to retroarch.cfg until quit. This means that the application must be quit cleanly for changes to be written.
-    standard_user.as_effective_user(|| Ok(()))
-
-    //         pub(crate) fn load_from_file<P: AsRef<Path>>(path: P) -> Result<Self> {
-    //     match File::open(path) {
-    //         Err(e) => if e.kind() == ErrorKind::NotFound {
-    //             debug!("Missing file {:?}; returning empty configuration");
-    //             Ok(Self::default())
-    //         } else {
-    //             Err(e) // TODO context
-    //         }
-    //         Ok(file) => load_from_reader(BufReader::new(file)),
-    //     }
-    // }
+    standard_user.as_effective_user(|| {
+        let config_dir = standard_user.home_dir().join("Library/Application Support/RetroArch/config");
+        let config_path = config_dir.join("retroarch.cfg");
+        let mut config = match File::open(&config_path) {
+            Err(e) => if e.kind() == std::io::ErrorKind::NotFound {
+                debug!("Missing file {:?}; returning empty configuration", config_path);
+                Ok(Config::default())
+            } else {
+                Err(e).context("TODO")
+            }
+            Ok(file) => Config::read_from(file),
+        }?;
+        let mut modified = false;
+        for (key, value) in ENTRIES {
+            modified = modified || config.replace(*key, *value)?;
+        }
+        Ok(())
+    })
 }
-
-// Rust parser and emitter based on these sources:
-//
-// https://github.com/libretro/RetroArch/blob/v1.22.2/libretro-common/include/file/config_file.h
-// https://github.com/libretro/RetroArch/blob/v1.22.2/libretro-common/file/config_file.c
-//
-// The grammar has been updated in this pull: https://github.com/libretro/RetroArch/pull/19218
-//
-// This will very likely be included in a future release, but for now, we will target the grammar in version 1.22.2.

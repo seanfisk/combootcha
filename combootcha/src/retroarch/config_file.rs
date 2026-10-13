@@ -1,5 +1,12 @@
-// TODO Update with streaming changes from Claude
-// Also update to keep track of whether any values were incorrect in the file. Don't write the file if all my settings were correct.
+// Rust parser and emitter based on these sources:
+//
+// https://github.com/libretro/RetroArch/blob/v1.22.2/libretro-common/include/file/config_file.h
+// https://github.com/libretro/RetroArch/blob/v1.22.2/libretro-common/file/config_file.c
+//
+// The grammar has been updated in this pull: https://github.com/libretro/RetroArch/pull/19218
+//
+// This will very likely be included in a future release, but for now, we will target the grammar in version 1.22.2.
+
 
 //! Reader/writer for RetroArch's `retroarch.cfg`, following the grammar of
 //! `libretro-common/file/config_file.c` at the RetroArch v1.22.2 tag.
@@ -219,7 +226,7 @@ impl Config {
 
     /// Streaming equivalent of `parse`. Splits on `\n` only, like libretro
     /// (`BufRead::lines` would also strip a `\r` before the `\n`).
-    fn read_from<R: Read>(reader: R) -> Result<Self> {
+    pub(crate) fn read_from<R: Read>(reader: R) -> Result<Self> {
         let mut reader = BufReader::new(reader);
         let mut config = Self::default();
         let mut line = String::new();
