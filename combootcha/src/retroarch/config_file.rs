@@ -26,7 +26,7 @@ use std::{
     cmp::Ordering,
     collections::BTreeMap,
     fs::File,
-    io::{ErrorKind, Write, BufReader},
+    io::{ErrorKind, Read, Write, BufReader, BufWriter},
     os::unix::fs::PermissionsExt,
     path::Path,
 };
@@ -194,7 +194,7 @@ impl Config {
                     debug!("New value {:?} for key {:?} matches old value; no need to update");
                     false
                 }
-                else if override {
+                else if replace {
                     debug!(
                         "Overriding existing value {:?} for key {:?} with value {:?}",
                         slot.get(),
@@ -213,24 +213,13 @@ impl Config {
                     false
                 }
             }
-        }
-    }
-
-    pub(crate) fn load_from_file<P: AsRef<Path>>(path: P) -> Result<Self> {
-        match File::open(path) {
-            Err(e) => if e.kind() == ErrorKind::NotFound {
-                debug!("Missing file {:?}; returning empty configuration");
-                Ok(Self::default())
-            } else {
-                Err(e) // TODO context
-            }
-            Ok(file) => load_from_reader(BufReader::new(file)),
-        }
+        })
     }
 
     /// Streaming equivalent of `parse`. Splits on `\n` only, like libretro
     /// (`BufRead::lines` would also strip a `\r` before the `\n`).
-    fn load_from_reader(mut reader: impl BufRead) -> Result<Config> {
+    fn read_from<R: Read>(reader: R) -> Result<Self> {
+        let reader = BufReader::new(reader);
         let mut config = Self::default();
         let mut line = String::new();
         loop {
@@ -253,26 +242,20 @@ impl Config {
         }
     }
 
-    pub(crate) save_to_file<P: AsRef<Path>>(path: P) -> Result<Self> {
+    fn write_to<W: Write>(&self, writer: W) -> Result<()> {
+        let mut writer = BufWriter::new(writer);
+        for path in self.references.iter() { // TODO Genericize with includes
+            writeln!(&mut writer, r#"#reference "{}""#, path)?;
+        }
+        for key, value in self.entries.iter() {
+            writeln!(&mut writer, r#"{} = "{}""#, key, value)?;
+        }
+        for path in self.includes.iter() {
+            writeln!(&mut writer, r#"#include "{}""#, path)?;
+        }
 
-    }
-
-    pub fn serialize(&self) -> Result<String> {
-        let mut out = String::new();
-        for r in &self.references {
-            check_text("reference path", r)?;
-            out.push_str(&format!("#reference \"{r}\"\n"));
-        }
-        for (k, v) in &self.entries {
-            check_key(k.as_str())?;
-            check_text(&format!("value for {:?}", k.as_str()), v)?;
-            out.push_str(&format!("{} = \"{v}\"\n", k.as_str()));
-        }
-        for i in &self.includes {
-            check_text("include path", i)?;
-            out.push_str(&format!("#include \"{i}\"\n"));
-        }
-        Ok(out)
+        writer.flush()?;
+        Ok(())
     }
 }
 
