@@ -63,6 +63,7 @@ const ENTRIES: &[(&str, &str)] = &[
 ];
 
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
+    info!("Configuring RetroArch");
     // RetroArch uses a bespoke configuration format. Wonderful. Find the details here:
     //
     // https://github.com/libretro/libretro-common/blob/master/file/config_file.c
