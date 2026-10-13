@@ -96,8 +96,8 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
             }
         }?;
         let mut updated = false;
-        for (key, value) in ENTRIES {
-            updated = updated || config.replace(*key, *value)?;
+        for &(key, value) in ENTRIES {
+            updated |= config.replace(key, value)?;
         }
         if updated {
             info!("Config updated; writing out"); // TODO Improve

@@ -196,14 +196,14 @@ impl Config {
                 let old_value = slot.get();
                 if new_value == *old_value {
                     debug!(
-                        "New value {:?} for key {:?} matches old value; no need to update",
+                        "Desired value {:?} for key {:?} matches existing value; no need to update",
                         new_value,
                         slot.key()
                     );
                     false
                 } else if replace {
                     debug!(
-                        "Overriding existing value {:?} for key {:?} with value {:?}",
+                        "Replacing existing value {:?} for key {:?} with desired value {:?}",
                         slot.get(),
                         slot.key(),
                         new_value,
@@ -212,7 +212,7 @@ impl Config {
                     true
                 } else {
                     debug!(
-                        "Discarding duplicate value {:?} for {:?}; keeping value {:?}",
+                        "Discarding duplicate value {:?} for {:?}; keeping existing value {:?}",
                         new_value,
                         slot.key(),
                         slot.get()
@@ -246,6 +246,7 @@ impl Config {
                     config.add(key, value)?;
                 }
             }
+            line.clear();
         }
         Ok(config)
     }
