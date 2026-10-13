@@ -13,6 +13,7 @@ use scoby::UserExt as OtherUserExt;
 
 // TODO Check consistency of strcasecmp
 // TODO Make wrapping consistent with rest of codebase (no wrapping?)
+// TODO Final pass to improve logging and errors
 
 const ENTRIES: &[(&str, &str)] = &[
     ("input_audio_mute", "nul"),
