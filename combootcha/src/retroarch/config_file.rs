@@ -84,8 +84,8 @@ enum Line {
     Entry(String, String),
 }
 
-/// libretro's `ISSPACE` (a `lr_char_props` table lookup): space, tab, LF and CR
-/// only. Unlike C `isspace`, it excludes `\f` and `\v`.
+/// Port of libretro's `ISSPACE` (a `lr_char_props` table lookup): space, tab, LF and CR only.
+/// Unlike C `isspace`, it excludes `\f` and `\v`.
 fn is_space(c: char) -> bool {
     matches!(c, ' ' | '\t' | terminals::NEWLINE | '\r')
 }
@@ -93,7 +93,7 @@ fn is_space(c: char) -> bool {
 /// Port of `config_file_extract_value`.
 fn extract_value(s: &str) -> String {
     let s = s.trim_start_matches(is_space);
-    if let Some(rest) = s.strip_prefix('"') {
+    if let Some(rest) = s.strip_prefix(terminals::QUOTE) {
         // Up to the next quote, or to the end of the line if unterminated.
         rest.split(terminals::QUOTE)
             .next()
@@ -134,9 +134,11 @@ fn parse_directive_path(text: &str) -> Option<String> {
     }
 }
 
-/// A port of `config_file_parse_line`. While `config_file_parse_line` modifies the struct fields directly and returns a Boolean indicating whether the line was meaningful, this version returns
+/// Port of `config_file_parse_line`. While `config_file_parse_line` modifies the struct fields
+/// directly and returns a Boolean indicating whether the line was meaningful, this version returns
+/// the parsed line without modifying any state.
 fn parse_line(raw: &str) -> Line {
-    if let Some(comment) = raw.strip_prefix('#') {
+    if let Some(comment) = raw.strip_prefix(terminals::COMMENT_START) {
         if let Some(path) = comment.strip_prefix(terminals::INCLUDE_DIRECTIVE) {
             return parse_directive_path(path).map_or(Line::Ignored, Line::Include);
         } else if let Some(path) = comment.strip_prefix(terminals::REFERENCE_DIRECTIVE) {
@@ -158,7 +160,10 @@ fn parse_line(raw: &str) -> Line {
 /// Keys are ASCII graphic runs. `#` would start a comment, and `"` could make
 /// a later `#` in the value look like it's outside the quoted literal.
 fn check_key(key: &str) -> Result<()> {
-    if key.is_empty() || !key.bytes().all(|b| b.is_ascii_graphic()) || key.contains(['#', '"']) {
+    if key.is_empty()
+        || !key.bytes().all(|b| b.is_ascii_graphic())
+        || key.contains([terminals::COMMENT_START, terminals::QUOTE])
+    {
         bail!("invalid RetroArch config key: {key:?}");
     }
     Ok(())
