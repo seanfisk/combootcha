@@ -30,10 +30,10 @@ use std::io::{BufRead, BufReader, BufWriter, Read, Write};
 /// A config key ordered like `strcasecmp` (ASCII case-insensitive), with a
 /// byte-wise tiebreak so keys differing only by case stay distinct.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Key(String);
+struct Key(String);
 
 impl Key {
-    pub fn as_str(&self) -> &str {
+    fn as_str(&self) -> &str {
         &self.0
     }
 }
@@ -54,9 +54,9 @@ impl PartialOrd for Key {
 
 #[derive(Debug, Default, PartialEq, Eq)]
 pub(crate) struct Config {
-    pub entries: BTreeMap<Key, String>,
-    pub includes: Vec<String>,
-    pub references: Vec<String>,
+    entries: BTreeMap<Key, String>,
+    includes: Vec<String>,
+    references: Vec<String>,
 }
 
 #[derive(Debug, PartialEq, Eq)]
