@@ -31,7 +31,15 @@ use log::debug;
 use std::borrow::Cow;
 use std::cmp::Ordering;
 use std::collections::BTreeMap;
+use std::fmt::Display;
 use std::io::{BufRead, BufReader, BufWriter, Read, Write};
+
+mod terminals {
+    pub(super) const INCLUDE_DIRECTIVE: &str = "include ";
+    pub(super) const REFERENCE_DIRECTIVE: &str = "reference ";
+    pub(super) const COMMENT_START: char = '#';
+    pub(super) const QUOTE: char = '"';
+}
 
 /// A config key ordered like `strcasecmp` (ASCII case-insensitive), with a
 /// byte-wise tiebreak so keys differing only by case stay distinct.
@@ -84,7 +92,10 @@ fn extract_value(s: &str) -> String {
     let s = s.trim_start_matches(is_space);
     if let Some(rest) = s.strip_prefix('"') {
         // Up to the next quote, or to the end of the line if unterminated.
-        rest.split('"').next().unwrap_or("").to_string()
+        rest.split(terminals::QUOTE)
+            .next()
+            .unwrap_or("")
+            .to_string()
     } else {
         s.chars().take_while(char::is_ascii_graphic).collect()
     }
@@ -93,12 +104,12 @@ fn extract_value(s: &str) -> String {
 /// Port of the non-directive path of `config_file_strip_comment`: cut at the
 /// first `#` unless it lies inside the first quoted literal.
 fn strip_comment(line: &str) -> &str {
-    let Some(hash) = line.find('#') else {
+    let Some(hash) = line.find(terminals::COMMENT_START) else {
         return line;
     };
-    if let Some(open) = line.find('"') {
+    if let Some(open) = line.find(terminals::QUOTE) {
         if open < hash {
-            if let Some(close_rel) = line[open + 1..].find('"') {
+            if let Some(close_rel) = line[open + 1..].find(terminals::QUOTE) {
                 if open + 1 + close_rel > hash {
                     return line;
                 }
@@ -123,9 +134,9 @@ fn parse_directive_path(text: &str) -> Option<String> {
 /// A port of `config_file_parse_line`. While `config_file_parse_line` modifies the struct fields directly and returns a Boolean indicating whether the line was meaningful, this version returns
 fn parse_line(raw: &str) -> Line {
     if let Some(comment) = raw.strip_prefix('#') {
-        if let Some(path) = comment.strip_prefix("include ") {
+        if let Some(path) = comment.strip_prefix(terminals::INCLUDE_DIRECTIVE) {
             return parse_directive_path(path).map_or(Line::Ignored, Line::Include);
-        } else if let Some(path) = comment.strip_prefix("reference  ") {
+        } else if let Some(path) = comment.strip_prefix(terminals::REFERENCE_DIRECTIVE) {
             return parse_directive_path(path).map_or(Line::Ignored, Line::Reference);
         }
     }
@@ -153,8 +164,27 @@ fn check_key(key: &str) -> Result<()> {
 /// There is no escaping, so values and paths can't hold `"` or a line break.
 /// `#include` / `#reference` paths are written raw, like values.
 fn check_text(what: &str, text: &str) -> Result<()> {
-    if text.contains(['"', '\n']) {
+    if text.contains([terminals::QUOTE, '\n']) {
         bail!("{what} can't be represented in retroarch.cfg: {text:?}");
+    }
+    Ok(())
+}
+
+fn write_directives<W, D, P>(mut writer: &mut W, directive: D, paths: P) -> Result<()>
+where
+    W: Write,
+    D: Display,
+    P: IntoIterator,
+    P::Item: Display,
+{
+    for path in paths.into_iter() {
+        writeln!(
+            &mut writer,
+            r#"{}{}"{}""#,
+            terminals::COMMENT_START,
+            directive,
+            path
+        )?;
     }
     Ok(())
 }
@@ -253,17 +283,15 @@ impl Config {
 
     pub(crate) fn write_to<W: Write>(&self, writer: W) -> Result<()> {
         let mut writer = BufWriter::new(writer);
-        for path in self.references.iter() {
-            // TODO Genericize with includes
-            writeln!(&mut writer, r#"#reference "{}""#, path)?;
-        }
+        write_directives(
+            &mut writer,
+            terminals::REFERENCE_DIRECTIVE,
+            &self.references,
+        )?;
         for (key, value) in self.entries.iter() {
             writeln!(&mut writer, r#"{} = "{}""#, key.as_str(), value)?;
         }
-        for path in self.includes.iter() {
-            writeln!(&mut writer, r#"#include "{}""#, path)?;
-        }
-
+        write_directives(&mut writer, terminals::INCLUDE_DIRECTIVE, &self.includes)?;
         writer.flush()?;
         Ok(())
     }
