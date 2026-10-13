@@ -10,10 +10,14 @@ use users::User;
 
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
     standard_user.as_effective_user(|| {
-        // Do not attempt to ensure that any of these directories exist. They should exist by virtue of Firefox being installed, and if they don't exist, we don't want to create them.
+        // Do not attempt to create any of these directories in this path. They should already exist by virtue of Firefox being installed, and if they don't exist, we don't want to create them.
         let resources_dir = Path::new("/Applications/Firefox.app/Contents/Resources");
 
-        let autoconfig_path = resources_dir.join("defaults/pref/autoconfig.js");
+        // These directories might not exist, in which case we *do* need to create them.
+        let pref_dir = resources_dir.join("defaults/pref");
+        crate::fs::ensure_dir(&pref_dir)?;
+
+        let autoconfig_path = pref_dir.join("autoconfig.js");
         info!("Writing Firefox AutoConfig file to {autoconfig_path:?}");
         fs::write(autoconfig_path, include_bytes!("autoconfig.js"))?;
 
