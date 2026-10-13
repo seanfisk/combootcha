@@ -37,6 +37,7 @@ use std::fmt::Display;
 use std::io::{BufRead, BufReader, BufWriter, Read, Write};
 
 mod terminals {
+    pub(super) const NEWLINE: char = '\n';
     pub(super) const INCLUDE_DIRECTIVE: &str = "include ";
     pub(super) const REFERENCE_DIRECTIVE: &str = "reference ";
     pub(super) const COMMENT_START: char = '#';
@@ -86,7 +87,7 @@ enum Line {
 /// libretro's `ISSPACE` (a `lr_char_props` table lookup): space, tab, LF and CR
 /// only. Unlike C `isspace`, it excludes `\f` and `\v`.
 fn is_space(c: char) -> bool {
-    matches!(c, ' ' | '\t' | '\n' | '\r')
+    matches!(c, ' ' | '\t' | terminals::NEWLINE | '\r')
 }
 
 /// Port of `config_file_extract_value`.
@@ -166,7 +167,7 @@ fn check_key(key: &str) -> Result<()> {
 /// There is no escaping, so values and paths can't hold `"` or a line break.
 /// `#include` / `#reference` paths are written raw, like values.
 fn check_text(what: &str, text: &str) -> Result<()> {
-    if text.contains([terminals::QUOTE, '\n']) {
+    if text.contains([terminals::QUOTE, terminals::NEWLINE]) {
         bail!("{what} can't be represented in retroarch.cfg: {text:?}");
     }
     Ok(())
@@ -269,7 +270,7 @@ impl Config {
             if chars_read == 0 {
                 break;
             }
-            if line.ends_with('\n') {
+            if line.ends_with(terminals::NEWLINE) {
                 line.pop();
             }
             match parse_line(&line) {
