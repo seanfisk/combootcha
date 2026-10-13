@@ -7,7 +7,6 @@
 //
 // This will very likely be included in a future release, but for now, we will target the grammar in version 1.22.2.
 
-
 //! Reader/writer for RetroArch's `retroarch.cfg`, following the grammar of
 //! `libretro-common/file/config_file.c` at the RetroArch v1.22.2 tag.
 //!
