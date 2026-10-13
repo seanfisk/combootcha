@@ -109,7 +109,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
             config.write_to(&file)?;
             file.as_file()
                 .sync_all()
-                .context("Could not sync temporary file")?;
+                .with_context(|| format!("Could not sync temporary file at {:?}", file.path()))?;
 
             debug!("Moving output file into original location");
             let file = file.persist(&config_path).with_context(|| {
