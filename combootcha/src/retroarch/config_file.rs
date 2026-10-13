@@ -1,18 +1,18 @@
-// Rust parser and emitter based on these sources:
-//
-// https://github.com/libretro/RetroArch/blob/v1.22.2/libretro-common/include/file/config_file.h
-// https://github.com/libretro/RetroArch/blob/v1.22.2/libretro-common/file/config_file.c
-//
-// The grammar has been updated in this pull: https://github.com/libretro/RetroArch/pull/19218
-//
-// This will very likely be included in a future release, but for now, we will target the grammar in version 1.22.2.
-
-//! Reader/writer for RetroArch's `retroarch.cfg`, following the grammar of
-//! `libretro-common/file/config_file.c` at the RetroArch v1.22.2 tag.
+//! Parser and emitter for RetroArch's `retroarch.cfg`, based on these sources:
+//!
+//! - https://github.com/libretro/RetroArch/blob/v1.22.2/libretro-common/include/file/config_file.h
+//! - https://github.com/libretro/RetroArch/blob/v1.22.2/libretro-common/file/config_file.c
+//!
+//! The grammar has been updated in [this pull
+//! request](https://github.com/libretro/RetroArch/pull/19218). This will very likely be included in
+//! a future release, but as of time of writing, 2026-10, we will target the grammar in version
+//! 1.22.2.
+//!
+//! Behaviors:
 //!
 //! - Lines are split on `\n`. A line starting with `#` in column 0 is either a
 //!   `#include "path"` / `#reference "path"` directive or a comment.
-//! - Otherwise a line is `key = value`: the key is a run of ASCII graphic
+//! - Otherwise, a line is `key = value`: the key is a run of ASCII graphic
 //!   characters, followed by optional whitespace, `=`, and the value.
 //! - A value is either `"quoted"` (ends at the next `"`; there is no escaping,
 //!   and an unterminated quote runs to end of line) or unquoted (a run of ASCII
@@ -20,11 +20,13 @@
 //! - A `#` after the start of the line begins a comment unless it falls inside
 //!   the first quoted literal.
 //! - The topmost entry wins when a key repeats. Lookups are case-sensitive.
-//! - RetroArch writes `#reference` lines, then entries sorted with `strcasecmp`,
+//! - libretro writes `#reference` lines, then entries sorted with `strcasecmp`,
 //!   then `#include` lines, each entry as `key = "value"`.
 //!
-//! Deliberate deviations: repeated keys collapse to the topmost entry, and
-//! lines with an empty key or an empty `#reference` path are dropped.
+//! Deliberate deviations:
+//!
+//! - Repeated keys collapse to the topmost entry.
+//! - Lines with an empty key or an empty `#reference` path are dropped.
 
 use anyhow::{bail, Context, Result};
 use log::debug;
