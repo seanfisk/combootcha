@@ -106,16 +106,18 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
             // Create temp file in same directory as original file. This guarantees the files will be on the same filesystem, so the rename will be atomic.
             let file = NamedTempFile::new_in(&config_dir)
                 .with_context(|| format!("Could not create temporary file in {:?}", config_dir))?;
+            let file_path = file.path();
             config.write_to(&file)?;
             file.as_file()
                 .sync_all()
-                .with_context(|| format!("Could not sync temporary file at {:?}", file.path()))?;
+                .with_context(|| format!("Could not sync temporary file at {:?}", file_path))?;
 
             debug!("Moving output file into original location");
+            let file_path = file_path.to_owned(); // Rust variable `file' is moved when we call `persist' (I am not talking about being moved on the filesystem)
             let file = file.persist(&config_path).with_context(|| {
                 format!(
-                    "Could not move temporary file back to original file's location at {:?}",
-                    config_path
+                    "Could not move temporary file {:?} back to original file's location at {:?}",
+                    file_path, config_path
                 )
             })?;
 
