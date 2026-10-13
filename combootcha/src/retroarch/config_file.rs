@@ -20,15 +20,12 @@
 //! Deliberate deviations: repeated keys collapse to the topmost entry, and
 //! lines with an empty key or an empty `#reference` path are dropped.
 
-use anyhow::{bail, Context, Result};
-use std::cmp::Ordering;
-use std::collections::BTreeMap;
-use std::fs::File;
-use std::io::{ErrorKind, Read, Write, BufReader, BufRead, BufWriter};
-use std::os::unix::fs::PermissionsExt;
-use tempfile::NamedTempFile;
+use anyhow::{bail, Result};
 use log::debug;
 use std::borrow::Cow;
+use std::cmp::Ordering;
+use std::collections::BTreeMap;
+use std::io::{BufRead, BufReader, BufWriter, Read, Write};
 
 /// A config key ordered like `strcasecmp` (ASCII case-insensitive), with a
 /// byte-wise tiebreak so keys differing only by case stay distinct.
@@ -107,7 +104,7 @@ fn strip_comment(line: &str) -> &str {
 
 fn parse_directive_path(text: &str) -> Option<String> {
     if text.is_empty() {
-        return None
+        return None;
     }
     let path = extract_value(text);
     if path.is_empty() {
@@ -121,9 +118,9 @@ fn parse_directive_path(text: &str) -> Option<String> {
 fn parse_line(raw: &str) -> Line {
     if let Some(comment) = raw.strip_prefix('#') {
         if let Some(path) = comment.strip_prefix("include ") {
-            return parse_directive_path(&path).map_or(Line::Ignored, Line::Include);
+            return parse_directive_path(path).map_or(Line::Ignored, Line::Include);
         } else if let Some(path) = comment.strip_prefix("reference  ") {
-            return parse_directive_path(&path).map_or(Line::Ignored, Line::Reference);
+            return parse_directive_path(path).map_or(Line::Ignored, Line::Reference);
         }
     }
     let line = strip_comment(raw).trim_start_matches(is_space);
@@ -161,7 +158,7 @@ impl Config {
     pub(crate) fn replace<'a, K, V>(&mut self, key: K, value: V) -> Result<bool>
     where
         K: Into<Cow<'a, str>>,
-        V: Into<Cow<'a, str>>
+        V: Into<Cow<'a, str>>,
     {
         self.set(key.into(), value.into(), /*replace=*/ true)
     }
@@ -170,7 +167,7 @@ impl Config {
     pub(super) fn add<'a, K, V>(&mut self, key: K, value: V) -> Result<bool>
     where
         K: Into<Cow<'a, str>>,
-        V: Into<Cow<'a, str>>
+        V: Into<Cow<'a, str>>,
     {
         self.set(key.into(), value.into(), /*replace=*/ false)
     }
@@ -192,10 +189,13 @@ impl Config {
             Entry::Occupied(mut slot) => {
                 let old_value = slot.get();
                 if new_value == *old_value {
-                    debug!("New value {:?} for key {:?} matches old value; no need to update", new_value, slot.key());
+                    debug!(
+                        "New value {:?} for key {:?} matches old value; no need to update",
+                        new_value,
+                        slot.key()
+                    );
                     false
-                }
-                else if replace {
+                } else if replace {
                     debug!(
                         "Overriding existing value {:?} for key {:?} with value {:?}",
                         slot.get(),
@@ -246,7 +246,8 @@ impl Config {
 
     fn write_to<W: Write>(&self, writer: W) -> Result<()> {
         let mut writer = BufWriter::new(writer);
-        for path in self.references.iter() { // TODO Genericize with includes
+        for path in self.references.iter() {
+            // TODO Genericize with includes
             writeln!(&mut writer, r#"#reference "{}""#, path)?;
         }
         for (key, value) in self.entries.iter() {

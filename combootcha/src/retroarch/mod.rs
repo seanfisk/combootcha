@@ -20,7 +20,6 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
     // When settings are changed, RetroArch stores them in memory but does not write them back to retroarch.cfg until quit. This means that the application must be quit cleanly for changes to be written.
     standard_user.as_effective_user(|| Ok(()))
 
-
     //         pub(crate) fn load_from_file<P: AsRef<Path>>(path: P) -> Result<Self> {
     //     match File::open(path) {
     //         Err(e) => if e.kind() == ErrorKind::NotFound {
@@ -32,8 +31,6 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
     //         Ok(file) => load_from_reader(BufReader::new(file)),
     //     }
     // }
-
-
 }
 
 // Rust parser and emitter based on these sources:
