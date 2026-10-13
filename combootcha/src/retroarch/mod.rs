@@ -103,7 +103,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
         if updated {
             info!("Config updated; writing out"); // TODO Improve
 
-            // Temp file in the same directory so the rename stays on one filesystem.
+            // Create temp file in same directory as original file. This guarantees the files will be on the same filesystem, so the rename will be atomic.
             let file = NamedTempFile::new_in(&config_dir)
                 .with_context(|| format!("Could not create temporary file in {:?}", config_dir))?;
             config.write_to(&file)?;
