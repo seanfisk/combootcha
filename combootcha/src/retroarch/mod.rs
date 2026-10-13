@@ -1,8 +1,10 @@
 mod config_file;
 
 use anyhow::{Context, Result};
-use log::debug;
+use log::{debug, info};
 use std::fs::File;
+use std::os::unix::fs::PermissionsExt;
+use tempfile::NamedTempFile;
 use users::{os::unix::UserExt, User};
 
 use config_file::Config;
@@ -27,23 +29,57 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
             .home_dir()
             .join("Library/Application Support/RetroArch/config");
         let config_path = config_dir.join("retroarch.cfg");
-        let mut config = match File::open(&config_path) {
+        let (mut config, original_permissions) = match File::open(&config_path) {
             Err(e) => {
                 if e.kind() == std::io::ErrorKind::NotFound {
                     debug!(
                         "Missing file {:?}; returning empty configuration",
                         config_path
                     );
-                    Ok(Config::default())
+                    Ok((Config::default(), std::fs::Permissions::from_mode(0o644)))
                 } else {
                     Err(e).context("TODO")
                 }
             }
-            Ok(file) => Config::read_from(file),
+            Ok(file) => {
+                let config = Config::read_from(&file)?;
+                let permissions = file.metadata()?.permissions();
+                Ok((config, permissions))
+            }
         }?;
-        let mut modified = false;
+        let mut updated = false;
         for (key, value) in ENTRIES {
-            modified = modified || config.replace(*key, *value)?;
+            updated = updated || config.replace(*key, *value)?;
+        }
+        if updated {
+            info!("Config updated; writing out"); // TODO Improve
+
+            // Temp file in the same directory so the rename stays on one filesystem.
+            let file = NamedTempFile::new_in(&config_dir)
+                .with_context(|| format!("Could not create temporary file in {:?}", config_dir))?;
+            config.write_to(&file)?;
+            file.as_file()
+                .sync_all()
+                .context("Could not sync temporary file")?;
+
+            debug!("Moving output file into original location");
+            let file = file.persist(&config_path).with_context(|| {
+                format!(
+                    "Could not move temporary file back to original file's location at {:?}",
+                    config_path
+                )
+            })?;
+
+            debug!("Setting output file permissions");
+            file.set_permissions(original_permissions)
+                .with_context(|| {
+                    format!(
+                        "Error writing permissions to newly-written output file {:?}",
+                        config_path
+                    )
+                })?;
+        } else {
+            info!("Nothing to update in config"); // TODO improve
         }
         Ok(())
     })

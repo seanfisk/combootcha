@@ -250,7 +250,7 @@ impl Config {
         Ok(config)
     }
 
-    fn write_to<W: Write>(&self, writer: W) -> Result<()> {
+    pub(crate) fn write_to<W: Write>(&self, writer: W) -> Result<()> {
         let mut writer = BufWriter::new(writer);
         for path in self.references.iter() {
             // TODO Genericize with includes
