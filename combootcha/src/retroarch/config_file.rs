@@ -67,7 +67,7 @@ impl PartialOrd for Key {
 
 impl Display for Key {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
-        self.0.fmt(f)
+        write!(f, "key {:?}", self.0)
     }
 }
 
@@ -221,7 +221,7 @@ impl Config {
         use std::collections::btree_map::Entry;
         Ok(match self.entries.entry(Key(key.into_owned())) {
             Entry::Vacant(slot) => {
-                debug!("Adding new value {:?} for key {:?}", new_value, slot.key());
+                debug!("Adding new value {:?} for {}", new_value, slot.key());
                 slot.insert(new_value.to_string());
                 true
             }
@@ -229,14 +229,14 @@ impl Config {
                 let old_value = slot.get();
                 if new_value == *old_value {
                     debug!(
-                        "Desired value {:?} for key {:?} matches existing value; no need to update",
+                        "Desired value {:?} for {} matches existing value; no need to update",
                         new_value,
                         slot.key()
                     );
                     false
                 } else if replace {
                     debug!(
-                        "Replacing existing value {:?} for key {:?} with desired value {:?}",
+                        "Replacing existing value {:?} for {} with desired value {:?}",
                         slot.get(),
                         slot.key(),
                         new_value,
@@ -245,7 +245,7 @@ impl Config {
                     true
                 } else {
                     debug!(
-                        "Discarding duplicate value {:?} for {:?}; keeping existing value {:?}",
+                        "Discarding duplicate value {:?} for {}; keeping existing value {:?}",
                         new_value,
                         slot.key(),
                         slot.get()
