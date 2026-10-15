@@ -7,9 +7,9 @@
 //!
 //! Emulated libretro behavior:
 //!
-//! - Lines are split on `\n`
-//! - A line starting with `#` in column 0 is either a `#include "path"` / `#reference "path"` directive or a comment.
-//! - Otherwise, a line is `key = value`
+//! - Lines are split on `\n`.
+//! - A line starting with `#` in column 0 is either a `#include "path"` directive, `#reference "path"` directive, or a comment.
+//! - Otherwise, a line is `key = value`.
 //! - A key is a run of ASCII graphic characters, followed by optional whitespace, `=`, and the value.
 //! - A value is either `"quoted"` (ends at the next `"`; there is no escaping, and an unterminated quote runs to end of line) or unquoted (a run of ASCII graphic characters).
 //! - A `#` after the start of the line begins a comment unless it falls inside the first quoted literal.
@@ -22,8 +22,8 @@
 //!
 //! Deliberate deviations from libretro behavior:
 //!
-//! - Repeated keys collapse to the topmost entry.
-//! - Lines with an empty key or an empty `#reference` path are dropped.
+//! - Repeated keys collapse to the topmost entry. TODO is this true?
+//! - Lines with an empty key or an empty `#reference` path are dropped. TODO confirm
 
 use anyhow::{bail, Context, Result};
 use log::debug;
