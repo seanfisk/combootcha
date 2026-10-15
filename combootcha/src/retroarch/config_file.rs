@@ -20,7 +20,7 @@
 //!   2. Entries sorted by keys with `strcasecmp`, with each entry as `key = "value"`.
 //!   3. `#include` lines
 //!
-//! Deliberate and known deviations from libretro behavior:
+//! Deliberate deviations from libretro behavior:
 //!
 //! - Repeated keys collapse to the topmost entry.
 //! - Lines with an empty key or an empty `#reference` path are dropped.
