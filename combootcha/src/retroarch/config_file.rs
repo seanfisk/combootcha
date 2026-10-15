@@ -65,6 +65,12 @@ impl PartialOrd for Key {
     }
 }
 
+impl Display for Key {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
+        self.0.fmt(f)
+    }
+}
+
 #[derive(Debug, Default, PartialEq, Eq)]
 pub(crate) struct Config {
     entries: BTreeMap<Key, String>,
