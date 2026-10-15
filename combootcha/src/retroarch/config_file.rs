@@ -7,18 +7,12 @@
 //!
 //! Behaviors:
 //!
-//! - Lines are split on `\n`. A line starting with `#` in column 0 is either a
-//!   `#include "path"` / `#reference "path"` directive or a comment.
-//! - Otherwise, a line is `key = value`: the key is a run of ASCII graphic
-//!   characters, followed by optional whitespace, `=`, and the value.
-//! - A value is either `"quoted"` (ends at the next `"`; there is no escaping,
-//!   and an unterminated quote runs to end of line) or unquoted (a run of ASCII
-//!   graphic characters).
-//! - A `#` after the start of the line begins a comment unless it falls inside
-//!   the first quoted literal.
+//! - Lines are split on `\n`. A line starting with `#` in column 0 is either a `#include "path"` / `#reference "path"` directive or a comment.
+//! - Otherwise, a line is `key = value`: the key is a run of ASCII graphic characters, followed by optional whitespace, `=`, and the value.
+//! - A value is either `"quoted"` (ends at the next `"`; there is no escaping, and an unterminated quote runs to end of line) or unquoted (a run of ASCII graphic characters).
+//! - A `#` after the start of the line begins a comment unless it falls inside the first quoted literal.
 //! - The topmost entry wins when a key repeats. Lookups are case-sensitive.
-//! - libretro writes `#reference` lines, then entries sorted with `strcasecmp`,
-//!   then `#include` lines, each entry as `key = "value"`.
+//! - libretro writes `#reference` lines, then entries sorted with `strcasecmp`, then `#include` lines, each entry as `key = "value"`.
 //!
 //! Deliberate deviations:
 //!
@@ -41,8 +35,7 @@ mod terminals {
     pub(super) const QUOTE: char = '"';
 }
 
-/// A config key ordered like `strcasecmp` (ASCII case-insensitive), with a
-/// byte-wise tiebreak so keys differing only by case stay distinct.
+/// A config key ordered like `strcasecmp` (ASCII case-insensitive), with a byte-wise tiebreak so keys differing only by case stay distinct.
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct Key(String);
 
@@ -81,8 +74,7 @@ enum Line {
     Entry(String, String),
 }
 
-/// Port of libretro's `ISSPACE` (a `lr_char_props` table lookup): space, tab, LF and CR only.
-/// Unlike C `isspace`, it excludes `\f` and `\v`.
+/// Port of libretro's `ISSPACE` (a `lr_char_props` table lookup): space, tab, LF and CR only. Unlike C `isspace`, it excludes `\f` and `\v`.
 fn is_space(c: char) -> bool {
     matches!(c, ' ' | '\t' | terminals::NEWLINE | '\r')
 }
@@ -101,8 +93,7 @@ fn extract_value(s: &str) -> String {
     }
 }
 
-/// Port of the non-directive path of `config_file_strip_comment`: cut at the
-/// first `#` unless it lies inside the first quoted literal.
+/// Port of the non-directive path of `config_file_strip_comment`: cut at the first `#` unless it lies inside the first quoted literal.
 fn strip_comment(line: &str) -> &str {
     let Some(hash) = line.find(terminals::COMMENT_START) else {
         return line;
@@ -131,9 +122,7 @@ fn parse_directive_path(text: &str) -> Option<String> {
     }
 }
 
-/// Port of `config_file_parse_line`. While `config_file_parse_line` modifies the struct fields
-/// directly and returns a Boolean indicating whether the line was meaningful, this version returns
-/// the parsed line without modifying any state.
+/// Port of `config_file_parse_line`. While `config_file_parse_line` modifies the struct fields directly and returns a Boolean indicating whether the line was meaningful, this version returns the parsed line without modifying any state.
 fn parse_line(raw: &str) -> Line {
     if let Some(comment) = raw.strip_prefix(terminals::COMMENT_START) {
         if let Some(path) = comment.strip_prefix(terminals::INCLUDE_DIRECTIVE) {
@@ -154,8 +143,7 @@ fn parse_line(raw: &str) -> Line {
     Line::Entry(key, extract_value(value))
 }
 
-/// Keys are ASCII graphic runs. `#` would start a comment, and `"` could make
-/// a later `#` in the value look like it's outside the quoted literal.
+/// Keys are ASCII graphic runs. `#` would start a comment, and `"` could make a later `#` in the value look like it's outside the quoted literal.
 fn check_key(key: &str) -> Result<()> {
     if key.is_empty()
         || !key.bytes().all(|b| b.is_ascii_graphic())
@@ -166,8 +154,7 @@ fn check_key(key: &str) -> Result<()> {
     Ok(())
 }
 
-/// There is no escaping, so values and paths can't hold `"` or a line break.
-/// `#include` / `#reference` paths are written raw, like values.
+/// There is no escaping, so values and paths can't hold `"` or a line break. `#include` / `#reference` paths are written raw, like values.
 fn check_text(what: &str, text: &str) -> Result<()> {
     if text.contains([terminals::QUOTE, terminals::NEWLINE]) {
         bail!("{what} can't be represented in retroarch.cfg: {text:?}"); // TODO improve
@@ -213,8 +200,7 @@ impl Config {
         self.set(key.into(), value.into(), /*replace=*/ false)
     }
 
-    /// Attempt to associate a key with a new value, optional replacing it if already present.
-    /// Returns a `bool` indicating whether the configuration was updated.
+    /// Attempt to associate a key with a new value, optional replacing it if already present. Returns a `bool` indicating whether the configuration was updated.
     fn set(&mut self, key: Cow<'_, str>, new_value: Cow<'_, str>, replace: bool) -> Result<bool> {
         // Design decision: eagerly validate keys and values even if the value will be discarded
         check_key(&key)?;
@@ -258,8 +244,7 @@ impl Config {
         })
     }
 
-    /// Streaming equivalent of `parse`. Splits on `\n` only, like libretro
-    /// (`BufRead::lines` would also strip a `\r` before the `\n`).
+    /// Streaming equivalent of `parse`. Splits on `\n` only, like libretro (`BufRead::lines` would also strip a `\r` before the `\n`).
     pub(crate) fn read_from<R: Read>(reader: R) -> Result<Self> {
         let mut reader = BufReader::new(reader);
         let mut config = Self::default();
