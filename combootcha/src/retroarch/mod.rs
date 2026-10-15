@@ -11,7 +11,6 @@ use config_file::Config;
 
 use scoby::UserExt as OtherUserExt;
 
-// TODO Check consistency of strcasecmp
 // TODO Final pass to improve logging and errors
 
 const ENTRIES: &[(&str, &str)] = &[
