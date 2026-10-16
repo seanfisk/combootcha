@@ -88,13 +88,17 @@ fn is_space(c: char) -> bool {
 /// Port of `config_file_extract_value`.
 fn extract_value(s: &str) -> String {
     let s = s.trim_start_matches(is_space);
+    // libretro: Note: From this point on, an empty value string is valid
     if let Some(rest) = s.strip_prefix(terminals::QUOTE) {
-        // Up to the next quote, or to the end of the line if unterminated
+        // libretro: If first character is ("), we have a full string literal
+
+        // Read up to the next quote, or to the end of the line if the literal is unterminated
         rest.split(terminals::QUOTE)
             .next()
-            .unwrap_or("")
+            .unwrap_or("") // libretro: If this a ("), then value string is empty
             .to_string()
     } else {
+        // libretro: This is not a string literal - just read until the next space is found
         s.chars().take_while(char::is_ascii_graphic).collect()
     }
 }
@@ -356,7 +360,7 @@ impl Config {
                 .with_context(|| format!("Cannot write key-value entry at line {line_number}"))?;
             line_number += 1;
         }
-        // libretro: Config files are read from the top down: if duplicate entries are found then the topmost one in the list takes precedence. This means `#include' directives must go *after* individual config entries, otherwise they will override any custom-set values
+        // libretro: Config files are read from the top down - if duplicate entries are found then the topmost one in the list takes precedence. This means `#include' directives must go *after* individual config entries, otherwise they will override any custom-set values
         for path in self.includes.iter() {
             write_directive(&mut writer, terminals::INCLUDE_DIRECTIVE, path)
                 .with_context(|| format!("Cannot write include directive at line {line_number}"))?;
