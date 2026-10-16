@@ -174,23 +174,19 @@ fn check_text(what: &str, text: &str) -> Result<()> {
     Ok(())
 }
 
-fn write_directives<W, D, P>(mut writer: &mut W, directive: D, paths: P) -> Result<()>
+fn write_directive<W, D, P>(mut writer: &mut W, directive: D, path: P) -> std::io::Result<()>
 where
     W: Write,
     D: Display,
-    P: IntoIterator,
-    P::Item: Display,
+    P: Display,
 {
-    for path in paths.into_iter() {
-        writeln!(
-            &mut writer,
-            r#"{}{}"{}""#,
-            terminals::COMMENT_START,
-            directive,
-            path
-        )?;
-    }
-    Ok(())
+    writeln!(
+        &mut writer,
+        r#"{}{}"{}""#,
+        terminals::COMMENT_START,
+        directive,
+        path
+    )
 }
 
 impl Config {
@@ -265,7 +261,7 @@ impl Config {
         loop {
             let chars_read = reader
                 .read_line(&mut line)
-                .with_context(|| format!("Cannot read line {}", line_number))?;
+                .with_context(|| format!("Cannot read config line {}", line_number))?;
             if chars_read == 0 {
                 break;
             }
@@ -279,7 +275,7 @@ impl Config {
                 Line::Entry(key, value) => {
                     config
                         .add(key, value)
-                        .with_context(|| format!("Cannot parse line {}", line_number))?;
+                        .with_context(|| format!("Cannot parse config line {}", line_number))?;
                 }
             }
             line.clear();
@@ -290,16 +286,23 @@ impl Config {
 
     pub(crate) fn write_to<W: Write>(&self, writer: W) -> Result<()> {
         let mut writer = BufWriter::new(writer);
-        // TODO Add line numbers to errors?
-        write_directives(
-            &mut writer,
-            terminals::REFERENCE_DIRECTIVE,
-            &self.references,
-        )?;
-        for (key, value) in self.entries.iter() {
-            writeln!(&mut writer, r#"{} = "{}""#, key.as_str(), value)?;
+        let mut line_number = 1;
+        for path in self.references.iter() {
+            write_directive(&mut writer, terminals::REFERENCE_DIRECTIVE, path).with_context(
+                || format!("Cannot write reference directive at line {line_number}"),
+            )?;
+            line_number += 1;
         }
-        write_directives(&mut writer, terminals::INCLUDE_DIRECTIVE, &self.includes)?;
+        for (key, value) in self.entries.iter() {
+            writeln!(&mut writer, r#"{} = "{}""#, key.as_str(), value)
+                .with_context(|| format!("Cannot write key-value entry at line {line_number}"))?;
+            line_number += 1;
+        }
+        for path in self.includes.iter() {
+            write_directive(&mut writer, terminals::INCLUDE_DIRECTIVE, path)
+                .with_context(|| format!("Cannot write include directive at line {line_number}"))?;
+            line_number += 1;
+        }
         writer.flush()?;
         Ok(())
     }
