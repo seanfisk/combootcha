@@ -117,7 +117,7 @@ impl Config {
                 line.pop();
             }
             match parse_line(&line) {
-                LineContent::Comment => trace!("Ignoring comment at line {line_number}"),
+                LineContent::Ignored => trace!("Ignoring line {line_number}"),
                 LineContent::Malformed(reason) => {
                     warn!("Ignoring malformed line {line_number}: {reason}")
                 }
@@ -279,7 +279,7 @@ enum LineContent {
     Reference(String),
     Entry(String, String),
     Malformed(&'static str),
-    Comment,
+    Ignored,
 }
 
 /// Port of libretro's `config_file_parse_line`.
@@ -315,7 +315,7 @@ fn parse_line(raw: &str) -> LineContent {
                 // libretro: All comments except those starting with the include or reference directive are ignored
 
                 // Notably, the "include or reference directive" *includes a trailing space*, so the lines `#include` or `#reference` will *not* be classified by this code as directives, and will be ignored as plain comments
-                LineContent::Comment
+                LineContent::Ignored
             }
         }
         LineText::Entry(text) => {
@@ -327,7 +327,7 @@ fn parse_line(raw: &str) -> LineContent {
 
             // libretro ignores entries with empty keys *after* parsing the value, but this seems like a minor oversight rather than a deliberate design decision. We ignore eagerly here.
             if key.is_empty() {
-                return LineContent::Malformed("missing key");
+                return LineContent::Ignored;
             }
 
             // libretro: An entry without a value is invalid
