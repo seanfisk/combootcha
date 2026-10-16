@@ -28,7 +28,7 @@
 //! Comments copied from the libretro source code have been prefixed as such.
 
 use anyhow::{bail, Context, Result};
-use log::{trace, debug, info};
+use log::{debug, info, trace, warn};
 use std::borrow::Cow;
 use std::cmp::Ordering;
 use std::collections::BTreeMap;
@@ -149,24 +149,18 @@ fn split_line_text(line: &str) -> LineText<'_> {
 }
 
 fn parse_directive_path(text: &str) -> Option<String> {
-    // TODO libretro doesn't do this?
-    // if text.is_empty() {
-    //     return None;
-    // }
-    let path = extract_value(text);
-    if path.is_empty() {
-        // TODO libretro doesn't do this?
-        None
-    } else {
-        Some(path)
+    if text.is_empty() {
+        return None;
     }
+    Some(extract_value(text))
 }
 
 enum LineContent {
-    Ignored,
     Include(String),
     Reference(String),
     Entry(String, String),
+    Malformed(&'static str),
+    Comment,
 }
 
 /// Port of libretro's `config_file_parse_line`.
@@ -178,16 +172,25 @@ fn parse_line(raw: &str) -> LineContent {
     // libretro: Check whether entire line is a comment
     match line_text {
         LineText::Comment(text) => {
+            // libretro quirk: includes or references with missing paths are discarded, includes with empty string ("") paths are discarded, but references with empty string paths are retained. Emulate.
             if let Some(path) = text.strip_prefix(terminals::INCLUDE_DIRECTIVE) {
-                parse_directive_path(path).map_or(LineContent::Ignored, LineContent::Include)
-            } else if let Some(path) = text.strip_prefix(terminals::REFERENCE_DIRECTIVE) {
-                parse_directive_path(path).map_or(LineContent::Ignored, LineContent::Reference)
-            } else {
-                // libretro: All comments except those starting with the include or reference directive are ignored
-
+                if let Some(path) = parse_directive_path(path) {
+                    if !path.is_empty() {
+                        return LineContent::Include(path);
+                    }
+                }
+                LineContent::Malformed("missing include path")
                 // libretro handles sub-config files at this point in the function
                 // We don't need to read those since we just round-trip the directives in the original file
-                LineContent::Ignored
+            } else if let Some(path) = text.strip_prefix(terminals::REFERENCE_DIRECTIVE) {
+                if let Some(path) = parse_directive_path(path) {
+                    LineContent::Reference(path)
+                } else {
+                    LineContent::Malformed("missing reference path")
+                }
+            } else {
+                // libretro: All comments except those starting with the include or reference directive are ignored
+                LineContent::Comment
             }
         }
         LineText::Entry(text) => {
@@ -199,7 +202,7 @@ fn parse_line(raw: &str) -> LineContent {
 
             // libretro discards entries with empty keys *after* parsing the value, but this seems like a minor oversight rather than a deliberate design decision. We discard eagerly here.
             if key.is_empty() {
-                return LineContent::Ignored;
+                return LineContent::Malformed("missing key");
             }
 
             // libretro: An entry without a value is invalid
@@ -209,7 +212,7 @@ fn parse_line(raw: &str) -> LineContent {
                 LineContent::Entry(key, extract_value(value))
             } else {
                 // libretro: If we don't have an equal sign here, we've got an invalid string.
-                LineContent::Ignored
+                LineContent::Malformed("missing value")
             }
         }
     }
@@ -318,7 +321,7 @@ impl Config {
         loop {
             let chars_read = reader
                 .read_line(&mut line)
-                .with_context(|| format!("Cannot read config line {}", line_number))?;
+                .with_context(|| format!("Cannot read config line {line_number}"))?;
             if chars_read == 0 {
                 break;
             }
@@ -326,13 +329,16 @@ impl Config {
                 line.pop();
             }
             match parse_line(&line) {
-                LineContent::Ignored => {}
+                LineContent::Comment => {}
+                LineContent::Malformed(reason) => {
+                    warn!("Ignoring malformed line {line_number}: {reason}")
+                }
                 LineContent::Include(path) => config.includes.push(path),
                 LineContent::Reference(path) => config.references.push(path),
                 LineContent::Entry(key, value) => {
                     config
                         .add(key, value)
-                        .with_context(|| format!("Cannot parse config line {}", line_number))?;
+                        .with_context(|| format!("Cannot parse config line {line_number}"))?;
                 }
             }
             line.clear();
