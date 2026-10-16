@@ -78,14 +78,6 @@ pub(crate) struct Config {
     references: Vec<String>,
 }
 
-#[derive(Debug, PartialEq, Eq)]
-enum Line {
-    Ignored,
-    Include(String),
-    Reference(String),
-    Entry(String, String),
-}
-
 /// Port of libretro's `ISSPACE` (a `lr_char_props` table lookup): space, tab, LF and CR only. Unlike C `isspace`, it excludes `\f` and `\v`.
 fn is_space(c: char) -> bool {
     matches!(c, ' ' | '\t' | terminals::NEWLINE | '\r')
@@ -95,7 +87,7 @@ fn is_space(c: char) -> bool {
 fn extract_value(s: &str) -> String {
     let s = s.trim_start_matches(is_space);
     if let Some(rest) = s.strip_prefix(terminals::QUOTE) {
-        // Up to the next quote, or to the end of the line if unterminated.
+        // Up to the next quote, or to the end of the line if unterminated
         rest.split(terminals::QUOTE)
             .next()
             .unwrap_or("")
@@ -105,54 +97,117 @@ fn extract_value(s: &str) -> String {
     }
 }
 
-/// Port of the non-directive path of `config_file_strip_comment`: cut at the first `#` unless it lies inside the first quoted literal.
-fn strip_comment(line: &str) -> &str {
-    let Some(hash) = line.find(terminals::COMMENT_START) else {
-        return line;
-    };
-    if let Some(open) = line.find(terminals::QUOTE) {
-        if open < hash {
-            if let Some(close_rel) = line[open + 1..].find(terminals::QUOTE) {
-                if open + 1 + close_rel > hash {
-                    return line;
+enum LineText<'a> {
+    Entry(&'a str),
+    Comment(&'a str),
+}
+
+/// Port of libretro's `config_file_strip_comment`. Returns entry text rather than mutating the argument.
+///
+/// Searches input string for a comment (*#*) entry
+///
+/// If first character is *#*, then entire line is a comment and may correspond to a directive (command action -- e.g. include sub-config file). In this case, the function returns the comment itself (everything after the *#* character)
+/// If a *#* character is found inside a string literal value, then it does not correspond to a comment and is ignored. In this case, the whole line is entry text
+/// If a *#* character is found anywhere else, then the comment text is a suffix of the input string and has no programmatic value. In this case, the entry text is returned with comment removed
+fn split_line_text(line: &str) -> LineText<'_> {
+    // Search for a comment character
+    if let Some(comment_start) = line.find(terminals::COMMENT_START) {
+        // Check whether entire line is a comment
+        // > First character == '#'
+        if comment_start == 0 {
+            // Return comment for processing at a higher level
+            return LineText::Comment(line);
+        }
+        // Comment character occurs at an offset:
+        // Search for the start of a string literal value
+        if let Some(literal_start) = line.find(terminals::QUOTE) {
+            // Check whether string literal start occurs *before* the comment character
+            if literal_start < comment_start {
+                // Search for the end of the string literal value
+                if let Some(literal_end) = line[literal_start + 1..].find(terminals::QUOTE) {
+                    // Check whether string literal end occurs *after* the comment character
+                    // > If this is the case, ignore the comment
+                    // > Return the entry text
+                    if literal_end > comment_start {
+                        return LineText::Entry(line);
+                    }
                 }
             }
         }
+        // If we reach this point, then a comment exists outside of a string literal
+        // > Trim the entire comment from the end of the line
+        return LineText::Entry(&line[..comment_start]);
     }
-    &line[..hash]
+
+    LineText::Entry(line)
 }
 
 fn parse_directive_path(text: &str) -> Option<String> {
-    if text.is_empty() {
-        return None;
-    }
+    // TODO libretro doesn't do this?
+    // if text.is_empty() {
+    //     return None;
+    // }
     let path = extract_value(text);
     if path.is_empty() {
+        // TODO libretro doesn't do this?
         None
     } else {
         Some(path)
     }
 }
 
-/// Port of `config_file_parse_line`. While `config_file_parse_line` modifies the struct fields directly and returns a Boolean indicating whether the line was meaningful, this version returns the parsed line without modifying any state.
-fn parse_line(raw: &str) -> Line {
-    if let Some(comment) = raw.strip_prefix(terminals::COMMENT_START) {
-        if let Some(path) = comment.strip_prefix(terminals::INCLUDE_DIRECTIVE) {
-            return parse_directive_path(path).map_or(Line::Ignored, Line::Include);
-        } else if let Some(path) = comment.strip_prefix(terminals::REFERENCE_DIRECTIVE) {
-            return parse_directive_path(path).map_or(Line::Ignored, Line::Reference);
+#[derive(Debug, PartialEq, Eq)]
+enum LineContent {
+    Ignored,
+    Include(String),
+    Reference(String),
+    Entry(String, String),
+}
+
+/// Port of libretro's `config_file_parse_line`.
+///
+/// The C function modifies the struct fields directly and returns a `boolean` indicating whether the line contained an entry. Since this does not work well in Rust, this port returns the parsed line without mutating any state.
+fn parse_line(raw: &str) -> LineContent {
+    // Remove any comment text
+    let line_text = split_line_text(raw);
+    // Check whether entire line is a comment
+    match line_text {
+        LineText::Comment(text) => {
+            if let Some(path) = text.strip_prefix(terminals::INCLUDE_DIRECTIVE) {
+                parse_directive_path(path).map_or(LineContent::Ignored, LineContent::Include)
+            } else if let Some(path) = text.strip_prefix(terminals::REFERENCE_DIRECTIVE) {
+                parse_directive_path(path).map_or(LineContent::Ignored, LineContent::Reference)
+            } else {
+                // All comments except those starting with the include or reference directive are ignored
+
+                // libretro handles sub-config files at this point in the function
+                // We don't need to read those since we just round-trip the directives in the original file
+                LineContent::Ignored
+            }
+        }
+        LineText::Entry(text) => {
+            // Skip to first non-space character
+            let text = text.trim_start_matches(is_space);
+
+            // Copy line contents into key until we reach the next space character
+            let key: String = text.chars().take_while(char::is_ascii_graphic).collect();
+
+            // Note: libretro discards entries with empty keys *after* parsing the value, but this seems like a minor oversight rather than a deliberate design decision. We discard eagerly here.
+            if key.is_empty() {
+                return LineContent::Ignored;
+            }
+
+            // An entry without a value is invalid
+            let text = text[key.len()..].trim_start_matches(is_space);
+
+            if let Some(value) = text.strip_prefix('=') {
+                LineContent::Entry(key, extract_value(value))
+            } else {
+                // If we don't have an equal sign here, we've got an invalid string.
+                LineContent::Ignored
+            }
         }
     }
-    let line = strip_comment(raw).trim_start_matches(is_space);
-    let key: String = line.chars().take_while(char::is_ascii_graphic).collect();
-    if key.is_empty() {
-        return Line::Ignored;
-    }
-    let rest = line[key.len()..].trim_start_matches(is_space);
-    let Some(value) = rest.strip_prefix('=') else {
-        return Line::Ignored; // No '=' after the key
-    };
-    Line::Entry(key, extract_value(value))
 }
 
 /// Keys are ASCII graphic runs. `#` would start a comment, and `"` could make a later `#` in the value look like it's outside the quoted literal.
@@ -269,10 +324,10 @@ impl Config {
                 line.pop();
             }
             match parse_line(&line) {
-                Line::Ignored => {}
-                Line::Include(path) => config.includes.push(path),
-                Line::Reference(path) => config.references.push(path),
-                Line::Entry(key, value) => {
+                LineContent::Ignored => {}
+                LineContent::Include(path) => config.includes.push(path),
+                LineContent::Reference(path) => config.references.push(path),
+                LineContent::Entry(key, value) => {
                     config
                         .add(key, value)
                         .with_context(|| format!("Cannot parse config line {}", line_number))?;
