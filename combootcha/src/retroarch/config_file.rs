@@ -24,6 +24,8 @@
 //!
 //! - Repeated keys collapse to the topmost entry. TODO is this true?
 //! - Lines with an empty key or an empty `#reference` path are dropped. TODO confirm
+//!
+//! Comments copied from the libretro source code have been prefixed as such.
 
 use anyhow::{bail, Context, Result};
 use log::{debug, info};
@@ -110,22 +112,22 @@ enum LineText<'a> {
 /// If a *#* character is found inside a string literal value, then it does not correspond to a comment and is ignored. In this case, the whole line is entry text
 /// If a *#* character is found anywhere else, then the comment text is a suffix of the input string and has no programmatic value. In this case, the entry text is returned with comment removed
 fn split_line_text(line: &str) -> LineText<'_> {
-    // Search for a comment character
+    // libretro: Search for a comment character
     if let Some(comment_start) = line.find(terminals::COMMENT_START) {
-        // Check whether entire line is a comment
+        // libretro: Check whether entire line is a comment
         // > First character == '#'
         if comment_start == 0 {
             // Return comment for processing at a higher level
             return LineText::Comment(line);
         }
-        // Comment character occurs at an offset:
+        // libretro: Comment character occurs at an offset:
         // Search for the start of a string literal value
         if let Some(literal_start) = line.find(terminals::QUOTE) {
-            // Check whether string literal start occurs *before* the comment character
+            // libretro: Check whether string literal start occurs *before* the comment character
             if literal_start < comment_start {
-                // Search for the end of the string literal value
+                // libretro: Search for the end of the string literal value
                 if let Some(literal_end) = line[literal_start + 1..].find(terminals::QUOTE) {
-                    // Check whether string literal end occurs *after* the comment character
+                    // libretro: Check whether string literal end occurs *after* the comment character
                     // > If this is the case, ignore the comment
                     // > Return the entry text
                     if literal_end > comment_start {
@@ -134,7 +136,7 @@ fn split_line_text(line: &str) -> LineText<'_> {
                 }
             }
         }
-        // If we reach this point, then a comment exists outside of a string literal
+        // libretro: If we reach this point, then a comment exists outside of a string literal
         // > Trim the entire comment from the end of the line
         return LineText::Entry(&line[..comment_start]);
     }
@@ -168,9 +170,9 @@ enum LineContent {
 ///
 /// The C function modifies the struct fields directly and returns a `boolean` indicating whether the line contained an entry. Since this does not work well in Rust, this port returns the parsed line without mutating any state.
 fn parse_line(raw: &str) -> LineContent {
-    // Remove any comment text
+    // libretro: Remove any comment text
     let line_text = split_line_text(raw);
-    // Check whether entire line is a comment
+    // libretro: Check whether entire line is a comment
     match line_text {
         LineText::Comment(text) => {
             if let Some(path) = text.strip_prefix(terminals::INCLUDE_DIRECTIVE) {
@@ -178,7 +180,7 @@ fn parse_line(raw: &str) -> LineContent {
             } else if let Some(path) = text.strip_prefix(terminals::REFERENCE_DIRECTIVE) {
                 parse_directive_path(path).map_or(LineContent::Ignored, LineContent::Reference)
             } else {
-                // All comments except those starting with the include or reference directive are ignored
+                // libretro: All comments except those starting with the include or reference directive are ignored
 
                 // libretro handles sub-config files at this point in the function
                 // We don't need to read those since we just round-trip the directives in the original file
@@ -186,24 +188,24 @@ fn parse_line(raw: &str) -> LineContent {
             }
         }
         LineText::Entry(text) => {
-            // Skip to first non-space character
+            // libretro: Skip to first non-space character
             let text = text.trim_start_matches(is_space);
 
-            // Copy line contents into key until we reach the next space character
+            // libretro: Copy line contents into key until we reach the next space character
             let key: String = text.chars().take_while(char::is_ascii_graphic).collect();
 
-            // Note: libretro discards entries with empty keys *after* parsing the value, but this seems like a minor oversight rather than a deliberate design decision. We discard eagerly here.
+            // libretro discards entries with empty keys *after* parsing the value, but this seems like a minor oversight rather than a deliberate design decision. We discard eagerly here.
             if key.is_empty() {
                 return LineContent::Ignored;
             }
 
-            // An entry without a value is invalid
+            // libretro: An entry without a value is invalid
             let text = text[key.len()..].trim_start_matches(is_space);
 
             if let Some(value) = text.strip_prefix('=') {
                 LineContent::Entry(key, extract_value(value))
             } else {
-                // If we don't have an equal sign here, we've got an invalid string.
+                // libretro: If we don't have an equal sign here, we've got an invalid string.
                 LineContent::Ignored
             }
         }
@@ -353,6 +355,7 @@ impl Config {
                 .with_context(|| format!("Cannot write key-value entry at line {line_number}"))?;
             line_number += 1;
         }
+        // libretro: Config files are read from the top down: if duplicate entries are found then the topmost one in the list takes precedence. This means `#include' directives must go *after* individual config entries, otherwise they will override any custom-set values
         for path in self.includes.iter() {
             write_directive(&mut writer, terminals::INCLUDE_DIRECTIVE, path)
                 .with_context(|| format!("Cannot write include directive at line {line_number}"))?;
