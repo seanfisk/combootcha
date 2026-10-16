@@ -74,7 +74,7 @@ impl Config {
                 let old_value = slot.get();
                 if new_value == *old_value {
                     debug!(
-                        "Desired value {:?} for {} matches existing value; no need to update",
+                        "New value {:?} for {} matches existing value; no need to update",
                         new_value,
                         slot.key()
                     );
@@ -89,7 +89,7 @@ impl Config {
                     slot.insert(new_value.into_owned());
                     true
                 } else {
-                    debug!(
+                    warn!(
                         "Discarding duplicate value {:?} for {}; keeping existing value {:?}",
                         new_value,
                         slot.key(),
