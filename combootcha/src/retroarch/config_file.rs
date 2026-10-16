@@ -122,7 +122,7 @@ fn split_line_text(line: &str) -> LineText<'_> {
         // > First character == '#'
         if comment_start == 0 {
             // Return comment for processing at a higher level
-            return LineText::Comment(line);
+            return LineText::Comment(&line[1..]);
         }
         // libretro: Comment character occurs at an offset:
         // Search for the start of a string literal value
@@ -148,13 +148,6 @@ fn split_line_text(line: &str) -> LineText<'_> {
     LineText::Entry(line)
 }
 
-fn parse_directive_path(text: &str) -> Option<String> {
-    if text.is_empty() {
-        return None;
-    }
-    Some(extract_value(text))
-}
-
 enum LineContent {
     Include(String),
     Reference(String),
@@ -172,24 +165,30 @@ fn parse_line(raw: &str) -> LineContent {
     // libretro: Check whether entire line is a comment
     match line_text {
         LineText::Comment(text) => {
-            // libretro quirk: includes or references with missing paths are discarded, includes with empty string ("") paths are discarded, but references with empty string paths are retained. Emulate.
             if let Some(path) = text.strip_prefix(terminals::INCLUDE_DIRECTIVE) {
-                if let Some(path) = parse_directive_path(path) {
-                    if !path.is_empty() {
-                        return LineContent::Include(path);
+                if path.is_empty() {
+                    LineContent::Malformed("missing include path")
+                } else {
+                    let path = extract_value(path);
+                    if path.is_empty() {
+                        LineContent::Malformed("empty include path")
+                    } else {
+                        LineContent::Include(path)
                     }
                 }
-                LineContent::Malformed("missing include path")
                 // libretro handles sub-config files at this point in the function
                 // We don't need to read those since we just round-trip the directives in the original file
             } else if let Some(path) = text.strip_prefix(terminals::REFERENCE_DIRECTIVE) {
-                if let Some(path) = parse_directive_path(path) {
-                    LineContent::Reference(path)
-                } else {
+                if path.is_empty() {
                     LineContent::Malformed("missing reference path")
+                } else {
+                    // libretro quirk: references with empty string paths are retained. Emulate.
+                    LineContent::Reference(extract_value(path))
                 }
             } else {
                 // libretro: All comments except those starting with the include or reference directive are ignored
+
+                // Notably, the "include or reference directive" *includes a trailing space*, so the lines `#include` or `#reference` will *not* be classified by this code as directives, and will be ignored as plain comments
                 LineContent::Comment
             }
         }
@@ -200,7 +199,7 @@ fn parse_line(raw: &str) -> LineContent {
             // libretro: Copy line contents into key until we reach the next space character
             let key: String = text.chars().take_while(char::is_ascii_graphic).collect();
 
-            // libretro discards entries with empty keys *after* parsing the value, but this seems like a minor oversight rather than a deliberate design decision. We discard eagerly here.
+            // libretro ignores entries with empty keys *after* parsing the value, but this seems like a minor oversight rather than a deliberate design decision. We ignore eagerly here.
             if key.is_empty() {
                 return LineContent::Malformed("missing key");
             }
@@ -329,12 +328,18 @@ impl Config {
                 line.pop();
             }
             match parse_line(&line) {
-                LineContent::Comment => {}
+                LineContent::Comment => trace!("Ignoring comment at line {line_number}"),
                 LineContent::Malformed(reason) => {
                     warn!("Ignoring malformed line {line_number}: {reason}")
                 }
-                LineContent::Include(path) => config.includes.push(path),
-                LineContent::Reference(path) => config.references.push(path),
+                LineContent::Include(path) => {
+                    debug!("Adding include path {path:?}");
+                    config.includes.push(path);
+                }
+                LineContent::Reference(path) => {
+                    debug!("Adding reference path {path:?}");
+                    config.references.push(path);
+                }
                 LineContent::Entry(key, value) => {
                     config
                         .add(key, value)
