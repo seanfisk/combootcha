@@ -99,25 +99,26 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
         if updated {
             info!("Writing updated RetroArch config to {config_path:?}");
 
-            || -> Result<_> {
+            || -> Result<()> {
+                // Create temp file in same directory as original file. This guarantees the files will be on the same filesystem, so the rename will be atomic.
+                let temp_file = NamedTempFile::new_in(&config_dir)
+                    .with_context(|| format!("Could not create temporary file in {:?}", config_dir))?;
+                let temp_file_path = temp_file.path();
+                debug!("Writing new RetroArch config to temp file {temp_file_path:?}");
+                config.write_to(&temp_file)?;
+                temp_file.as_file()
+                    .sync_all()
+                    .with_context(|| format!("Could not sync temporary file at {:?}", temp_file_path))?;
 
-            // Create temp file in same directory as original file. This guarantees the files will be on the same filesystem, so the rename will be atomic.
-            let temp_file = NamedTempFile::new_in(&config_dir)
-                .with_context(|| format!("Could not create temporary file in {:?}", config_dir))?;
-            let temp_file_path = temp_file.path();
-            debug!("Writing new RetroArch config to temp file {temp_file_path:?}");
-            config.write_to(&temp_file)?;
-            temp_file.as_file()
-                .sync_all()
-                .with_context(|| format!("Could not sync temporary file at {:?}", temp_file_path))?;
+                debug!("Applying original permissions to {temp_file_path:?}");
+                temp_file.as_file().set_permissions(original_permissions)
+                    .with_context(|| format!("Error applying original permissions to {config_path:?}"))?;
 
-            debug!("Moving temp file {temp_file_path:?} to {config_path:?}");
-            let temp_file_path = temp_file_path.to_owned(); // Rust variable `temp_file' is moved when we call `persist' (I am not talking about being moved on the filesystem)
-            let temp_file = temp_file.persist(&config_path).with_context(|| format!("Could not move temporary file {temp_file_path:?} to {config_path:?}"))?;
+                debug!("Moving temp file {temp_file_path:?} to {config_path:?}");
+                let temp_file_path = temp_file_path.to_owned(); // Rust variable `temp_file' is moved when we call `persist' (I am not talking about being moved on the filesystem)
+                temp_file.persist(&config_path).with_context(|| format!("Could not move temporary file {temp_file_path:?} to {config_path:?}"))?;
 
-            debug!("Restoring original permissions to newly-written {config_path:?}");
-                temp_file.set_permissions(original_permissions)
-                    .with_context(|| format!("Error restoring permissions to newly-written {config_path:?}"))
+                Ok(())
             }().with_context(|| format!("Could not write RetroArch config to {config_path:?}"))?;
         } else {
             info!("RetroArch already configured correctly; not updating config file");
