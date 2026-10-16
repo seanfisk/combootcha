@@ -26,7 +26,7 @@
 //! - Lines with an empty key or an empty `#reference` path are dropped. TODO confirm
 
 use anyhow::{bail, Context, Result};
-use log::debug;
+use log::{debug, info};
 use std::borrow::Cow;
 use std::cmp::Ordering;
 use std::collections::BTreeMap;
@@ -286,7 +286,7 @@ impl Config {
                     );
                     false
                 } else if replace {
-                    debug!(
+                    info!(
                         "Replacing existing value {:?} for {} with desired value {:?}",
                         slot.get(),
                         slot.key(),
