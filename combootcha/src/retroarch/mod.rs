@@ -41,7 +41,7 @@ const ENTRIES: &[(&str, &str)] = &[
     ("input_player1_r", "i"),
     ("input_player1_right", "f"),
     ("input_player1_select", "y"),
-    ("input_player1_start", "h"),
+    ("input_player1_start", "l"),
     ("input_player1_up", "s"),
     ("input_reset", "nul"),
     ("input_rewind", "nul"),
