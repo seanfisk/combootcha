@@ -74,27 +74,26 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
             .join("Library/Application Support/RetroArch/config");
         scoby::fs::ensure_dir(&config_dir)?;
         let config_path = config_dir.join("retroarch.cfg");
-        info!("Reading RetroArch configuration file at {:?}", config_path);
-        let (mut config, original_permissions) = match File::open(&config_path) {
-            Err(e) => {
-                if e.kind() == std::io::ErrorKind::NotFound {
-                    debug!(
-                        "Missing file {:?}; returning empty configuration",
-                        config_path
-                    );
-                    Ok((Config::default(), std::fs::Permissions::from_mode(0o644)))
-                } else {
-                    Err(e).with_context(|| {
-                        format!("Could not open RetroArch configuration file at {config_path:?}")
-                    })
+        info!("Reading RetroArch config from {:?}", config_path);
+        let (mut config, original_permissions) = || -> Result<_> {
+            match File::open(&config_path) {
+                Err(e) => {
+                    if e.kind() == std::io::ErrorKind::NotFound {
+                        debug!("Config file {config_path:?} does not exist; starting with empty config");
+                        Ok((Config::default(), std::fs::Permissions::from_mode(0o644)))
+                    } else {
+                        Err(e.into())
+                    }
+                }
+                Ok(file) => {
+                    let config = Config::read_from(&file)?;
+                    let permissions = file.metadata()?.permissions();
+                    Ok((config, permissions))
                 }
             }
-            Ok(file) => {
-                let config = Config::read_from(&file)?;
-                let permissions = file.metadata()?.permissions();
-                Ok((config, permissions))
-            }
-        }?;
+        }().with_context(|| {
+            format!("Could not read RetroArch config from {config_path:?}")
+        })?;
         let mut updated = false;
         for &(key, value) in ENTRIES {
             updated |= config.replace(key, value)?;
