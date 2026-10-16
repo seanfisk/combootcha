@@ -7,7 +7,7 @@
 //!
 //! Comments copied from the libretro source code have been prefixed as such.
 
-use anyhow::{bail, Context, Result};
+use anyhow::{anyhow, bail, Context, Result};
 use log::{debug, info, trace, warn};
 use std::borrow::Cow;
 use std::cmp::Ordering;
@@ -23,6 +23,26 @@ pub(crate) struct Config {
 }
 
 impl Config {
+    fn add_include<'a, P>(&mut self, path: P) -> Result<()>
+    where
+        P: Into<Cow<'a, str>>,
+    {
+        let path = path.into();
+        validate_value(path.as_ref())?;
+        self.includes.push(path.into_owned());
+        Ok(())
+    }
+
+    fn add_reference<'a, P>(&mut self, path: P) -> Result<()>
+    where
+        P: Into<Cow<'a, str>>,
+    {
+        let path = path.into();
+        validate_value(path.as_ref())?;
+        self.references.push(path.into_owned());
+        Ok(())
+    }
+
     // Generics are added to public functions, whereas the types in the private `set` function is concrete. This ensures that concrete copies generated for the generic remain small and is a common Rust pattern.
 
     /// Ensure `key` is set to `value`, returning whether the configuration was updated.
@@ -57,11 +77,7 @@ impl Config {
             bail!("Invalid RetroArch config key {key:?}");
         }
 
-        trace!("Validating RetroArch config value {new_value:?}");
-        // There is no escaping, so values and paths cannot hold `"` or a line break.
-        if new_value.contains([terminals::QUOTE, terminals::NEWLINE]) {
-            bail!("Invalid RetroArch config value {new_value:?}");
-        }
+        validate_value(new_value.as_ref())?;
 
         use std::collections::btree_map::Entry;
         Ok(match self.entries.entry(Key(key.into_owned())) {
@@ -117,24 +133,25 @@ impl Config {
                 line.pop();
             }
             match parse_line(&line) {
-                LineContent::Ignored => trace!("Ignoring line {line_number}"),
+                LineContent::Ignored => {
+                    trace!("Ignoring line {line_number}");
+                    Ok(())
+                }
                 LineContent::Malformed(reason) => {
-                    warn!("Ignoring malformed line {line_number}: {reason}")
+                    warn!("Ignoring malformed line {line_number}: {reason}");
+                    Ok(())
                 }
                 LineContent::Include(path) => {
                     debug!("Adding include path {path:?}");
-                    config.includes.push(path);
+                    config.add_include(path)
                 }
                 LineContent::Reference(path) => {
                     debug!("Adding reference path {path:?}");
-                    config.references.push(path);
+                    config.add_reference(path)
                 }
-                LineContent::Entry(key, value) => {
-                    config
-                        .add(key, value)
-                        .with_context(|| format!("Cannot parse config line {line_number}"))?;
-                }
+                LineContent::Entry(key, value) => config.add(key, value).map(|_| ()),
             }
+            .with_context(|| format!("Cannot parse config line {line_number}"))?;
             line.clear();
             line_number += 1;
         }
@@ -210,10 +227,10 @@ fn is_space(c: char) -> bool {
 }
 
 /// Port of libretro's `config_file_extract_value`.
-fn extract_value(s: &str) -> String {
-    let s = s.trim_start_matches(is_space);
+fn extract_value(line: &str) -> String {
+    let line = line.trim_start_matches(is_space);
     // libretro: Note: From this point on, an empty value string is valid
-    if let Some(rest) = s.strip_prefix(terminals::QUOTE) {
+    if let Some(rest) = line.strip_prefix(terminals::QUOTE) {
         // libretro: If first character is ("), we have a full string literal
 
         // Read up to the next quote, or to the end of the line if the literal is unterminated
@@ -223,7 +240,17 @@ fn extract_value(s: &str) -> String {
             .to_string()
     } else {
         // libretro: This is not a string literal - just read until the next space is found
-        s.chars().take_while(char::is_ascii_graphic).collect()
+        line.chars().take_while(char::is_ascii_graphic).collect()
+    }
+}
+
+fn validate_value(text: &str) -> Result<()> {
+    trace!("Validating RetroArch value {text:?}");
+    // There is no escaping, so values and paths cannot hold `"` or a line break.
+    if text.contains([terminals::QUOTE, terminals::NEWLINE]) {
+        Err(anyhow!("Invalid RetroArch value {text:?}"))
+    } else {
+        Ok(())
     }
 }
 
