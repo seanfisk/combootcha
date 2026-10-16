@@ -85,7 +85,7 @@ fn is_space(c: char) -> bool {
     matches!(c, ' ' | '\t' | terminals::NEWLINE | '\r')
 }
 
-/// Port of `config_file_extract_value`.
+/// Port of libretro's `config_file_extract_value`.
 fn extract_value(s: &str) -> String {
     let s = s.trim_start_matches(is_space);
     // libretro: Note: From this point on, an empty value string is valid
@@ -162,7 +162,6 @@ fn parse_directive_path(text: &str) -> Option<String> {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
 enum LineContent {
     Ignored,
     Include(String),
