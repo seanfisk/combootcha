@@ -35,7 +35,7 @@ impl Config {
     }
 
     /// Add a key-value pair if one was not already present.
-    pub(super) fn add<'a, K, V>(&mut self, key: K, value: V) -> Result<bool>
+    fn add<'a, K, V>(&mut self, key: K, value: V) -> Result<bool>
     where
         K: Into<Cow<'a, str>>,
         V: Into<Cow<'a, str>>,
@@ -67,7 +67,7 @@ impl Config {
         Ok(match self.entries.entry(Key(key.into_owned())) {
             Entry::Vacant(slot) => {
                 debug!("Adding new value {:?} for {}", new_value, slot.key());
-                slot.insert(new_value.to_string());
+                slot.insert(new_value.into_owned());
                 true
             }
             Entry::Occupied(mut slot) => {
@@ -101,7 +101,6 @@ impl Config {
         })
     }
 
-    /// Streaming equivalent of `parse`. Splits on `\n` only, like libretro (`BufRead::lines` would also strip a `\r` before the `\n`).
     pub(crate) fn read_from<R: Read>(reader: R) -> Result<Self> {
         let mut reader = BufReader::new(reader);
         let mut config = Self::default();
@@ -255,7 +254,8 @@ fn split_line_text(line: &str) -> LineText<'_> {
             // libretro: Check whether string literal start occurs *before* the comment character
             if literal_start < comment_start {
                 // libretro: Search for the end of the string literal value
-                if let Some(relative_literal_end) = line[literal_start + 1..].find(terminals::QUOTE) {
+                if let Some(relative_literal_end) = line[literal_start + 1..].find(terminals::QUOTE)
+                {
                     // libretro: Check whether string literal end occurs *after* the comment character
                     // > If this is the case, ignore the comment
                     // > Return the entry text
@@ -343,14 +343,14 @@ fn parse_line(raw: &str) -> LineContent {
     }
 }
 
-fn write_directive<W, D, P>(mut writer: &mut W, directive: D, path: P) -> std::io::Result<()>
+fn write_directive<W, D, P>(mut writer: W, directive: D, path: P) -> std::io::Result<()>
 where
     W: Write,
     D: Display,
     P: Display,
 {
     writeln!(
-        &mut writer,
+        writer,
         r#"{}{}"{}""#,
         terminals::COMMENT_START,
         directive,
