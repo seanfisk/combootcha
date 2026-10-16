@@ -106,11 +106,11 @@ enum LineText<'a> {
 
 /// Port of libretro's `config_file_strip_comment`. Returns entry text rather than mutating the argument.
 ///
-/// Searches input string for a comment (*#*) entry
+/// Searches input string for a comment (`#`) entry
 ///
-/// If first character is *#*, then entire line is a comment and may correspond to a directive (command action -- e.g. include sub-config file). In this case, the function returns the comment itself (everything after the *#* character)
-/// If a *#* character is found inside a string literal value, then it does not correspond to a comment and is ignored. In this case, the whole line is entry text
-/// If a *#* character is found anywhere else, then the comment text is a suffix of the input string and has no programmatic value. In this case, the entry text is returned with comment removed
+/// If first character is `#`, then entire line is a comment and may correspond to a directive (command action -- e.g. include sub-config file). In this case, the function returns the comment itself (everything after the `#` character)
+/// If a `#` character is found inside a string literal value, then it does not correspond to a comment and is ignored. In this case, the whole line is entry text
+/// If a `#` character is found anywhere else, then the comment text is a suffix of the input string and has no programmatic value. In this case, the entry text is returned with comment removed
 fn split_line_text(line: &str) -> LineText<'_> {
     // libretro: Search for a comment character
     if let Some(comment_start) = line.find(terminals::COMMENT_START) {
@@ -262,6 +262,7 @@ impl Config {
         K: Into<Cow<'a, str>>,
         V: Into<Cow<'a, str>>,
     {
+        // libretro: Only add entry to the map if an entry with the specified value does not already exist
         self.set(key.into(), value.into(), /*replace=*/ false)
     }
 
