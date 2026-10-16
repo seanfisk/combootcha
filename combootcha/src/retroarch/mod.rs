@@ -63,7 +63,6 @@ const ENTRIES: &[(&str, &str)] = &[
 ];
 
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
-    info!("Configuring RetroArch");
     // Upon start, RetroArch reads retroarch.cfg into memory. If retroarch.cfg is missing, empty, or missing some keys, the missing keys will get default values and immediately be written back.
     //
     // Upon quit, RetroArch always writes retroarch.cfg from memory with no regard to any changes that were made to the file externally while RetroArch was running.
@@ -75,6 +74,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
             .join("Library/Application Support/RetroArch/config");
         scoby::fs::ensure_dir(&config_dir)?;
         let config_path = config_dir.join("retroarch.cfg");
+        info!("Reading RetroArch configuration file at {:?}", config_path);
         let (mut config, original_permissions) = match File::open(&config_path) {
             Err(e) => {
                 if e.kind() == std::io::ErrorKind::NotFound {
@@ -100,7 +100,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
             updated |= config.replace(key, value)?;
         }
         if updated {
-            info!("Config updated; writing out"); // TODO Improve
+            info!("Writing updated RetroArch config to {config_path:?}");
 
             // Create temp file in same directory as original file. This guarantees the files will be on the same filesystem, so the rename will be atomic.
             let file = NamedTempFile::new_in(&config_dir)
@@ -114,22 +114,16 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
             debug!("Moving output file into original location");
             let file_path = file_path.to_owned(); // Rust variable `file' is moved when we call `persist' (I am not talking about being moved on the filesystem)
             let file = file.persist(&config_path).with_context(|| {
-                format!(
-                    "Could not move temporary file {:?} back to original file's location at {:?}",
-                    file_path, config_path
-                )
+                format!("Could not move temporary file {file_path:?} back to original file's location at {config_path:?}")
             })?;
 
             debug!("Setting output file permissions");
             file.set_permissions(original_permissions)
                 .with_context(|| {
-                    format!(
-                        "Error writing permissions to newly-written output file {:?}",
-                        config_path
-                    )
+                    format!("Error writing permissions to newly-written output file {config_path:?}")
                 })?;
         } else {
-            info!("Nothing to update in config"); // TODO improve
+            info!("RetroArch already configured correctly; not updating config file");
         }
         Ok(())
     })
