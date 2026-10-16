@@ -240,6 +240,24 @@ fn extract_value(line: &str) -> String {
             .to_string()
     } else {
         // libretro: This is not a string literal - just read until the next space is found
+
+        // libretro 1.22.2 introduces a round-trip bug here by not rejecting quotes embedded in an unquoted value. This results in this series of actions:
+        //
+        // Given: #reference a"b
+        // Reads path: a"b
+        // Writes: #reference "a"b"
+        //
+        // Given: #reference "a"b"
+        // Reads path: a
+        // Writes: #reference "a"
+        //
+        // Given: #reference "a"
+        // Reads path: a
+        // Writes: #reference "a"
+        //
+        // The cycle then stabilizes.
+        //
+        // We reject all values with embedded quotes or newlines in the mutators of Config to ensure that doesn't happen. We deliberately do not validate here in order to mirror the structure of this function in libretro.
         line.chars().take_while(char::is_ascii_graphic).collect()
     }
 }
