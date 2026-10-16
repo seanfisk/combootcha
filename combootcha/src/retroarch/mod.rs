@@ -11,8 +11,6 @@ use config_file::Config;
 
 use scoby::UserExt as OtherUserExt;
 
-// TODO Final pass to improve logging and errors
-
 const ENTRIES: &[(&str, &str)] = &[
     ("input_audio_mute", "nul"),
     ("input_cheat_index_minus", "nul"),
