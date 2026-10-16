@@ -28,7 +28,7 @@
 //! Comments copied from the libretro source code have been prefixed as such.
 
 use anyhow::{bail, Context, Result};
-use log::{debug, info};
+use log::{trace, debug, info};
 use std::borrow::Cow;
 use std::cmp::Ordering;
 use std::collections::BTreeMap;
@@ -215,25 +215,6 @@ fn parse_line(raw: &str) -> LineContent {
     }
 }
 
-/// Keys are ASCII graphic runs. `#` would start a comment, and `"` could make a later `#` in the value look like it's outside the quoted literal.
-fn check_key(key: &str) -> Result<()> {
-    if key.is_empty()
-        || !key.bytes().all(|b| b.is_ascii_graphic())
-        || key.contains([terminals::COMMENT_START, terminals::QUOTE])
-    {
-        bail!("Invalid RetroArch config key {key:?}");
-    }
-    Ok(())
-}
-
-/// There is no escaping, so values and paths can't hold `"` or a line break. `#include` / `#reference` paths are written raw, like values.
-fn check_text(what: &str, text: &str) -> Result<()> {
-    if text.contains([terminals::QUOTE, terminals::NEWLINE]) {
-        bail!("{what} can't be represented in retroarch.cfg: {text:?}"); // TODO improve
-    }
-    Ok(())
-}
-
 fn write_directive<W, D, P>(mut writer: &mut W, directive: D, path: P) -> std::io::Result<()>
 where
     W: Write,
@@ -250,6 +231,8 @@ where
 }
 
 impl Config {
+    // Generics are added to public functions, whereas the types in the private `set` function is concrete. This ensures that concrete copies generated for the generic remain small and is a common Rust pattern.
+
     /// Ensure `key` is set to `value`, returning whether the configuration was updated.
     pub(crate) fn replace<'a, K, V>(&mut self, key: K, value: V) -> Result<bool>
     where
@@ -272,8 +255,21 @@ impl Config {
     /// Attempt to associate a key with a new value, optional replacing it if already present. Returns a `bool` indicating whether the configuration was updated.
     fn set(&mut self, key: Cow<'_, str>, new_value: Cow<'_, str>, replace: bool) -> Result<bool> {
         // Design decision: eagerly validate keys and values even if the value will be discarded
-        check_key(&key)?;
-        check_text("value", &new_value)?;
+
+        trace!("Validating RetroArch config key {key:?}");
+        // Keys are ASCII graphic runs. `#` would start a comment, and `"` could make a later `#` in the value look like it's outside the quoted literal.
+        if key.is_empty()
+            || !key.bytes().all(|b| b.is_ascii_graphic())
+            || key.contains([terminals::COMMENT_START, terminals::QUOTE])
+        {
+            bail!("Invalid RetroArch config key {key:?}");
+        }
+
+        trace!("Validating RetroArch config value {new_value:?}");
+        // There is no escaping, so values and paths cannot hold `"` or a line break.
+        if new_value.contains([terminals::QUOTE, terminals::NEWLINE]) {
+            bail!("Invalid RetroArch config value {new_value:?}");
+        }
 
         use std::collections::btree_map::Entry;
         Ok(match self.entries.entry(Key(key.into_owned())) {
