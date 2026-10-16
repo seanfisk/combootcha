@@ -5,26 +5,6 @@
 //!
 //! The grammar has been updated in [this pull request](https://github.com/libretro/RetroArch/pull/19218). This will very likely be included in a future release, but as of time of writing, 2026-10, we will target the grammar in version 1.22.2.
 //!
-//! Emulated libretro behavior:
-//!
-//! - Lines are split on `\n`.
-//! - A line starting with `#` in column 0 is either a `#include "path"` directive, `#reference "path"` directive, or a comment.
-//! - Otherwise, a line is `key = value`.
-//! - A key is a run of ASCII graphic characters, followed by optional whitespace, `=`, and the value.
-//! - A value is either `"quoted"` (ends at the next `"`; there is no escaping, and an unterminated quote runs to end of line) or unquoted (a run of ASCII graphic characters).
-//! - A `#` after the start of the line begins a comment unless it falls inside the first quoted literal.
-//! - The topmost entry wins when a key repeats.
-//! - Lookups are case-sensitive.
-//! - File is written in this order:
-//!   1. `#reference` lines
-//!   2. Entries sorted by keys with `strcasecmp`, with each entry as `key = "value"`.
-//!   3. `#include` lines
-//!
-//! Deliberate deviations from libretro behavior:
-//!
-//! - Repeated keys collapse to the topmost entry. TODO is this true?
-//! - Lines with an empty key or an empty `#reference` path are dropped. TODO confirm
-//!
 //! Comments copied from the libretro source code have been prefixed as such.
 
 use anyhow::{bail, Context, Result};
