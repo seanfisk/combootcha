@@ -15,6 +15,158 @@ use std::collections::BTreeMap;
 use std::fmt::Display;
 use std::io::{BufRead, BufReader, BufWriter, Read, Write};
 
+#[derive(Debug, Default, PartialEq, Eq)]
+pub(crate) struct Config {
+    entries: BTreeMap<Key, String>,
+    includes: Vec<String>,
+    references: Vec<String>,
+}
+
+impl Config {
+    // Generics are added to public functions, whereas the types in the private `set` function is concrete. This ensures that concrete copies generated for the generic remain small and is a common Rust pattern.
+
+    /// Ensure `key` is set to `value`, returning whether the configuration was updated.
+    pub(crate) fn replace<'a, K, V>(&mut self, key: K, value: V) -> Result<bool>
+    where
+        K: Into<Cow<'a, str>>,
+        V: Into<Cow<'a, str>>,
+    {
+        self.set(key.into(), value.into(), /*replace=*/ true)
+    }
+
+    /// Add a key-value pair if one was not already present.
+    pub(super) fn add<'a, K, V>(&mut self, key: K, value: V) -> Result<bool>
+    where
+        K: Into<Cow<'a, str>>,
+        V: Into<Cow<'a, str>>,
+    {
+        // libretro: Only add entry to the map if an entry with the specified value does not already exist
+        self.set(key.into(), value.into(), /*replace=*/ false)
+    }
+
+    /// Attempt to associate a key with a new value, optional replacing it if already present. Returns a `bool` indicating whether the configuration was updated.
+    fn set(&mut self, key: Cow<'_, str>, new_value: Cow<'_, str>, replace: bool) -> Result<bool> {
+        // Design decision: eagerly validate keys and values even if the value will be discarded
+
+        trace!("Validating RetroArch config key {key:?}");
+        // Keys are ASCII graphic runs. `#` would start a comment, and `"` could make a later `#` in the value look like it's outside the quoted literal.
+        if key.is_empty()
+            || !key.bytes().all(|b| b.is_ascii_graphic())
+            || key.contains([terminals::COMMENT_START, terminals::QUOTE])
+        {
+            bail!("Invalid RetroArch config key {key:?}");
+        }
+
+        trace!("Validating RetroArch config value {new_value:?}");
+        // There is no escaping, so values and paths cannot hold `"` or a line break.
+        if new_value.contains([terminals::QUOTE, terminals::NEWLINE]) {
+            bail!("Invalid RetroArch config value {new_value:?}");
+        }
+
+        use std::collections::btree_map::Entry;
+        Ok(match self.entries.entry(Key(key.into_owned())) {
+            Entry::Vacant(slot) => {
+                debug!("Adding new value {:?} for {}", new_value, slot.key());
+                slot.insert(new_value.to_string());
+                true
+            }
+            Entry::Occupied(mut slot) => {
+                let old_value = slot.get();
+                if new_value == *old_value {
+                    debug!(
+                        "Desired value {:?} for {} matches existing value; no need to update",
+                        new_value,
+                        slot.key()
+                    );
+                    false
+                } else if replace {
+                    info!(
+                        "Replacing existing value {:?} for {} with desired value {:?}",
+                        slot.get(),
+                        slot.key(),
+                        new_value,
+                    );
+                    slot.insert(new_value.into_owned());
+                    true
+                } else {
+                    debug!(
+                        "Discarding duplicate value {:?} for {}; keeping existing value {:?}",
+                        new_value,
+                        slot.key(),
+                        slot.get()
+                    );
+                    false
+                }
+            }
+        })
+    }
+
+    /// Streaming equivalent of `parse`. Splits on `\n` only, like libretro (`BufRead::lines` would also strip a `\r` before the `\n`).
+    pub(crate) fn read_from<R: Read>(reader: R) -> Result<Self> {
+        let mut reader = BufReader::new(reader);
+        let mut config = Self::default();
+        let mut line = String::new();
+        let mut line_number = 1;
+        loop {
+            let chars_read = reader
+                .read_line(&mut line)
+                .with_context(|| format!("Cannot read config line {line_number}"))?;
+            if chars_read == 0 {
+                break;
+            }
+            if line.ends_with(terminals::NEWLINE) {
+                line.pop();
+            }
+            match parse_line(&line) {
+                LineContent::Comment => trace!("Ignoring comment at line {line_number}"),
+                LineContent::Malformed(reason) => {
+                    warn!("Ignoring malformed line {line_number}: {reason}")
+                }
+                LineContent::Include(path) => {
+                    debug!("Adding include path {path:?}");
+                    config.includes.push(path);
+                }
+                LineContent::Reference(path) => {
+                    debug!("Adding reference path {path:?}");
+                    config.references.push(path);
+                }
+                LineContent::Entry(key, value) => {
+                    config
+                        .add(key, value)
+                        .with_context(|| format!("Cannot parse config line {line_number}"))?;
+                }
+            }
+            line.clear();
+            line_number += 1;
+        }
+        Ok(config)
+    }
+
+    pub(crate) fn write_to<W: Write>(&self, writer: W) -> Result<()> {
+        let mut writer = BufWriter::new(writer);
+        let mut line_number = 1;
+        for path in self.references.iter() {
+            write_directive(&mut writer, terminals::REFERENCE_DIRECTIVE, path).with_context(
+                || format!("Cannot write reference directive at line {line_number}"),
+            )?;
+            line_number += 1;
+        }
+        for (key, value) in self.entries.iter() {
+            writeln!(&mut writer, r#"{} = "{}""#, key.as_str(), value)
+                .with_context(|| format!("Cannot write key-value entry at line {line_number}"))?;
+            line_number += 1;
+        }
+        // libretro: Config files are read from the top down - if duplicate entries are found then the topmost one in the list takes precedence. This means `#include' directives must go *after* individual config entries, otherwise they will override any custom-set values
+        for path in self.includes.iter() {
+            write_directive(&mut writer, terminals::INCLUDE_DIRECTIVE, path)
+                .with_context(|| format!("Cannot write include directive at line {line_number}"))?;
+            line_number += 1;
+        }
+        writer.flush()?;
+        Ok(())
+    }
+}
+
 mod terminals {
     pub(super) const NEWLINE: char = '\n';
     pub(super) const INCLUDE_DIRECTIVE: &str = "include ";
@@ -51,13 +203,6 @@ impl Display for Key {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
         write!(f, "key {:?}", self.0)
     }
-}
-
-#[derive(Debug, Default, PartialEq, Eq)]
-pub(crate) struct Config {
-    entries: BTreeMap<Key, String>,
-    includes: Vec<String>,
-    references: Vec<String>,
 }
 
 /// Port of libretro's `ISSPACE` (a `lr_char_props` table lookup): space, tab, LF and CR only. Unlike C `isspace`, it excludes `\f` and `\v`.
@@ -210,149 +355,4 @@ where
         directive,
         path
     )
-}
-
-impl Config {
-    // Generics are added to public functions, whereas the types in the private `set` function is concrete. This ensures that concrete copies generated for the generic remain small and is a common Rust pattern.
-
-    /// Ensure `key` is set to `value`, returning whether the configuration was updated.
-    pub(crate) fn replace<'a, K, V>(&mut self, key: K, value: V) -> Result<bool>
-    where
-        K: Into<Cow<'a, str>>,
-        V: Into<Cow<'a, str>>,
-    {
-        self.set(key.into(), value.into(), /*replace=*/ true)
-    }
-
-    /// Add a key-value pair if one was not already present.
-    pub(super) fn add<'a, K, V>(&mut self, key: K, value: V) -> Result<bool>
-    where
-        K: Into<Cow<'a, str>>,
-        V: Into<Cow<'a, str>>,
-    {
-        // libretro: Only add entry to the map if an entry with the specified value does not already exist
-        self.set(key.into(), value.into(), /*replace=*/ false)
-    }
-
-    /// Attempt to associate a key with a new value, optional replacing it if already present. Returns a `bool` indicating whether the configuration was updated.
-    fn set(&mut self, key: Cow<'_, str>, new_value: Cow<'_, str>, replace: bool) -> Result<bool> {
-        // Design decision: eagerly validate keys and values even if the value will be discarded
-
-        trace!("Validating RetroArch config key {key:?}");
-        // Keys are ASCII graphic runs. `#` would start a comment, and `"` could make a later `#` in the value look like it's outside the quoted literal.
-        if key.is_empty()
-            || !key.bytes().all(|b| b.is_ascii_graphic())
-            || key.contains([terminals::COMMENT_START, terminals::QUOTE])
-        {
-            bail!("Invalid RetroArch config key {key:?}");
-        }
-
-        trace!("Validating RetroArch config value {new_value:?}");
-        // There is no escaping, so values and paths cannot hold `"` or a line break.
-        if new_value.contains([terminals::QUOTE, terminals::NEWLINE]) {
-            bail!("Invalid RetroArch config value {new_value:?}");
-        }
-
-        use std::collections::btree_map::Entry;
-        Ok(match self.entries.entry(Key(key.into_owned())) {
-            Entry::Vacant(slot) => {
-                debug!("Adding new value {:?} for {}", new_value, slot.key());
-                slot.insert(new_value.to_string());
-                true
-            }
-            Entry::Occupied(mut slot) => {
-                let old_value = slot.get();
-                if new_value == *old_value {
-                    debug!(
-                        "Desired value {:?} for {} matches existing value; no need to update",
-                        new_value,
-                        slot.key()
-                    );
-                    false
-                } else if replace {
-                    info!(
-                        "Replacing existing value {:?} for {} with desired value {:?}",
-                        slot.get(),
-                        slot.key(),
-                        new_value,
-                    );
-                    slot.insert(new_value.into_owned());
-                    true
-                } else {
-                    debug!(
-                        "Discarding duplicate value {:?} for {}; keeping existing value {:?}",
-                        new_value,
-                        slot.key(),
-                        slot.get()
-                    );
-                    false
-                }
-            }
-        })
-    }
-
-    /// Streaming equivalent of `parse`. Splits on `\n` only, like libretro (`BufRead::lines` would also strip a `\r` before the `\n`).
-    pub(crate) fn read_from<R: Read>(reader: R) -> Result<Self> {
-        let mut reader = BufReader::new(reader);
-        let mut config = Self::default();
-        let mut line = String::new();
-        let mut line_number = 1;
-        loop {
-            let chars_read = reader
-                .read_line(&mut line)
-                .with_context(|| format!("Cannot read config line {line_number}"))?;
-            if chars_read == 0 {
-                break;
-            }
-            if line.ends_with(terminals::NEWLINE) {
-                line.pop();
-            }
-            match parse_line(&line) {
-                LineContent::Comment => trace!("Ignoring comment at line {line_number}"),
-                LineContent::Malformed(reason) => {
-                    warn!("Ignoring malformed line {line_number}: {reason}")
-                }
-                LineContent::Include(path) => {
-                    debug!("Adding include path {path:?}");
-                    config.includes.push(path);
-                }
-                LineContent::Reference(path) => {
-                    debug!("Adding reference path {path:?}");
-                    config.references.push(path);
-                }
-                LineContent::Entry(key, value) => {
-                    config
-                        .add(key, value)
-                        .with_context(|| format!("Cannot parse config line {line_number}"))?;
-                }
-            }
-            line.clear();
-            line_number += 1;
-        }
-        Ok(config)
-    }
-
-    pub(crate) fn write_to<W: Write>(&self, writer: W) -> Result<()> {
-        let mut writer = BufWriter::new(writer);
-        let mut line_number = 1;
-        for path in self.references.iter() {
-            write_directive(&mut writer, terminals::REFERENCE_DIRECTIVE, path).with_context(
-                || format!("Cannot write reference directive at line {line_number}"),
-            )?;
-            line_number += 1;
-        }
-        for (key, value) in self.entries.iter() {
-            writeln!(&mut writer, r#"{} = "{}""#, key.as_str(), value)
-                .with_context(|| format!("Cannot write key-value entry at line {line_number}"))?;
-            line_number += 1;
-        }
-        // libretro: Config files are read from the top down - if duplicate entries are found then the topmost one in the list takes precedence. This means `#include' directives must go *after* individual config entries, otherwise they will override any custom-set values
-        for path in self.includes.iter() {
-            write_directive(&mut writer, terminals::INCLUDE_DIRECTIVE, path)
-                .with_context(|| format!("Cannot write include directive at line {line_number}"))?;
-            line_number += 1;
-        }
-        writer.flush()?;
-        Ok(())
-    }
 }
