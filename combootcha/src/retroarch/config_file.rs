@@ -255,10 +255,11 @@ fn split_line_text(line: &str) -> LineText<'_> {
             // libretro: Check whether string literal start occurs *before* the comment character
             if literal_start < comment_start {
                 // libretro: Search for the end of the string literal value
-                if let Some(literal_end) = line[literal_start + 1..].find(terminals::QUOTE) {
+                if let Some(relative_literal_end) = line[literal_start + 1..].find(terminals::QUOTE) {
                     // libretro: Check whether string literal end occurs *after* the comment character
                     // > If this is the case, ignore the comment
                     // > Return the entry text
+                    let literal_end = literal_start + 1 + relative_literal_end;
                     if literal_end > comment_start {
                         return LineText::Entry(line);
                     }
