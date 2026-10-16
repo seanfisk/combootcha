@@ -161,7 +161,7 @@ fn check_key(key: &str) -> Result<()> {
         || !key.bytes().all(|b| b.is_ascii_graphic())
         || key.contains([terminals::COMMENT_START, terminals::QUOTE])
     {
-        bail!("invalid RetroArch config key: {key:?}"); // TODO improve
+        bail!("Invalid RetroArch config key {key:?}");
     }
     Ok(())
 }
