@@ -57,7 +57,6 @@ const ENTRIES: &[(&str, &str)] = &[
     ("input_volume_down", "minus"),
     ("input_volume_up", "equals"),
     ("menu_unified_controls", "true"),
-    ("menu_disable_search_button", "false"), // Temporary, until I can figure out how to disable the `s` key starting the menu search
     ("video_fullscreen", "true"),
 ];
 
