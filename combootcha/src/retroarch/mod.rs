@@ -56,7 +56,9 @@ const ENTRIES: &[(&str, &str)] = &[
     ("input_toggle_fullscreen", "nul"),
     ("input_volume_down", "minus"),
     ("input_volume_up", "equals"),
-    ("menu_unified_controls", "true"),
+    ("menu_unified_controls", "false"), // TODO Until I can figure out how to disable `s` key triggering search
+    // Note: Disabling search does not fix the `s` key issue. Setting this to false causes `s` to do nothing.
+    ("menu_disable_search_button", "true"),
     ("video_fullscreen", "true"),
 ];
 
