@@ -115,7 +115,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
                     .with_context(|| format!("Error applying original permissions to {config_path:?}"))?;
 
                 debug!("Moving temp file {temp_file_path:?} to {config_path:?}");
-                let temp_file_path = temp_file_path.to_owned(); // Rust variable `temp_file' is moved when we call `persist' (I am not talking about being moved on the filesystem)
+                let temp_file_path = temp_file_path.to_owned(); // Rust variable `temp_file` is moved when we call `persist` (I am not talking about being moved on the filesystem)
                 temp_file.persist(&config_path).with_context(|| format!("Could not move temporary file {temp_file_path:?} to {config_path:?}"))?;
 
                 Ok(())

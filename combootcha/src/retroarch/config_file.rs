@@ -407,26 +407,21 @@ where
 mod tests {
     use super::*;
 
-    // Test harness. Everything goes through `Config`'s read/write interface using in-memory byte buffers, so no test touches the filesystem. Raw strings are deliberately flush left: their contents are exactly the bytes of the file.
-
-    /// Parse `input` as a `retroarch.cfg`.
     fn read(input: &str) -> Result<Config> {
         Config::read_from(input.as_bytes())
     }
 
-    /// Emit `config` as the text of a `retroarch.cfg`.
     fn write(config: &Config) -> Result<String> {
         let mut buffer = Vec::new();
         config.write_to(&mut buffer)?;
         Ok(String::from_utf8(buffer)?)
     }
 
-    /// Parse `input` and emit the result: what Combootcha does to a file it leaves otherwise unchanged.
     fn round_trip(input: &str) -> Result<String> {
         write(&read(input)?)
     }
 
-    /// A file in exactly the form RetroArch writes: references first, entries sorted like `strcasecmp`, includes last.
+    /// A file in exactly the form RetroArch writes: references first, then entries sorted with `strcasecmp`, then includes.
     const CANONICAL: &str = r#"#reference "/Users/me/shared.cfg"
 audio_driver = "coreaudio"
 audiofilter_dir = "default"
@@ -439,10 +434,11 @@ video_fullscreen = "true"
 
     #[test]
     fn canonical_file_round_trips_byte_for_byte() -> Result<()> {
-        let output = round_trip(CANONICAL)?;
+        let config = read(CANONICAL)?;
+        let output = write(&config)?;
         assert_eq!(output, CANONICAL);
-        // The emitted text must also read back as an equal `Config`.
-        assert_eq!(read(&output)?, read(CANONICAL)?);
+        // The emitted text must also read back as an equal Config
+        assert_eq!(read(&output)?, config);
         Ok(())
     }
 
@@ -496,11 +492,11 @@ video_fullscreen = "true"
     #[test]
     fn blank_whitespace_only_and_comment_lines_are_ignored() -> Result<()> {
         let input = concat!(
-            "#a comment\n",
+            "# a comment\n",
             "\n",
             "   \n",
             "	\n",
-            r#"# an indented comment
+            r#"  # an indented comment
 video_fullscreen = "true"
 #include
 #reference
