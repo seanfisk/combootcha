@@ -402,3 +402,273 @@ where
         path
     )
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // Test harness. Everything goes through `Config`'s read/write interface using in-memory byte buffers, so no test touches the filesystem. Raw strings are deliberately flush left: their contents are exactly the bytes of the file.
+
+    /// Parse `input` as a `retroarch.cfg`.
+    fn read(input: &str) -> Result<Config> {
+        Config::read_from(input.as_bytes())
+    }
+
+    /// Emit `config` as the text of a `retroarch.cfg`.
+    fn write(config: &Config) -> Result<String> {
+        let mut buffer = Vec::new();
+        config.write_to(&mut buffer)?;
+        Ok(String::from_utf8(buffer)?)
+    }
+
+    /// Parse `input` and emit the result: what Combootcha does to a file it leaves otherwise unchanged.
+    fn round_trip(input: &str) -> Result<String> {
+        write(&read(input)?)
+    }
+
+    /// A file in exactly the form RetroArch writes: references first, entries sorted like `strcasecmp`, includes last.
+    const CANONICAL: &str = r#"#reference "/Users/me/shared.cfg"
+audio_driver = "coreaudio"
+audiofilter_dir = "default"
+input_player1_a = "k"
+video_fullscreen = "true"
+#include "/Users/me/base.cfg"
+"#;
+
+    // Whole-file behavior
+
+    #[test]
+    fn canonical_file_round_trips_byte_for_byte() -> Result<()> {
+        let output = round_trip(CANONICAL)?;
+        assert_eq!(output, CANONICAL);
+        // The emitted text must also read back as an equal `Config`.
+        assert_eq!(read(&output)?, read(CANONICAL)?);
+        Ok(())
+    }
+
+    #[test]
+    fn output_is_normalized_to_libretro_ordering() -> Result<()> {
+        // Same content as `CANONICAL`, but shuffled: an include first, a reference last, entries out of order. Note that `audio_driver` sorts before `audiofilter_dir` because `_` (0x5F) precedes `f` (0x66) once case is folded.
+        let shuffled = r#"#include "/Users/me/base.cfg"
+video_fullscreen = "true"
+audiofilter_dir = "default"
+input_player1_a = "k"
+audio_driver = "coreaudio"
+#reference "/Users/me/shared.cfg"
+"#;
+        assert_eq!(round_trip(shuffled)?, CANONICAL);
+        Ok(())
+    }
+
+    #[test]
+    fn empty_input_is_an_empty_config() -> Result<()> {
+        let config = read("")?;
+        assert_eq!(config, Config::default());
+        assert_eq!(write(&config)?, "");
+        Ok(())
+    }
+
+    #[test]
+    fn replace_reports_whether_the_config_changed() -> Result<()> {
+        let mut config = read(
+            r#"video_fullscreen = "false"
+"#,
+        )?;
+
+        // Existing key, different value: updated.
+        assert!(config.replace("video_fullscreen", "true")?);
+        // Same value again: not updated, which is what lets `configure` skip rewriting the file.
+        assert!(!config.replace("video_fullscreen", "true")?);
+        // New key: updated, and it lands in sorted position.
+        assert!(config.replace("audio_driver", "coreaudio")?);
+
+        assert_eq!(
+            write(&config)?,
+            r#"audio_driver = "coreaudio"
+video_fullscreen = "true"
+"#
+        );
+        Ok(())
+    }
+
+    // Lines that carry no entry
+
+    #[test]
+    fn blank_whitespace_only_and_comment_lines_are_ignored() -> Result<()> {
+        let input = concat!(
+            "#a comment\n",
+            "\n",
+            "   \n",
+            "	\n",
+            r#"# an indented comment
+video_fullscreen = "true"
+#include
+#reference
+  #include "indented.cfg"
+"#
+        );
+        assert_eq!(
+            round_trip(input)?,
+            r#"video_fullscreen = "true"
+"#
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn lines_without_a_value_are_dropped() -> Result<()> {
+        // No `=` at all, no whitespace between key and `=` (so the whole thing is the key), and a lone `=`.
+        let input = r#"just_a_key
+no_space="1"
+= "orphan"
+video_fullscreen = "true"
+"#;
+        assert_eq!(
+            round_trip(input)?,
+            r#"video_fullscreen = "true"
+"#
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn form_feed_and_vertical_tab_are_not_whitespace() -> Result<()> {
+        // libretro's `ISSPACE` is only space, tab, CR and LF (unlike C's `isspace`), so `\f` and `\v` cannot separate a key from its `=`. These are escapes, not a raw string, because the characters are invisible.
+        let input = "a\x0b= \"1\"\n\x0cb = \"2\"\nc\t=\t\"3\"\n";
+        assert_eq!(
+            round_trip(input)?,
+            r#"c = "3"
+"#
+        );
+        Ok(())
+    }
+
+    // Values
+
+    #[test]
+    fn hash_inside_a_quoted_value_is_not_a_comment() -> Result<()> {
+        let input = r#"savefile_directory = "/Users/me/a#b/c"
+"#;
+        assert_eq!(round_trip(input)?, input);
+        Ok(())
+    }
+
+    #[test]
+    fn hash_after_a_value_starts_a_comment() -> Result<()> {
+        let input = r#"quoted = "1" # note
+unquoted = 2 # note
+"#;
+        assert_eq!(
+            round_trip(input)?,
+            r#"quoted = "1"
+unquoted = "2"
+"#
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn unquoted_values_end_at_whitespace_and_are_emitted_quoted() -> Result<()> {
+        let input = r#"a = foo bar
+b = "x" trailing text
+"#;
+        assert_eq!(
+            round_trip(input)?,
+            r#"a = "foo"
+b = "x"
+"#
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn empty_and_unterminated_values() -> Result<()> {
+        let input = r#"empty = ""
+unterminated = "runs to the end of the line
+"#;
+        assert_eq!(
+            round_trip(input)?,
+            r#"empty = ""
+unterminated = "runs to the end of the line"
+"#
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn crlf_line_endings_are_normalized() -> Result<()> {
+        let input = "a = \"1\"\r\nb = 2\r\n#include \"x.cfg\"\r\n";
+        assert_eq!(
+            round_trip(input)?,
+            r#"a = "1"
+b = "2"
+#include "x.cfg"
+"#
+        );
+        Ok(())
+    }
+
+    // Keys
+
+    #[test]
+    fn duplicate_keys_keep_the_first_value() -> Result<()> {
+        let input = r#"a = "first"
+a = "second"
+"#;
+        assert_eq!(
+            round_trip(input)?,
+            r#"a = "first"
+"#
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn keys_differing_only_by_case_are_distinct() -> Result<()> {
+        // They compare equal when case is folded, so the tiebreak is plain byte order: `F` (0x46) before `f` (0x66).
+        let input = r#"foo = "lower"
+Foo = "upper"
+"#;
+        assert_eq!(
+            round_trip(input)?,
+            r#"Foo = "upper"
+foo = "lower"
+"#
+        );
+        Ok(())
+    }
+
+    // Directives
+
+    #[test]
+    fn directive_paths_are_emitted_quoted_in_their_original_order() -> Result<()> {
+        let input = r#"#include b.cfg
+#include "a file with spaces.cfg"
+#reference z.cfg
+#reference "another path.cfg"
+"#;
+        assert_eq!(
+            round_trip(input)?,
+            r#"#reference "z.cfg"
+#reference "another path.cfg"
+#include "b.cfg"
+#include "a file with spaces.cfg"
+"#
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn empty_reference_path_is_kept_but_empty_include_path_is_dropped() -> Result<()> {
+        // libretro retains an empty reference path and drops an empty include path; we mirror both.
+        let input = r#"#reference ""
+#include ""
+"#;
+        assert_eq!(
+            round_trip(input)?,
+            r#"#reference ""
+"#
+        );
+        Ok(())
+    }
+}
