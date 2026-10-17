@@ -443,7 +443,7 @@ video_fullscreen = "true"
     }
 
     #[test]
-    fn output_is_normalized_to_libretro_ordering() -> Result<()> {
+    fn output_normalized_to_libretro_ordering() -> Result<()> {
         // Same content as `CANONICAL`, but shuffled: an include first, a reference last, entries out of order. Note that `audio_driver` sorts before `audiofilter_dir` because `_` (0x5F) precedes `f` (0x66) once case is folded.
         let shuffled = r#"#include "/Users/me/base.cfg"
 video_fullscreen = "true"
@@ -457,7 +457,7 @@ audio_driver = "coreaudio"
     }
 
     #[test]
-    fn empty_input_is_an_empty_config() -> Result<()> {
+    fn empty_input_is_empty_config() -> Result<()> {
         let config = read("")?;
         assert_eq!(config, Config::default());
         assert_eq!(write(&config)?, "");
@@ -465,7 +465,7 @@ audio_driver = "coreaudio"
     }
 
     #[test]
-    fn replace_reports_whether_the_config_changed() -> Result<()> {
+    fn replace_reports_whether_config_changed() -> Result<()> {
         let mut config = read(
             r#"video_fullscreen = "false"
 "#,
@@ -512,7 +512,7 @@ video_fullscreen = "true"
     }
 
     #[test]
-    fn lines_without_a_value_are_dropped() -> Result<()> {
+    fn lines_without_value_are_dropped() -> Result<()> {
         // No `=` at all, no whitespace between key and `=` (so the whole thing is the key), and a lone `=`.
         let input = r#"just_a_key
 no_space="1"
@@ -528,8 +528,8 @@ video_fullscreen = "true"
     }
 
     #[test]
-    fn form_feed_and_vertical_tab_are_not_whitespace() -> Result<()> {
-        // libretro's `ISSPACE` is only space, tab, CR and LF (unlike C's `isspace`), so `\f` and `\v` cannot separate a key from its `=`. These are escapes, not a raw string, because the characters are invisible.
+    fn form_feed_and_vertical_tab_not_considered_whitespace() -> Result<()> {
+        // libretro's `ISSPACE` is only space, tab, CR and LF (unlike C's `isspace`), so `\f` and `\v` cannot separate a key from its `=`.
         let input = "a\x0b= \"1\"\n\x0cb = \"2\"\nc\t=\t\"3\"\n";
         assert_eq!(
             round_trip(input)?,
@@ -542,7 +542,7 @@ video_fullscreen = "true"
     // Values
 
     #[test]
-    fn hash_inside_a_quoted_value_is_not_a_comment() -> Result<()> {
+    fn number_sign_inside_quoted_value_is_not_comment() -> Result<()> {
         let input = r#"savefile_directory = "/Users/me/a#b/c"
 "#;
         assert_eq!(round_trip(input)?, input);
@@ -550,7 +550,7 @@ video_fullscreen = "true"
     }
 
     #[test]
-    fn hash_after_a_value_starts_a_comment() -> Result<()> {
+    fn number_sign_after_value_starts_comment() -> Result<()> {
         let input = r#"quoted = "1" # note
 unquoted = 2 # note
 "#;
@@ -564,7 +564,7 @@ unquoted = "2"
     }
 
     #[test]
-    fn unquoted_values_end_at_whitespace_and_are_emitted_quoted() -> Result<()> {
+    fn unquoted_values_end_at_whitespace_and_emitted_quoted() -> Result<()> {
         let input = r#"a = foo bar
 b = "x" trailing text
 "#;
@@ -592,7 +592,7 @@ unterminated = "runs to the end of the line"
     }
 
     #[test]
-    fn crlf_line_endings_are_normalized() -> Result<()> {
+    fn crlf_line_endings_normalized() -> Result<()> {
         let input = "a = \"1\"\r\nb = 2\r\n#include \"x.cfg\"\r\n";
         assert_eq!(
             round_trip(input)?,
@@ -607,7 +607,7 @@ b = "2"
     // Keys
 
     #[test]
-    fn duplicate_keys_keep_the_first_value() -> Result<()> {
+    fn duplicate_keys_keep_first_value() -> Result<()> {
         let input = r#"a = "first"
 a = "second"
 "#;
@@ -637,7 +637,7 @@ foo = "lower"
     // Directives
 
     #[test]
-    fn directive_paths_are_emitted_quoted_in_their_original_order() -> Result<()> {
+    fn directive_paths_emitted_quoted_in_original_order() -> Result<()> {
         let input = r#"#include b.cfg
 #include "a file with spaces.cfg"
 #reference z.cfg
@@ -655,7 +655,7 @@ foo = "lower"
     }
 
     #[test]
-    fn empty_reference_path_is_kept_but_empty_include_path_is_dropped() -> Result<()> {
+    fn empty_reference_path_retained_empty_include_path_dropped() -> Result<()> {
         // libretro retains an empty reference path and drops an empty include path; we mirror both.
         let input = r#"#reference ""
 #include ""
