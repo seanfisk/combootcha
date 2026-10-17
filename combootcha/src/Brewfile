@@ -38,7 +38,17 @@ cask 'google-chrome'
 #     Previously, RetroArch for OSX/macOS only had an OpenGL video driver. Since Apple will be deprecating OpenGL support in the near future, this Metal video driver essentially future proofs RetroArch for mac!﻿
 #
 # So, let's go with Metal instead of OpenGL.
-cask 'retroarch-metal'
+
+# Update from 2026-10-17:
+#
+# RetroArch 1.22.2, the latest stable version at time of writing, is very laggy on macOS Ventura 13. It relates to these bugs:
+#
+# https://github.com/libretro/RetroArch/issues/18674
+# https://github.com/libretro/RetroArch/issues/18408
+# https://github.com/libretro/RetroArch/issues/18417
+#
+# The Nightly version at time of writing works well, however, so we need to use it.
+cask 'retroarch-metal@nightly'
 
 # On initial computer setup, App Store will prompt for an Apple ID which is stored in my password manager. Therefore, to make this easier, all apps installed with mas should be listed in the Brewfile *after* the password manager.
 
