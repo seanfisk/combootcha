@@ -14,7 +14,7 @@ use scoby::UserExt as OtherUserExt;
 const ENTRIES: &[(&str, &str)] = &[
     // General options
     ("menu_unified_controls", "false"), // TODO At least until I can figure out how to disable `s` key triggering search
-    ("video_fullscreen", "true"),
+    ("video_fullscreen", "false"),
     ("input_autodetect_enable", "false"), // Allows clearing RetroPad bindings for analog sticks without falling back to automatic bindings
     // TODO Is it necessary to unbind these?
     // ("input_player1_gun_offscreen_shot_mbtn", "nul"),
