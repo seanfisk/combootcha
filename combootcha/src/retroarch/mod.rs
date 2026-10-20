@@ -18,6 +18,7 @@ const ENTRIES: &[(&str, &str)] = &[
     ("input_autodetect_enable", "false"), // Allows clearing RetroPad bindings for analog sticks without falling back to automatic bindings
     // RetroPad bindings
     // Order matches RetroArch's UI
+    // A value is explicitly set to "nul" to remove an unwanted RetroArch default binding
     //   Keyboard
     ("input_player1_b", "j"),
     ("input_player1_a", "k"),
@@ -31,13 +32,6 @@ const ENTRIES: &[(&str, &str)] = &[
     ("input_player1_down", "d"),
     ("input_player1_left", "a"),
     ("input_player1_right", "f"),
-    //       Unbind from defaults
-    ("input_player1_gun_trigger_mbtn", "nul"),
-    ("input_player1_gun_offscreen_shot_mbtn" /*reload*/, "nul"),
-    ("input_player1_gun_start", "nul"),
-    ("input_player1_gun_start_mbtn", "nul"),
-    ("input_player1_gun_select", "nul"),
-    ("input_player1_gun_select_mbtn", "nul"),
     //     Hotkeys
     ("input_reset", "nul"),
     ("input_toggle_fast_forward", "nul"),
@@ -65,7 +59,7 @@ const ENTRIES: &[(&str, &str)] = &[
     ("input_grab_mouse_toggle", "nul"),
     ("input_game_focus_toggle", "nul"),
     ("input_toggle_fullscreen", "z"),
-    // TODO Desktop
+    ("input_desktop_menu_toggle", "nul"),
     ("input_fps_toggle", "nul"),
     ("input_netplay_game_watch", "nul"),
     ("input_netplay_player_chat", "nul"),
@@ -82,7 +76,7 @@ const ENTRIES: &[(&str, &str)] = &[
     ("input_player1_start_btn", "3"),        // XBOX One Menu button
     ("input_player1_l_btn" /*shoulder*/, "10"), // XBOX One left trigger
     ("input_player1_r_btn" /*shoulder*/, "11"), // XBOX One right trigger
-    //       Unbound because the games I am playing don't use them, and I am using them for hotkeys
+    //       Unbind because the games I am playing don't use them, and I am using them for hotkeys
     ("input_player1_l2_btn" /*trigger*/, "nul"),
     ("input_player1_r2_btn" /*trigger*/, "nul"),
     ("input_player1_l3_btn" /*thumb*/, "nul"),
@@ -91,6 +85,16 @@ const ENTRIES: &[(&str, &str)] = &[
     ("input_player1_down_axis", "-1"),  // Left stick down
     ("input_player1_left_axis", "-0"),  // Left stick left
     ("input_player1_right_axis", "+0"), // Left stick right
+    //       Unbind because I'm not using a gun
+    ("input_player1_gun_trigger_mbtn", "nul"),
+    (
+        "input_player1_gun_offscreen_shot_mbtn", /*reload*/
+        "nul",
+    ),
+    ("input_player1_gun_start", "nul"),
+    ("input_player1_gun_start_mbtn", "nul"),
+    ("input_player1_gun_select", "nul"),
+    ("input_player1_gun_select_mbtn", "nul"),
     //     Hotkeys
     ("input_hold_fast_forward_btn", "11"),  // Right bumper
     ("input_hold_slowmotion_btn", "10"),    // Left bumper
