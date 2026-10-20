@@ -12,81 +12,94 @@ use config_file::Config;
 use scoby::UserExt as OtherUserExt;
 
 const ENTRIES: &[(&str, &str)] = &[
-    ("input_audio_mute", "nul"),
+    // General options
+    ("menu_unified_controls", "false"), // TODO At least until I can figure out how to disable `s` key triggering search
+    ("video_fullscreen", "true"),
     ("input_autodetect_enable", "false"), // Allows clearing RetroPad bindings for analog sticks without falling back to automatic bindings
-    ("input_cheat_index_minus", "nul"),
-    ("input_cheat_index_plus", "nul"),
-    ("input_cheat_toggle", "nul"),
-    ("input_fps_toggle", "nul"),
-    ("input_frame_advance", "nul"),
-    ("input_game_focus_toggle", "nul"),
-    ("input_grab_mouse_toggle", "nul"),
-    ("input_hold_fast_forward", "nul"),
-    ("input_hold_slowmotion", "nul"),
-    ("input_load_state", "n"),
-    ("input_menu_toggle", "q"),
-    ("input_netplay_game_watch", "nul"),
-    ("input_netplay_player_chat", "nul"),
-    ("input_pause_toggle", "nul"),
-    ("input_player1_a", "k"),
+    // TODO Is it necessary to unbind these?
+    // ("input_player1_gun_offscreen_shot_mbtn", "nul"),
+    // ("input_player1_gun_select", "nul"),
+    // ("input_player1_gun_select_mbtn", "nul"),
+    // ("input_player1_gun_start", "nul"),
+    // ("input_player1_gun_start_mbtn", "nul"),
+    // ("input_player1_gun_trigger_mbtn", "nul"),
+    // ("input_cheat_index_minus", "nul"),
+    // ("input_cheat_index_plus", "nul"),
+    // ("input_cheat_toggle", "nul"),
+    // ("input_fps_toggle", "nul"),
+    // ("input_frame_advance", "nul"),
+    // ("input_game_focus_toggle", "nul"),
+    // ("input_grab_mouse_toggle", "nul"),
+    // ("input_netplay_game_watch", "nul"),
+    // ("input_netplay_player_chat", "nul"),
+    // ("input_pause_toggle", "nul"),
+    // ("input_reset", "nul"),
+    // ("input_rewind", "nul"),
+    // ("input_screenshot", "nul"),
+    // ("input_shader_next", "nul"),
+    // ("input_shader_prev", "nul"),
+    // ("input_shader_toggle", "nul"),
+    // ("input_toggle_fast_forward", "nul"),
+    // RetroPad bindings
+    // Order matches RetroArch's UI
+    //   Keyboard
     ("input_player1_b", "j"),
-    ("input_player1_down", "d"),
-    ("input_player1_gun_offscreen_shot_mbtn", "nul"),
-    ("input_player1_gun_select", "nul"),
-    ("input_player1_gun_select_mbtn", "nul"),
-    ("input_player1_gun_start", "nul"),
-    ("input_player1_gun_start_mbtn", "nul"),
-    ("input_player1_gun_trigger_mbtn", "nul"),
-    ("input_player1_l", "u"),
-    ("input_player1_left", "a"),
-    ("input_player1_r", "i"),
-    ("input_player1_right", "f"),
+    ("input_player1_a", "k"),
+    ("input_player1_y", "nul"),
+    ("input_player1_x", "nul"),
     ("input_player1_select", "y"),
     ("input_player1_start", "l"),
+    ("input_player1_l", "u"),
+    ("input_player1_r", "i"),
     ("input_player1_up", "s"),
-    ("input_reset", "nul"),
-    ("input_rewind", "nul"),
-    ("input_save_state", "h"),
-    ("input_screenshot", "nul"),
-    ("input_shader_next", "nul"),
-    ("input_shader_prev", "nul"),
-    ("input_shader_toggle", "nul"),
-    ("input_state_slot_decrease", "period"),
-    ("input_state_slot_increase", "comma"),
-    ("input_toggle_fast_forward", "nul"),
-    ("input_toggle_fullscreen", "nul"),
-    ("input_volume_down", "minus"),
+    ("input_player1_down", "d"),
+    ("input_player1_left", "a"),
+    ("input_player1_right", "f"),
+    //     Hotkeys
+    ("input_hold_fast_forward", "nul"),
+    ("input_hold_slowmotion", "nul"),
+    ("input_audio_mute", "nul"),
     ("input_volume_up", "equals"),
-    ("menu_unified_controls", "false"), // TODO Until I can figure out how to disable `s` key triggering search
-    // Note: Disabling search does not fix the `s` key issue. Setting this to false causes `s` to do nothing.
-    ("menu_disable_search_button", "true"),
-    ("video_fullscreen", "true"),
-    // RetroPad to XBOX One Wireless Controller configuration
-    // Order matches RetroArch's UI
-    // Button names come from here: https://support.xbox.com/en-US/help/hardware-network/controller/xbox-one-wireless-controller
+    ("input_volume_down", "minus"),
+    ("input_menu_toggle", "q"),
+    ("input_load_state", "n"),
+    ("input_save_state", "h"),
+    ("input_state_slot_increase", "comma"),
+    ("input_state_slot_decrease", "period"),
+    ("input_toggle_fullscreen", "z"),
+    //   XBOX One Wireless Controller bindings
+    //   Button names come from here: https://support.xbox.com/en-US/help/hardware-network/controller/xbox-one-wireless-controller
     //
-    // RetroPad binds:
+    //     RetroPad binds
+    ("input_player1_analog_dpad_mode", "0"), // Set Analog to Digital Type to None. This is important because we want to use the D-pad for hotkeys.
     ("input_player1_b_btn" /*bottom*/, "0"), // XBOX One A button
     ("input_player1_a_btn" /*right*/, "8"), // XBOX One B button
     ("input_player1_y_btn" /*left*/, "1"), // XBOX One X button
     ("input_player1_x_btn" /*top*/, "9"), // XBOX One Y button
-    select,
-    start,
-    l shoulder,
-    r shoulder,
-    l trigger,
-    r trigger,
-    l thumb,
-    r thumb,
-    l analog up down left right,
-    r analog up down left right,
-    ("input_player1_analog_dpad_mode", "0"), // Disable analog to
-    ("input_hold_slowmotion_btn", "10"), // Left bumper
+    ("input_player1_select_btn", "2"), // XBOX One View button
+    ("input_player1_start_btn", "3"), // XBOX One Menu button
+    ("input_player1_l_btn" /*shoulder*/, "10"), // XBOX One left trigger
+    ("input_player1_r_btn" /*shoulder*/, "11"), // XBOX One right trigger
+    //       Unbound because the games I am playing don't use them, and I am using them for hotkeys
+    ("input_player1_l2_btn" /*trigger*/, "nul"),
+    ("input_player1_r2_btn" /*trigger*/, "nul"),
+    ("input_player1_l3_btn" /*thumb*/, "nul"),
+    ("input_player1_r3_btn" /*thumb*/, "nul"),
+    ("input_player1_up_axis", "+1"), // Left stick up
+    ("input_player1_down_axis", "-1"), // Left stick down
+    ("input_player1_left_axis", "-0"), // Left stick left
+    ("input_player1_right_axis", "+0"), // Left stick right
+    //     Hotkeys
     ("input_hold_fast_forward_btn", "11"), // Right bumper
+    ("input_hold_slowmotion_btn", "10"), // Left bumper
+    ("input_audio_mute_btn", "-2"), // Right stick click
+    ("input_volume_up_axis", "+3"), // Right stick up
+    ("input_volume_down_axis", "-3"), // Right stick down
     ("input_menu_toggle_btn", "16"), // XBOX One XBOX button
-    // Hotkeys:
     ("input_load_state_btn", "4"), // D-pad up
-    ("input_save_state_btn", "5"), //
+    ("input_save_state_btn", "5"), // D-pad down
+    ("input_state_slot_increase_btn", "7"), // D-pad right
+    ("input_state_slot_decrease_btn", "6"), // D-pad left
 ];
 
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
