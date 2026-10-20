@@ -13,6 +13,7 @@ use scoby::UserExt as OtherUserExt;
 
 const ENTRIES: &[(&str, &str)] = &[
     ("input_audio_mute", "nul"),
+    ("input_autodetect_enable", "false"), // Allows clearing RetroPad bindings for analog sticks without falling back to automatic bindings
     ("input_cheat_index_minus", "nul"),
     ("input_cheat_index_plus", "nul"),
     ("input_cheat_toggle", "nul"),
@@ -60,6 +61,32 @@ const ENTRIES: &[(&str, &str)] = &[
     // Note: Disabling search does not fix the `s` key issue. Setting this to false causes `s` to do nothing.
     ("menu_disable_search_button", "true"),
     ("video_fullscreen", "true"),
+    // RetroPad to XBOX One Wireless Controller configuration
+    // Order matches RetroArch's UI
+    // Button names come from here: https://support.xbox.com/en-US/help/hardware-network/controller/xbox-one-wireless-controller
+    //
+    // RetroPad binds:
+    ("input_player1_b_btn" /*bottom*/, "0"), // XBOX One A button
+    ("input_player1_a_btn" /*right*/, "8"), // XBOX One B button
+    ("input_player1_y_btn" /*left*/, "1"), // XBOX One X button
+    ("input_player1_x_btn" /*top*/, "9"), // XBOX One Y button
+    select,
+    start,
+    l shoulder,
+    r shoulder,
+    l trigger,
+    r trigger,
+    l thumb,
+    r thumb,
+    l analog up down left right,
+    r analog up down left right,
+    ("input_player1_analog_dpad_mode", "0"), // Disable analog to
+    ("input_hold_slowmotion_btn", "10"), // Left bumper
+    ("input_hold_fast_forward_btn", "11"), // Right bumper
+    ("input_menu_toggle_btn", "16"), // XBOX One XBOX button
+    // Hotkeys:
+    ("input_load_state_btn", "4"), // D-pad up
+    ("input_save_state_btn", "5"), //
 ];
 
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
