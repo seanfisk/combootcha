@@ -74,8 +74,8 @@ const ENTRIES: &[(&str, &str)] = &[
     ("input_player1_x_btn" /*top*/, "9"),    // XBOX One Y button
     ("input_player1_select_btn", "2"),       // XBOX One View button
     ("input_player1_start_btn", "3"),        // XBOX One Menu button
-    ("input_player1_l_btn" /*shoulder*/, "10"), // XBOX One left trigger
-    ("input_player1_r_btn" /*shoulder*/, "11"), // XBOX One right trigger
+    ("input_player1_l_btn" /*shoulder*/, "12"), // XBOX One left trigger
+    ("input_player1_r_btn" /*shoulder*/, "13"), // XBOX One right trigger
     //       Unbind because the games I am playing don't use them, and I am using them for hotkeys
     ("input_player1_l2_btn" /*trigger*/, "nul"),
     ("input_player1_r2_btn" /*trigger*/, "nul"),
