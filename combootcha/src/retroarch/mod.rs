@@ -16,30 +16,6 @@ const ENTRIES: &[(&str, &str)] = &[
     ("menu_unified_controls", "false"), // TODO At least until I can figure out how to disable `s` key triggering search
     ("video_fullscreen", "false"),
     ("input_autodetect_enable", "false"), // Allows clearing RetroPad bindings for analog sticks without falling back to automatic bindings
-    // TODO Is it necessary to unbind these?
-    // ("input_player1_gun_offscreen_shot_mbtn", "nul"),
-    // ("input_player1_gun_select", "nul"),
-    // ("input_player1_gun_select_mbtn", "nul"),
-    // ("input_player1_gun_start", "nul"),
-    // ("input_player1_gun_start_mbtn", "nul"),
-    // ("input_player1_gun_trigger_mbtn", "nul"),
-    // ("input_cheat_index_minus", "nul"),
-    // ("input_cheat_index_plus", "nul"),
-    // ("input_cheat_toggle", "nul"),
-    // ("input_fps_toggle", "nul"),
-    // ("input_frame_advance", "nul"),
-    // ("input_game_focus_toggle", "nul"),
-    // ("input_grab_mouse_toggle", "nul"),
-    // ("input_netplay_game_watch", "nul"),
-    // ("input_netplay_player_chat", "nul"),
-    // ("input_pause_toggle", "nul"),
-    // ("input_reset", "nul"),
-    // ("input_rewind", "nul"),
-    // ("input_screenshot", "nul"),
-    // ("input_shader_next", "nul"),
-    // ("input_shader_prev", "nul"),
-    // ("input_shader_toggle", "nul"),
-    // ("input_toggle_fast_forward", "nul"),
     // RetroPad bindings
     // Order matches RetroArch's UI
     //   Keyboard
@@ -55,9 +31,22 @@ const ENTRIES: &[(&str, &str)] = &[
     ("input_player1_down", "d"),
     ("input_player1_left", "a"),
     ("input_player1_right", "f"),
+    //       Unbind from defaults
+    ("input_player1_gun_trigger_mbtn", "nul"),
+    ("input_player1_gun_offscreen_shot_mbtn" /*reload*/, "nul"),
+    ("input_player1_gun_start", "nul"),
+    ("input_player1_gun_start_mbtn", "nul"),
+    ("input_player1_gun_select", "nul"),
+    ("input_player1_gun_select_mbtn", "nul"),
     //     Hotkeys
-    ("input_hold_fast_forward", "nul"),
+    ("input_reset", "nul"),
+    ("input_toggle_fast_forward", "nul"),
+    ("input_hold_fast_forward", "space"),
+    ("input_toggle_slowmotion", "nul"),
     ("input_hold_slowmotion", "nul"),
+    ("input_rewind", "nul"),
+    ("input_pause_toggle", "nul"),
+    ("input_frame_advance", "nul"),
     ("input_audio_mute", "nul"),
     ("input_volume_up", "equals"),
     ("input_volume_down", "minus"),
@@ -66,7 +55,20 @@ const ENTRIES: &[(&str, &str)] = &[
     ("input_save_state", "h"),
     ("input_state_slot_increase", "comma"),
     ("input_state_slot_decrease", "period"),
+    ("input_shader_toggle", "nul"),
+    ("input_shader_next", "nul"),
+    ("input_shader_prev", "nul"),
+    ("input_cheat_toggle", "nul"),
+    ("input_cheat_index_plus", "nul"),
+    ("input_cheat_index_minus", "nul"),
+    ("input_screenshot", "nul"),
+    ("input_grab_mouse_toggle", "nul"),
+    ("input_game_focus_toggle", "nul"),
     ("input_toggle_fullscreen", "z"),
+    // TODO Desktop
+    ("input_fps_toggle", "nul"),
+    ("input_netplay_game_watch", "nul"),
+    ("input_netplay_player_chat", "nul"),
     //   XBOX One Wireless Controller bindings
     //   Button names come from here: https://support.xbox.com/en-US/help/hardware-network/controller/xbox-one-wireless-controller
     //
