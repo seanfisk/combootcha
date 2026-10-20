@@ -16,6 +16,7 @@ const ENTRIES: &[(&str, &str)] = &[
     ("menu_unified_controls", "false"), // TODO At least until I can figure out how to disable `s` key triggering search
     ("video_fullscreen", "false"),
     ("input_autodetect_enable", "false"), // Allows clearing RetroPad bindings for analog sticks without falling back to automatic bindings
+    ("menu_swap_ok_cancel_buttons", "true"), // Now OK is A button, Cancel is B button
     // RetroPad bindings
     // Order matches RetroArch's UI
     // A value is explicitly set to "nul" to remove an unwanted RetroArch default binding
@@ -69,8 +70,9 @@ const ENTRIES: &[(&str, &str)] = &[
     //     RetroPad binds
     ("input_player1_analog_dpad_mode", "0"), // Set Analog to Digital Type to None. This is important because we want to use the D-pad for hotkeys.
     ("input_player1_b_btn" /*bottom*/, "0"), // XBOX One A button
-    ("input_player1_a_btn" /*right*/, "8"),  // XBOX One B button
-    ("input_player1_y_btn" /*left*/, "1"),   // XBOX One X button
+    //       Swap X and B. This causes the displayed button on the menu to be incorrect, but I want B button to the left button. This functions better in real-time games as I can lay my thumb across both the left and bottom buttons and rock my thumb to activate.
+    ("input_player1_a_btn" /*right*/, "1"),  // XBOX One X button
+    ("input_player1_y_btn" /*left*/, "8"),   // XBOX One B button
     ("input_player1_x_btn" /*top*/, "9"),    // XBOX One Y button
     ("input_player1_select_btn", "2"),       // XBOX One View button
     ("input_player1_start_btn", "3"),        // XBOX One Menu button
