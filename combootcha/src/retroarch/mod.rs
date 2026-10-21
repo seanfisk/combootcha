@@ -23,6 +23,7 @@ const ENTRIES: &[(&str, &str)] = &[
     ("input_autodetect_enable", "false"), // Allows clearing RetroPad bindings for analog sticks without falling back to automatic bindings
     ("menu_swap_ok_cancel_buttons", "false"), // RetroPad A = OK, RetroPad B = Cancel
     ("confirm_quit", "true"),
+    ("audio_fastforward_mute", "true"),
     // If I had hotkeys for these actions, I'd enable confirmation. But when confirmation is enabled, it still requires a second key press on even the actions from the Quick Menu. This is just annoying.
     ("confirm_close", "false"),
     ("confirm_reset", "false"),
