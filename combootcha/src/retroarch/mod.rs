@@ -68,11 +68,12 @@ const ENTRIES: &[(&str, &str)] = &[
     ("input_screenshot", "nul"),
     ("input_grab_mouse_toggle", "nul"),
     ("input_game_focus_toggle", "nul"),
-    ("input_toggle_fullscreen", "z"),
+    ("input_toggle_fullscreen", "w"),
     ("input_desktop_menu_toggle", "nul"),
     ("input_fps_toggle", "nul"),
     ("input_netplay_game_watch", "nul"),
     ("input_netplay_player_chat", "nul"),
+    ("input_menu_search", "r"),
     //   XBOX One Wireless Controller bindings
     //   Button names come from here: https://support.xbox.com/en-US/help/hardware-network/controller/xbox-one-wireless-controller
     //
