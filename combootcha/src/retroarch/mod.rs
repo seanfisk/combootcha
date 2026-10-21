@@ -13,10 +13,19 @@ use scoby::UserExt as OtherUserExt;
 
 const ENTRIES: &[(&str, &str)] = &[
     // General options
-    ("menu_unified_controls", "false"), // TODO At least until I can figure out how to disable `s` key triggering search
-    ("video_fullscreen", "false"),
+
+    // Note: video_fullscreen stores the *last state* of whether the app was fullscreen, so it's not particularly useful to set here
+
+    // Disable the default menu navigation bindings: https://docs.libretro.com/guides/input-and-controls/#general-controller-mapping
+    //
+    // Unified Menu Controls defaulting to OFF solves a chicken and egg problem: it enables a user to navigate the menu before having a RetroPad configured. Once a RetroPad is configured, the RetroPad binds can be used to navigate the menu.
+    ("menu_unified_controls", "true"),
     ("input_autodetect_enable", "false"), // Allows clearing RetroPad bindings for analog sticks without falling back to automatic bindings
     ("menu_swap_ok_cancel_buttons", "false"), // RetroPad A = OK, RetroPad B = Cancel
+    ("confirm_quit", "true"),
+    // If I had hotkeys for these actions, I'd enable confirmation. But when confirmation is enabled, it still requires a second key press on even the actions from the Quick Menu. This is just annoying.
+    ("confirm_close", "false"),
+    ("confirm_reset", "false"),
     // RetroPad bindings
     // Order matches RetroArch's UI
     // A value is explicitly set to "nul" to remove an unwanted RetroArch default binding
@@ -100,7 +109,7 @@ const ENTRIES: &[(&str, &str)] = &[
     //     Hotkeys
     ("input_hold_fast_forward_btn", "11"),  // Right bumper
     ("input_hold_slowmotion_btn", "10"),    // Left bumper
-    ("input_audio_mute_btn", "-2"),         // Right stick click
+    ("input_audio_mute_axis", "-2"),        // Right stick left
     ("input_volume_up_axis", "+3"),         // Right stick up
     ("input_volume_down_axis", "-3"),       // Right stick down
     ("input_menu_toggle_btn", "16"),        // XBOX One XBOX button
@@ -108,6 +117,7 @@ const ENTRIES: &[(&str, &str)] = &[
     ("input_save_state_btn", "5"),          // D-pad down
     ("input_state_slot_increase_btn", "7"), // D-pad right
     ("input_state_slot_decrease_btn", "6"), // D-pad left
+    ("input_toggle_fullscreen_btn", "15"),  // Right stick click
 ];
 
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
