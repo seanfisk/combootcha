@@ -32,8 +32,8 @@ const ENTRIES: &[(&str, &str)] = &[
     //   Keyboard
     ("input_player1_b", "k"),
     ("input_player1_a", "j"),
-    ("input_player1_y", "nul"),
-    ("input_player1_x", "nul"),
+    ("input_player1_y", "p"),
+    ("input_player1_x", "o"),
     ("input_player1_select", "y"),
     ("input_player1_start", "l"),
     ("input_player1_l", "u"),
@@ -73,7 +73,6 @@ const ENTRIES: &[(&str, &str)] = &[
     ("input_fps_toggle", "nul"),
     ("input_netplay_game_watch", "nul"),
     ("input_netplay_player_chat", "nul"),
-    ("input_menu_search", "r"),
     //   XBOX One Wireless Controller bindings
     //   Button names come from here: https://support.xbox.com/en-US/help/hardware-network/controller/xbox-one-wireless-controller
     //
