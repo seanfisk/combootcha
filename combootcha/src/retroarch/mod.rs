@@ -16,13 +16,13 @@ const ENTRIES: &[(&str, &str)] = &[
     ("menu_unified_controls", "false"), // TODO At least until I can figure out how to disable `s` key triggering search
     ("video_fullscreen", "false"),
     ("input_autodetect_enable", "false"), // Allows clearing RetroPad bindings for analog sticks without falling back to automatic bindings
-    ("menu_swap_ok_cancel_buttons", "true"), // Now OK is A button, Cancel is B button
+    ("menu_swap_ok_cancel_buttons", "false"), // RetroPad A = OK, RetroPad B = Cancel
     // RetroPad bindings
     // Order matches RetroArch's UI
     // A value is explicitly set to "nul" to remove an unwanted RetroArch default binding
     //   Keyboard
-    ("input_player1_b", "j"),
-    ("input_player1_a", "k"),
+    ("input_player1_b", "k"),
+    ("input_player1_a", "j"),
     ("input_player1_y", "nul"),
     ("input_player1_x", "nul"),
     ("input_player1_select", "y"),
@@ -69,11 +69,11 @@ const ENTRIES: &[(&str, &str)] = &[
     //
     //     RetroPad binds
     ("input_player1_analog_dpad_mode", "0"), // Set Analog to Digital Type to None. This is important because we want to use the D-pad for hotkeys.
-    ("input_player1_b_btn" /*bottom*/, "0"), // XBOX One A button
-    //       Swap X and B. This causes the displayed button on the menu to be incorrect, but I want B button to the left button. This functions better in real-time games as I can lay my thumb across both the left and bottom buttons and rock my thumb to activate.
-    ("input_player1_a_btn" /*right*/, "1"),  // XBOX One X button
-    ("input_player1_y_btn" /*left*/, "8"),   // XBOX One B button
-    ("input_player1_x_btn" /*top*/, "9"),    // XBOX One Y button
+    // The button positions on the RetroPad do not match the button positions on the XBOX One Wireless Controller. This layout is deliberate as I want to be able to have the tip of my thumb on the RetroPad B button and be able to rock my thumb to activate the RetroPad A button. This causes the displayed button positions in the bottom right of the RetroArch menu to be incorrect. I've decided to live with that as there is no readily apparent way to fix it without altering RetroArch's source code, and I'd rather have this incorrect than settle for a non-optimal button layout while playing the games.
+    ("input_player1_b_btn" /*bottom*/, "1"), // XBOX One X button
+    ("input_player1_a_btn" /*right*/, "0"),  // XBOX One A button
+    ("input_player1_y_btn" /*left*/, "9"),   // XBOX One Y button
+    ("input_player1_x_btn" /*top*/, "8"),    // XBOX One B button
     ("input_player1_select_btn", "2"),       // XBOX One View button
     ("input_player1_start_btn", "3"),        // XBOX One Menu button
     ("input_player1_l_btn" /*shoulder*/, "12"), // XBOX One left trigger
