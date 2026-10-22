@@ -4,3 +4,5 @@ Play with both keyboard and controller
 - XD
 Copy remaps into config
 - ALttPR has both remaps and overrides
+  Only override is
+  fastforward_ratio = "4.000000"
