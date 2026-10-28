@@ -6,6 +6,8 @@ use std::fs::File;
 use std::os::unix::fs::PermissionsExt;
 use tempfile::NamedTempFile;
 use users::{os::unix::UserExt, User};
+use std::path::Path;
+use std::fmt::Debug;
 
 use config_file::Config;
 
@@ -151,12 +153,25 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
         for dir in [alttpr_rmp_dir, alttpr_cfg_dir] {
             scoby::fs::ensure_dir(dir)?;
         }
-        info!("Reading RetroArch config from {:?}", config_path);
-        let (mut config, original_permissions) = || -> Result<_> {
-            match File::open(&config_path) {
+
+        Ok(())
+    })
+}
+
+// TODO Learn how to genericize the entries?
+/// Pass the directory because we will always have it
+fn ensure_config<D, N>(dir: D, filename: N, entries: &[(&str, &str)]) -> Result<()>
+where D: AsRef<Path> + Debug,
+      N: AsRef<Path> + Debug,
+{
+    let dir = dir.as_ref();
+    let path = dir.join(filename);
+    info!("Reading RetroArch config from {:?}", path);
+    let (mut config, original_permissions) = || -> Result<_> {
+            match File::open(&path) {
                 Err(e) => {
                     if e.kind() == std::io::ErrorKind::NotFound {
-                        debug!("Config file {config_path:?} does not exist; starting with empty config");
+                        debug!("Config file {path:?} does not exist; starting with empty config");
                         Ok((Config::default(), std::fs::Permissions::from_mode(0o644)))
                     } else {
                         Err(e.into())
@@ -169,19 +184,19 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
                 }
             }
         }().with_context(|| {
-            format!("Could not read RetroArch config from {config_path:?}")
+            format!("Could not read RetroArch config from {path:?}")
         })?;
         let mut updated = false;
-        for &(key, value) in ENTRIES {
+        for &(key, value) in entries {
             updated |= config.replace(key, value)?;
         }
         if updated {
-            info!("Writing updated RetroArch config to {config_path:?}");
+            info!("Writing updated RetroArch config to {path:?}");
 
             || -> Result<()> {
                 // Create temp file in same directory as original file. This guarantees the files will be on the same filesystem, so the rename will be atomic.
-                let temp_file = NamedTempFile::new_in(&config_dir)
-                    .with_context(|| format!("Could not create temporary file in {:?}", config_dir))?;
+                let temp_file = NamedTempFile::new_in(dir)
+                    .with_context(|| format!("Could not create temporary file in {:?}", dir))?;
                 let temp_file_path = temp_file.path();
                 debug!("Writing new RetroArch config to temp file {temp_file_path:?}");
                 config.write_to(&temp_file)?;
@@ -191,17 +206,16 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
 
                 debug!("Applying original permissions to {temp_file_path:?}");
                 temp_file.as_file().set_permissions(original_permissions)
-                    .with_context(|| format!("Error applying original permissions to {config_path:?}"))?;
+                    .with_context(|| format!("Error applying original permissions to {path:?}"))?;
 
-                debug!("Moving temp file {temp_file_path:?} to {config_path:?}");
+                debug!("Moving temp file {temp_file_path:?} to {path:?}");
                 let temp_file_path = temp_file_path.to_owned(); // Rust variable `temp_file` is moved when we call `persist` (I am not talking about being moved on the filesystem)
-                temp_file.persist(&config_path).with_context(|| format!("Could not move temporary file {temp_file_path:?} to {config_path:?}"))?;
+                temp_file.persist(&path).with_context(|| format!("Could not move temporary file {temp_file_path:?} to {path:?}"))?;
 
                 Ok(())
-            }().with_context(|| format!("Could not write RetroArch config to {config_path:?}"))?;
+            }().with_context(|| format!("Could not write RetroArch config to {path:?}"))?;
         } else {
-            info!("RetroArch already configured correctly; not updating config file");
+            info!("RetroArch config {:?} already populated correctly; not updating file", path);
         }
         Ok(())
-    })
 }
