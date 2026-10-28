@@ -60,10 +60,11 @@ const ENTRIES: &[(&str, &str)] = &[
     ("input_volume_up", "equals"),
     ("input_volume_down", "minus"),
     ("input_menu_toggle", "q"),
+    // Matches XBOX One Wireless Controller d-pad state hotkeys, but mapped like I do with asdf
     ("input_load_state", "comma"),
-    ("input_save_state", "m"),
+    ("input_save_state", "period"),
     ("input_state_slot_increase", "slash"),
-    ("input_state_slot_decrease", "period"),
+    ("input_state_slot_decrease", "m"),
     ("input_shader_toggle", "nul"),
     ("input_shader_next", "nul"),
     ("input_shader_prev", "nul"),
