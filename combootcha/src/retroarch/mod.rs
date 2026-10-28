@@ -128,6 +128,8 @@ const ENTRIES: &[(&str, &str)] = &[
     ("input_toggle_fullscreen_btn", "15"),  // Right stick click
 ];
 
+const SNES_EMULATOR: &str = "Snes9x";
+
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
     // Upon start, RetroArch reads retroarch.cfg into memory. If retroarch.cfg is missing, empty, or missing some keys, the missing keys will get default values and immediately be written back.
     //
@@ -138,7 +140,11 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
         let config_dir = standard_user
             .home_dir()
             .join("Library/Application Support/RetroArch/config");
-        scoby::fs::ensure_dir(&config_dir)?;
+        let alttpr_rmp_dir = config_dir.join("remaps").join(SNES_EMULATOR);
+        let alttpr_cfg_dir = config_dir.join(SNES_EMULATOR);
+        for dir in [alttpr_rmp_dir, alttpr_cfg_dir] {
+            scoby::fs::ensure_dir(dir)?;
+        }
         let config_path = config_dir.join("retroarch.cfg");
         info!("Reading RetroArch config from {:?}", config_path);
         let (mut config, original_permissions) = || -> Result<_> {
