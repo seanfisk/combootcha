@@ -26,6 +26,8 @@ const ENTRIES: &[(&str, &str)] = &[
     ("audio_fastforward_mute", "true"),
     ("savestate_auto_load", "true"),
     ("savestate_auto_save", "true"),
+    // Applies to SRM files, not save states. The file extension remains the same. It looks like RetroArch has no problem *reading* compressed files even if this is set to false.
+    ("save_file_compression", "true"),
     // Keeps the file small, which is nice for seeing what I've changed
     ("config_save_minimal", "true"),
     // If I had hotkeys for these actions, I'd enable confirmation. But when confirmation is enabled, it still requires a second key press on even the actions from the Quick Menu. This is just annoying.
