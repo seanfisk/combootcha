@@ -65,7 +65,7 @@ const ENTRIES: &[(&str, &str)] = &[
     // States on left hand with directions to match the XBOX One Wireless Controller d-pad
     ("input_load_state", "w"),
     ("input_save_state", "e"),
-    ("input_state_slot_increase", "f"),
+    ("input_state_slot_increase", "r"),
     ("input_state_slot_decrease", "q"),
     ("input_shader_toggle", "nul"),
     ("input_shader_next", "nul"),
