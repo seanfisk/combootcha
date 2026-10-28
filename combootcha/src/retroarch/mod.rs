@@ -140,32 +140,41 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
         let config_dir = standard_user
             .home_dir()
             .join("Library/Application Support/RetroArch/config");
-        let config_path = config_dir.join("retroarch.cfg");
 
         const SNES_EMULATOR: &str = "Snes9x";
 
         let alttpr_rmp_dir = config_dir.join("remaps").join(SNES_EMULATOR);
-        let alttpr_rmp_path = alttpr_rmp_dir.join("alttpr.rmp");
-
         let alttpr_cfg_dir = config_dir.join(SNES_EMULATOR);
-        let alttpr_cfg_path = alttpr_cfg_dir.join("alttpr.cfg");
+        let alttpr_dir_name = Path::new("alttpr"); // This can also be done with macros, but whatever
 
-        for dir in [alttpr_rmp_dir, alttpr_cfg_dir] {
+        for dir in [&alttpr_rmp_dir, &alttpr_cfg_dir] {
             scoby::fs::ensure_dir(dir)?;
         }
 
-        Ok(())
+        ensure_config(config_dir, "retroarch.cfg", ENTRIES)?;
+
+        ensure_config(alttpr_rmp_dir, alttpr_dir_name.with_extension("rmp"), &[
+            ("input_player1_btn_a", "1"),
+            ("input_player1_btn_l", "9"),
+            ("input_player1_btn_r", "8"),
+            ("input_player1_btn_x", "11"),
+            ("input_player1_btn_y", "10"),
+        ])?;
+
+        ensure_config(alttpr_cfg_dir, alttpr_dir_name.with_extension("cfg"), &[
+            ("fastforward_ratio", "4.000000"),
+        ])
     })
 }
 
 // TODO Learn how to genericize the entries?
 /// Pass the directory because we will always have it
-fn ensure_config<D, N>(dir: D, filename: N, entries: &[(&str, &str)]) -> Result<()>
+fn ensure_config<D, N>(dir: D, file_name: N, entries: &[(&str, &str)]) -> Result<()>
 where D: AsRef<Path> + Debug,
       N: AsRef<Path> + Debug,
 {
     let dir = dir.as_ref();
-    let path = dir.join(filename);
+    let path = dir.join(file_name);
     info!("Reading RetroArch config from {:?}", path);
     let (mut config, original_permissions) = || -> Result<_> {
             match File::open(&path) {
