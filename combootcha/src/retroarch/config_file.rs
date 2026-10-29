@@ -8,7 +8,7 @@
 //! Comments copied from the libretro source code have been prefixed as such.
 
 use anyhow::{anyhow, bail, Context, Result};
-use log::{debug, info, trace, warn};
+use log::{debug, info, log, trace, warn, Level};
 use std::borrow::Cow;
 use std::cmp::Ordering;
 use std::collections::BTreeMap;
@@ -82,7 +82,13 @@ impl Config {
         use std::collections::btree_map::Entry;
         Ok(match self.entries.entry(Key(key.into_owned())) {
             Entry::Vacant(slot) => {
-                debug!("Adding new value {:?} for {}", new_value, slot.key());
+                // If replacing, it helps to know that the key wasn't there already. Otherwise it can be somewhat misleading why the file is being written in the caller.
+                log!(
+                    if replace { Level::Info } else { Level::Debug },
+                    "Adding new value {:?} for {}",
+                    new_value,
+                    slot.key()
+                );
                 slot.insert(new_value.into_owned());
                 true
             }
