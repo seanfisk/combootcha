@@ -48,7 +48,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
                 ("menu_unified_controls", "true"),
                 ("input_autodetect_enable", "false"), // Allows clearing RetroPad bindings for analog sticks without falling back to automatic bindings
                 ("menu_swap_ok_cancel_buttons", "false"), // RetroPad A = OK, RetroPad B = Cancel
-                ("confirm_quit", "true"),
+                ("pause_on_disconnect", "true"),      // Pause on controller disconnect
                 ("audio_fastforward_mute", "true"),
                 ("savestate_auto_load", "true"),
                 ("savestate_auto_save", "true"),
@@ -56,6 +56,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
                 ("save_file_compression", "true"),
                 // Keeps the file small, which is nice for seeing what I've changed
                 ("config_save_minimal", "true"),
+                ("confirm_quit", "true"),
                 // If I had hotkeys for these actions, I'd enable confirmation. But when confirmation is enabled, it still requires a second key press on even the actions from the Quick Menu. This is just annoying.
                 ("confirm_close", "false"),
                 ("confirm_reset", "false"),
