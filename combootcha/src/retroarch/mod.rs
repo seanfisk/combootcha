@@ -159,11 +159,13 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
             alttpr_rmp_dir,
             alttpr_dir_name.with_extension("rmp"),
             &[
-                ("input_player1_btn_a", "1"),
-                ("input_player1_btn_l", "9"),
-                ("input_player1_btn_r", "8"),
-                ("input_player1_btn_x", "11"),
-                ("input_player1_btn_y", "10"),
+                ("input_player1_btn_a", "1"), // RetroPad A → SNES Y (use item)
+                ("input_player1_btn_b", "0"), // RetroPad B → SNES B (swing sword) [technically, no remap needed]
+                ("input_player1_btn_l", "9"), // RetroPad L → SNES X (map)
+                // It's handy for this to be on the middle finger because this is a very common function and that finger is longer, so I don't need to move off the home row
+                ("input_player1_btn_r", "8"), // RetroPad R → SNES A (talk/read, lift, run)
+                ("input_player1_btn_x", "10"), // RetroPad X → SNES L
+                ("input_player1_btn_y", "11"), // RetroPad Y → SNES R
             ],
         )?;
 
