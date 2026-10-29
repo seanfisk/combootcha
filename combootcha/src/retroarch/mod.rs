@@ -52,6 +52,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
                 ("audio_fastforward_mute", "true"),
                 ("savestate_auto_load", "true"),
                 ("savestate_auto_save", "true"),
+                ("savestate_auto_index", "false"), // Useful for some games, but should not be a default behavior
                 // Applies to SRM files, not save states. The file extension remains the same. It looks like RetroArch has no problem *reading* compressed files even if this is set to false.
                 ("save_file_compression", "true"),
                 // Keeps the file small, which is nice for seeing what I've changed
