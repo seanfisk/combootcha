@@ -170,8 +170,8 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
                 ("input_player1_btn_l", "9"), // RetroPad L → SNES X (map)
                 // It's handy for this to be on the middle finger because this is a very common function and that finger is longer, so I don't need to move off the home row
                 ("input_player1_btn_r", "8"), // RetroPad R → SNES A (talk/read, lift, run)
-                ("input_player1_btn_x", "10"), // RetroPad X → SNES L
-                ("input_player1_btn_y", "11"), // RetroPad Y → SNES R
+                ("input_player1_btn_x", "11"), // (XBOX One Y →) RetroPad X → SNES R
+                ("input_player1_btn_y", "10"), // (XBOX One B →) RetroPad Y → SNES L
             ],
         )?;
 
