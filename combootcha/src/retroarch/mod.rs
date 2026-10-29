@@ -26,11 +26,15 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
 
         const SNES_EMULATOR: &str = "Snes9x";
 
+        // TODO Consider renaming these variables not specific to the games since they're really not
+
         let alttpr_rmp_dir = config_dir.join("remaps").join(SNES_EMULATOR);
         let alttpr_cfg_dir = config_dir.join(SNES_EMULATOR);
         let alttpr_dir_name = Path::new("alttpr"); // This can also be done with macros, but whatever
 
-        for dir in [&alttpr_rmp_dir, &alttpr_cfg_dir] {
+        let fire_emblem_cfg_dir = config_dir.join("mGBA");
+
+        for dir in [&alttpr_rmp_dir, &alttpr_cfg_dir, &fire_emblem_cfg_dir] {
             scoby::fs::ensure_dir(dir)?;
         }
 
@@ -175,6 +179,14 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
             alttpr_cfg_dir,
             alttpr_dir_name.with_extension("cfg"),
             &[("fastforward_ratio", "4.000000")],
+        )?;
+
+        ensure_config(
+            fire_emblem_cfg_dir,
+            "fire-emblem.cfg",
+            &[
+                ("savestate_auto_index", "true"), // Useful and desirable for this game
+            ],
         )
     })
 }
