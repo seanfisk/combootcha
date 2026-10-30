@@ -125,6 +125,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
                 ("input_player1_x_btn" /*top*/, "8"),    // XBOX One B button
                 ("input_player1_select_btn", "2"),       // XBOX One View button
                 ("input_player1_start_btn", "3"),        // XBOX One Menu button
+                //       Note: These buttons jump to the bottom and top of the save state list in Ozone, which is very helpful to reset to state 0
                 ("input_player1_l_btn" /*shoulder*/, "12"), // XBOX One left trigger
                 ("input_player1_r_btn" /*shoulder*/, "13"), // XBOX One right trigger
                 //       Unbind because the games I am playing don't use them, and I am using them for hotkeys
