@@ -54,6 +54,9 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
                 ("menu_swap_ok_cancel_buttons", "false"), // RetroPad A = OK, RetroPad B = Cancel
                 ("pause_on_disconnect", "true"),      // Pause on controller disconnect
                 ("audio_fastforward_mute", "true"),
+                // By default, the screenshot directory is unset. If unset, screenshots will go next to the ROM.
+                // I think it makes sense to put them in the same directory as recordings.
+                ("screenshot_directory", "~/Documents/RetroArch/records"),
                 ("savestate_auto_load", "true"),
                 ("savestate_auto_save", "true"),
                 ("savestate_auto_index", "false"), // Useful for some games, but should not be a default behavior
