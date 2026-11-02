@@ -182,14 +182,22 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
         ensure_config(
             alttpr_cfg_dir,
             alttpr_dir_name.with_extension("cfg"),
-            &[("fastforward_ratio", "4.000000")],
+            &[
+                ("fastforward_ratio", "4.000000"), // Enough to "sprint" while maintaining control
+            ],
         )?;
 
         ensure_config(
             fire_emblem_cfg_dir,
             "fire-emblem.cfg",
             &[
-                ("savestate_auto_index", "true"), // Useful and desirable for this game
+                // Fast forward doesn't have too many uses in these games, but here they are:
+                //
+                // 1. Loading state to an earlier turn, making some changes, then skipping through an Enemy Phase because you generally know what happens
+                // 2. Arena
+                //
+                // The goal is to be slow enough to generally see what's going on, but fast enough to get through the gameplay quickly.
+                ("fastforward_ratio", "4.000000"),
             ],
         )
     })
