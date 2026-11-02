@@ -93,7 +93,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
                 ("input_rewind", "nul"),
                 ("input_pause_toggle", "nul"),
                 ("input_frame_advance", "nul"),
-                ("input_audio_mute", "nul"),
+                ("input_audio_mute", "num0"),
                 ("input_volume_up", "equals"),
                 ("input_volume_down", "minus"),
                 ("input_menu_toggle", "z"),
