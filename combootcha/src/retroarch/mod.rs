@@ -50,6 +50,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
                 //
                 // Unified Menu Controls defaulting to OFF solves a chicken and egg problem: it enables a user to navigate the menu before having a RetroPad configured. Once a RetroPad is configured, the RetroPad binds can be used to navigate the menu.
                 ("menu_unified_controls", "true"),
+                ("all_users_control_menu", "true"),
                 ("input_autodetect_enable", "false"), // Allows clearing RetroPad bindings for analog sticks without falling back to automatic bindings
                 ("menu_swap_ok_cancel_buttons", "false"), // RetroPad A = OK, RetroPad B = Cancel
                 ("pause_on_disconnect", "true"),      // Pause on controller disconnect
