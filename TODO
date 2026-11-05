@@ -1,5 +1,7 @@
 RetroArch drivers: Deliberately select each, then set them in mod.rs
 
+Use H.264 native encoder?
+
 XD in Dolphin standalone:
 
 Configure the XBOX One Wireless Controller with parity to the RetroArch setup
