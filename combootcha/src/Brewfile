@@ -50,6 +50,15 @@ cask 'google-chrome'
 # The Nightly version at time of writing works well, however, so we need to use it.
 cask 'retroarch-metal@nightly'
 
+# Dolphin has a Metal renderer. Sadly, this renderer is not supported by the Dolphin libretro core and the gl, glcore, and vulkan video drivers do not result in playable games.
+#
+# See where the Metal video backend is excluded from the build here: https://github.com/libretro/dolphin/blob/71fd149aa682cf7b78c4fbd23e5b0896510e57dd/Source/Core/VideoBackends/CMakeLists.txt#L11
+#
+# This seems to be the best issue tracking the lack of Metal: https://github.com/libretro/dolphin/issues/344
+#
+# The end result is that GameCube games must be played in Dolphin standalone, at least for now.
+cask 'dolphin'
+
 # On initial computer setup, App Store will prompt for an Apple ID which is stored in my password manager. Therefore, to make this easier, all apps installed with mas should be listed in the Brewfile *after* the password manager.
 
 mas 'Microsoft To Do', id: 1274495053
