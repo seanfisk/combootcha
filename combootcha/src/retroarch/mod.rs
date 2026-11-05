@@ -45,7 +45,6 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
                 // General options
 
                 // Note: video_fullscreen stores the *last state* of whether the app was fullscreen, so it's not particularly useful to set here
-
                 ("menu_driver", "ozone"),
                 // Metal (`metal') is macOS' native 3D graphics API and is the best choice for video driver.
                 // OpenGL (`gl', `glcore') is deprecated on macOS as of 2018.
