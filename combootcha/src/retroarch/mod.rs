@@ -59,7 +59,7 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
                 // It allows clearing RetroPad bindings for analog sticks without falling back to automatic bindings.
                 ("input_autodetect_enable", "false"),
                 ("menu_swap_ok_cancel_buttons", "false"), // RetroPad A = OK, RetroPad B = Cancel
-                ("pause_on_disconnect", "true"),      // Pause on controller disconnect
+                ("pause_on_disconnect", "true"),          // Pause on controller disconnect
                 ("audio_fastforward_mute", "true"),
                 // By default, the screenshot directory is unset. If unset, screenshots will go next to the ROM.
                 // I think it makes sense to put them in the same directory as recordings.
