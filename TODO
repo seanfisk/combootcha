@@ -1,12 +1,9 @@
-XD stuff:
+RetroArch drivers: Deliberately select each, then set them in mod.rs
 
-The game doesn't even start in RetroArch. Do the following to debug this:
+XD in Dolphin standalone:
 
-1. Test the game in Dolphin standalone to see how it plays
-2. Search to see if anyone else has this issue with the libretro Dolphin core
-3. Mess around with the core settings in RetroArch
-4. Try a different GameCube game in RetroArch
-
-If I get it working in RetroArch:
+Configure the XBOX One Wireless Controller with parity to the RetroArch setup
 
 Ensure it is playable with both keyboard and controller
+
+Comment on the issue with what I've learned: https://github.com/libretro/dolphin/issues/344
