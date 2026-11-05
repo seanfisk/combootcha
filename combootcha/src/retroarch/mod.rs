@@ -46,6 +46,10 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
 
                 // Note: video_fullscreen stores the *last state* of whether the app was fullscreen, so it's not particularly useful to set here
 
+                // Metal (`metal') is macOS' native 3D graphics API and is the best choice for video driver.
+                // OpenGL (`gl', `glcore') is deprecated on macOS as of 2018.
+                // Vulkan (`vulkan') is an open standard created by Khronos Group to replace OpenGL. It has parity with Metal, but Apple rejected supporting it natively. Therefore, it requires a translation layer to Metal to run on macOS. RetroArch uses a translation layer called MoltenVK as of 2026 to accomplish this.
+                ("video_driver", "metal"),
                 // Disable the default menu navigation bindings: https://docs.libretro.com/guides/input-and-controls/#general-controller-mapping
                 //
                 // Unified Menu Controls defaulting to OFF solves a chicken and egg problem: it enables a user to navigate the menu before having a RetroPad configured. Once a RetroPad is configured, the RetroPad binds can be used to navigate the menu.
