@@ -1,12 +1,10 @@
-RetroArch drivers: Deliberately select each, then set them in mod.rs
-
-Use H.264 native encoder?
-
 XD in Dolphin standalone:
 
-Configure the XBOX One Wireless Controller with parity to the RetroArch setup
+Finish INI file writing using Claude's generated code
 
-Ensure it is playable with both keyboard and controller
+Test it
+
+Improve interface with .section("Something") which returns a &mut Section
 
 Comment on the issue with what I've learned: https://github.com/libretro/dolphin/issues/344
 https://github.com/libretro/dolphin/blob/71fd149aa682cf7b78c4fbd23e5b0896510e57dd/Source/Core/VideoBackends/CMakeLists.txt#L11
@@ -16,3 +14,7 @@ Dolphin controller:
 
 Button layout:
 https://en-americas-support.nintendo.com/app/answers/detail/a_id/68429/~/nintendo-gamecube-controller-diagram
+
+RetroArch drivers: Deliberately select each, then set them in mod.rs
+
+Use H.264 native encoder?

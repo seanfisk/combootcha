@@ -14,6 +14,7 @@ use config_file::Config;
 use scoby::UserExt as OtherUserExt;
 
 pub(crate) fn configure(standard_user: &User) -> Result<()> {
+    // TODO Update comment for Dolphin
     // Upon start, RetroArch reads retroarch.cfg into memory. If retroarch.cfg is missing, empty, or missing some keys, the missing keys will get default values and immediately be written back.
     //
     // Upon quit, RetroArch always writes retroarch.cfg from memory with no regard to any changes that were made to the file externally while RetroArch was running.
@@ -22,21 +23,10 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
     standard_user.as_effective_user(|| {
         let config_dir = standard_user
             .home_dir()
-            .join("Library/Application Support/RetroArch/config");
+            .join("Library/Application Support/Dolphin/Config");
+        let profiles_dir = config_dir.join("Profiles");
 
-        const SNES_EMULATOR: &str = "Snes9x";
-
-        // TODO Consider renaming these variables not specific to the games since they're really not
-
-        let alttpr_rmp_dir = config_dir.join("remaps").join(SNES_EMULATOR);
-        let alttpr_cfg_dir = config_dir.join(SNES_EMULATOR);
-        let alttpr_dir_name = Path::new("alttpr"); // This can also be done with macros, but whatever
-
-        let fire_emblem_cfg_dir = config_dir.join("mGBA");
-
-        for dir in [&alttpr_rmp_dir, &alttpr_cfg_dir, &fire_emblem_cfg_dir] {
-            scoby::fs::ensure_dir(dir)?;
-        }
+        scoby::fs::ensure_dir(profiles_dir)?;
 
         ensure_config(
             config_dir,
@@ -54,19 +44,13 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
             fire_emblem_cfg_dir,
             "fire-emblem.cfg",
             &[
-                // Fast forward doesn't have too many uses in these games, but here they are:
-                //
-                // 1. Loading state to an earlier turn, making some changes, then skipping through an Enemy Phase because you generally know what happens
-                // 2. Arena
-                //
-                // The goal is to be slow enough to generally see what's going on, but fast enough to get through the gameplay quickly.
-                ("fastforward_ratio", "4.000000"),
             ],
         )
     })
 }
 
 // TODO Learn how to genericize the entries?
+// TODO Reduce duplication between this and RetroArch?
 /// Pass the directory because we will always have it
 fn ensure_config<D, N>(dir: D, file_name: N, entries: &[(&str, &str)]) -> Result<()>
 where
@@ -75,7 +59,7 @@ where
 {
     let dir = dir.as_ref();
     let path = dir.join(file_name);
-    info!("Reading RetroArch config from {:?}", path);
+    info!("Reading Dolphin config from {:?}", path);
     let (mut config, original_permissions) = || -> Result<_> {
         match File::open(&path) {
             Err(e) => {
@@ -93,20 +77,20 @@ where
             }
         }
     }()
-    .with_context(|| format!("Could not read RetroArch config from {path:?}"))?;
+    .with_context(|| format!("Could not read Dolphin config from {path:?}"))?;
     let mut updated = false;
     for &(key, value) in entries {
         updated |= config.replace(key, value)?;
     }
     if updated {
-        info!("Writing updated RetroArch config to {path:?}");
+        info!("Writing updated Dolphin config to {path:?}");
 
         || -> Result<()> {
             // Create temp file in same directory as original file. This guarantees the files will be on the same filesystem, so the rename will be atomic.
             let temp_file = NamedTempFile::new_in(dir)
                 .with_context(|| format!("Could not create temporary file in {:?}", dir))?;
             let temp_file_path = temp_file.path();
-            debug!("Writing new RetroArch config to temp file {temp_file_path:?}");
+            debug!("Writing new Dolphin config to temp file {temp_file_path:?}");
             config.write_to(&temp_file)?;
             temp_file.as_file().sync_all().with_context(|| {
                 format!("Could not sync temporary file at {:?}", temp_file_path)
@@ -126,10 +110,10 @@ where
 
             Ok(())
         }()
-        .with_context(|| format!("Could not write RetroArch config to {path:?}"))?;
+        .with_context(|| format!("Could not write Dolphin config to {path:?}"))?;
     } else {
         info!(
-            "RetroArch config {:?} already populated correctly; not updating file",
+            "Dolphin config {:?} already populated correctly; not updating file",
             path
         );
     }
