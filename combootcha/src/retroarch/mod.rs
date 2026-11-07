@@ -47,10 +47,16 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
                 // Note: video_fullscreen stores the *last state* of whether the app was fullscreen, so it's not particularly useful to set here
                 ("menu_driver", "ozone"),
                 ("ozone_menu_color_theme", "basic_black"),
-                // Metal (`metal') is macOS' native 3D graphics API and is the best choice for video driver.
+                // Metal (`metal') is macOS' native 3D graphics API and *should* be the best choice for video driver.
                 // OpenGL (`gl', `glcore') is deprecated on macOS as of 2018.
                 // Vulkan (`vulkan') is an open standard created by Khronos Group to replace OpenGL. It has parity with Metal, but Apple rejected supporting it natively. Therefore, it requires a translation layer to Metal to run on macOS. RetroArch uses a translation layer called MoltenVK as of 2026 to accomplish this.
-                ("video_driver", "metal"),
+                //
+                // In practice, both Metal and Vulkan play games great in windowed mode. However, Metal introduces a stutter in fullscreen mode. Fullscreen is my preferred way to play. I wasn't able to fix the stutter by messing with settings such as Windowed Fullscreen Mode (`video_windowed_fullscreen') and Sync to Exact Content Framerate (`vrr_runloop_enable').
+                //
+                // In addition to being deprecated, OpenGL typically performs worse than Vulkan overall.
+                //
+                // Conclusion: I am currently preferring Vulkan.
+                ("video_driver", "vulkan"),
                 // Disable the default menu navigation bindings: https://docs.libretro.com/guides/input-and-controls/#general-controller-mapping
                 //
                 // Unified Menu Controls defaulting to OFF solves a chicken and egg problem: it enables a user to navigate the menu before having a RetroPad configured. Once a RetroPad is configured, the RetroPad binds can be used to navigate the menu.
