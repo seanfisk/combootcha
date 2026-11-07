@@ -45,6 +45,8 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
                 // General options
 
                 // Note: video_fullscreen stores the *last state* of whether the app was fullscreen, so it's not particularly useful to set here
+                ("rgui_browser_directory", "~/games/roms"),
+                ("discord_allow", "true"),
                 ("menu_driver", "ozone"),
                 ("ozone_menu_color_theme", "basic_black"),
                 // Metal (`metal') is macOS' native 3D graphics API and *should* be the best choice for video driver.
