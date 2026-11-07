@@ -6,6 +6,8 @@ Test it
 
 Improve interface with .section("Something") which returns a &mut Section
 
+Extract keyboard controls into a shared Rust file called `keyboard_controls.rs`. Note that Dolphin saves as uppercase tho.
+
 Comment on the issue with what I've learned: https://github.com/libretro/dolphin/issues/344
 https://github.com/libretro/dolphin/blob/71fd149aa682cf7b78c4fbd23e5b0896510e57dd/Source/Core/VideoBackends/CMakeLists.txt#L11
 
