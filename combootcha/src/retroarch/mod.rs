@@ -59,6 +59,12 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
                 //
                 // Conclusion: I am currently preferring Vulkan.
                 ("video_driver", "vulkan"),
+                // `avfoundation' produces an MOV, which can be played by QuickTime.
+                // `ffmpeg' produces an MKV (Matroska Video), which can be played by VLC.
+                // `wav' also produces an MKV, but presumably only the audio, although I haven't been able to play it with VLC at all.
+                ("record_driver", "avfoundation"),
+                // Was probably disabled by default to avoid proprietary H.264 encoders, but I want to use it if available
+                ("video_record_hw_encoder", "true"),
                 // Disable the default menu navigation bindings: https://docs.libretro.com/guides/input-and-controls/#general-controller-mapping
                 //
                 // Unified Menu Controls defaulting to OFF solves a chicken and egg problem: it enables a user to navigate the menu before having a RetroPad configured. Once a RetroPad is configured, the RetroPad binds can be used to navigate the menu.
