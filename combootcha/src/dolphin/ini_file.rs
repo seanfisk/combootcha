@@ -378,7 +378,7 @@ fn parse_line(line: &str) -> LineContent<'_> {
     let (key, value) = parse_key_and_value(line);
 
     // Dolphin: Lines starting with '$', '*' or '+' are kept verbatim.
-    // Kind of a hack, but the support for raw lines inside an INI is a hack anyway.
+    // Dolphin: Kind of a hack, but the support for raw lines inside an INI is a hack anyway.
     if (key.is_empty() && value.is_empty()) || line.starts_with(terminals::RAW_LINE_PREFIXES) {
         LineContent::Raw(line)
     } else if key.is_empty() {
