@@ -79,12 +79,13 @@ pub(crate) fn configure(standard_user: &User) -> Result<()> {
                 // By default, the screenshot directory is unset. If unset, screenshots will go next to the ROM.
                 // I think it makes sense to put them in the same directory as recordings.
                 ("screenshot_directory", "~/Documents/RetroArch/records"),
-                ("savestate_auto_load", "true"),
                 ("savestate_auto_save", "true"),
-                ("savestate_auto_index", "true"), // I have come to enjoy this as a default behavior
-                // Applies to SRM files, not save states. The file extension remains the same. It looks like RetroArch has no problem *reading* compressed files even if this is set to false.
+                ("savestate_auto_load", "true"),
+                // This feature is extremely useful, especially for games like Fire Emblem. I save state on the Status screen immediately after Player Phase begins and before it ends. The status screen, and thus the thumbnail, then shows the turn number when navigating through the states.
+                ("savestate_thumbnail_enable", "true"),
                 ("save_file_compression", "true"),
-                // Keeps the file small, which is nice for seeing what I've changed
+                ("savestate_auto_index", "true"), // I have come to enjoy this as a default behavior
+                // Applies to SRM files, not save states. The file extension remains the same. It looks like RetroArch has no problem *reading* compressed files even if this is set                 // Keeps the file small, which is nice for seeing what I've changed
                 ("config_save_minimal", "true"),
                 ("confirm_quit", "true"),
                 // If I had hotkeys for these actions, I'd enable confirmation. But when confirmation is enabled, it still requires a second key press on even the actions from the Quick Menu. This is just annoying.
