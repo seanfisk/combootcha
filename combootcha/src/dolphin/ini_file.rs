@@ -18,7 +18,7 @@
 //!
 //! Deliberate differences from Dolphin, following the policy of the RetroArch parser in this program:
 //!
-//! - Anything that could not be read back as the same thing is an error, both when reading and in `replace`: see `validate_section_name`, `validate_key` and `validate_value`. Dolphin silently normalizes (or mis-reads) these.
+//! - Anything that could not be read back as the same thing is an error, both when reading and in `replace`: see `validate_section_name`, `validate_key` and `validate_value`. Dolphin silently normalizes (or misreads) these.
 //! - Whatever Dolphin silently drops is dropped with a warning, including raw lines that are discarded on write.
 //! - An entry with an empty key (`= value`) is dropped with a warning. Dolphin keeps it.
 
